@@ -1,0 +1,13 @@
+//
+// Created by gabeo on 9/1/2026.
+//
+
+#ifndef MONARCH_OF_THE_HILL_SHIELDMOTORCONTROLLER_H
+#define MONARCH_OF_THE_HILL_SHIELDMOTORCONTROLLER_H
+
+
+class ShieldMotorController {
+};
+
+
+#endif //MONARCH_OF_THE_HILL_SHIELDMOTORCONTROLLER_H

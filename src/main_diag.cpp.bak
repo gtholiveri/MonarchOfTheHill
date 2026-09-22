@@ -1,0 +1,191 @@
+// ---------------------------------------------------------------------------
+// ADXL345 bring-up diagnostic - temporary, not part of the robot.
+//
+// The SparkFun example can't diagnose this failure: on a dead bus it blocks
+// inside powerOn() before printing anything. So this uses stock Wire directly
+// and answers three questions in order:
+//
+//   1. Is the bus electrically sane?  (are SDA/SCL pulled up, or stuck low)
+//   2. Does anything ACK its address? (the actual I2C handshake)
+//   3. Is it the ADXL345?             (DEVID register must read 0xE5)
+//
+// Plus a sweep of candidate SDA/SCL pin pairs, in case the shield doesn't
+// route its labelled SDA/SCL to GPIO21/22.
+//
+// Optional power check: run a jumper from the breakout's VCC pad to GPIO34
+// and this reports the measured rail voltage. GPIO34 is input-only, so it
+// cannot backfeed the sensor.
+// ---------------------------------------------------------------------------
+
+#include <Arduino.h>
+#include <Wire.h>
+
+static const int DEFAULT_SDA = 21;
+static const int DEFAULT_SCL = 22;
+
+static const int VCC_SENSE_PIN = 34;        // optional, see header comment
+
+static const uint8_t ADXL_ADDRS[] = {0x53, 0x1D};   // SDO low / SDO high
+static const uint8_t ADXL_REG_DEVID = 0x00;
+static const uint8_t ADXL_DEVID_EXPECTED = 0xE5;
+
+struct PinPair { int sda; int scl; };
+
+// GPIO6-11 are internal flash and are deliberately absent. 16/17 belong to
+// the motor link. Reversed pairs included because swapped wires are common.
+static const PinPair CANDIDATES[] = {
+    {21, 22}, {22, 21},
+    {4, 5},   {5, 4},
+    {32, 33}, {33, 32},
+    {25, 26}, {26, 25},
+    {18, 19}, {19, 18},
+    {13, 14}, {14, 13},
+    {27, 26}, {23, 22},
+};
+
+// --- 1. electrical ---------------------------------------------------------
+
+// A floating line and a shorted line both fail to ACK, but they are very
+// different problems, so separate them: read once with no pull, once with the
+// internal pull-up. Stuck low under a pull-up means shorted to ground.
+static void reportLine(const char *name, int pin) {
+    pinMode(pin, INPUT);
+    delayMicroseconds(200);
+    int bare = digitalRead(pin);
+
+    pinMode(pin, INPUT_PULLUP);
+    delayMicroseconds(200);
+    int pulled = digitalRead(pin);
+
+    Serial.printf("  %s (GPIO%d): idle=%s  with internal pull-up=%s  -> ",
+                  name, pin, bare ? "HIGH" : "LOW", pulled ? "HIGH" : "LOW");
+
+    if (bare == HIGH) {
+        Serial.println("external pull-up present, line healthy");
+    } else if (pulled == HIGH) {
+        Serial.println("no external pull-up, but line is free");
+    } else {
+        Serial.println("STUCK LOW - shorted to GND, or a device is holding it");
+    }
+
+    pinMode(pin, INPUT);
+}
+
+// --- 2. handshake ----------------------------------------------------------
+
+// endTransmission's return code distinguishes the failure modes, which a
+// plain "found / not found" scanner throws away.
+static const char *ackMeaning(uint8_t code) {
+    switch (code) {
+        case 0: return "ACK";
+        case 1: return "data too long";
+        case 2: return "NACK on address (nobody home)";
+        case 3: return "NACK on data";
+        case 4: return "other error";
+        case 5: return "TIMEOUT (bus held / no clock)";
+        default: return "unknown";
+    }
+}
+
+static int scanBus() {
+    int found = 0;
+
+    for (uint8_t addr = 1; addr < 127; addr++) {
+        Wire.beginTransmission(addr);
+        uint8_t rc = Wire.endTransmission();
+
+        if (rc == 0) {
+            Serial.printf("    ACK at 0x%02X\n", addr);
+            found++;
+        } else if (rc != 2) {
+            // Anything that isn't a clean NACK is worth seeing.
+            Serial.printf("    0x%02X -> %s\n", addr, ackMeaning(rc));
+        }
+    }
+    return found;
+}
+
+// --- 3. identity -----------------------------------------------------------
+
+static bool readDevId(uint8_t addr, uint8_t &out) {
+    Wire.beginTransmission(addr);
+    Wire.write(ADXL_REG_DEVID);
+    if (Wire.endTransmission() != 0) return false;
+
+    if (Wire.requestFrom((int) addr, 1) != 1) return false;
+    out = Wire.read();
+    return true;
+}
+
+// ---------------------------------------------------------------------------
+
+void setup() {
+    Serial.begin(115200);
+    delay(300);
+
+    Serial.println();
+    Serial.println("=== ADXL345 diagnostic ===");
+
+    // --- power ---
+    Serial.println("\n[power] (only meaningful if VCC is jumpered to GPIO34)");
+    analogReadResolution(12);
+    analogSetPinAttenuation(VCC_SENSE_PIN, ADC_11db);
+    int raw = analogRead(VCC_SENSE_PIN);
+    float volts = raw * 3.3f / 4095.0f;
+    Serial.printf("  GPIO%d reads %d counts ~= %.2f V %s\n",
+                  VCC_SENSE_PIN, raw, volts,
+                  raw < 100 ? "(0V - unpowered, or no jumper fitted)" : "");
+
+    // --- electrical ---
+    Serial.println("\n[electrical] default I2C pins");
+    reportLine("SDA", DEFAULT_SDA);
+    reportLine("SCL", DEFAULT_SCL);
+
+    // --- handshake on default pins ---
+    Serial.printf("\n[handshake] GPIO%d/%d\n", DEFAULT_SDA, DEFAULT_SCL);
+    Wire.begin(DEFAULT_SDA, DEFAULT_SCL);
+    Wire.setTimeOut(50);
+    if (scanBus() == 0) Serial.println("    no device ACKed any address");
+
+    // --- identity ---
+    Serial.println("\n[identity]");
+    for (uint8_t i = 0; i < sizeof(ADXL_ADDRS); i++) {
+        uint8_t id = 0;
+        uint8_t addr = ADXL_ADDRS[i];
+
+        if (readDevId(addr, id)) {
+            Serial.printf("  0x%02X DEVID=0x%02X %s\n", addr, id,
+                          id == ADXL_DEVID_EXPECTED ? "<-- ADXL345 confirmed" : "(unexpected)");
+        } else {
+            Serial.printf("  0x%02X no response\n", addr);
+        }
+    }
+
+    // --- pin sweep ---
+    Serial.println("\n[sweep] trying other SDA/SCL pin pairs");
+    for (uint8_t i = 0; i < sizeof(CANDIDATES) / sizeof(CANDIDATES[0]); i++) {
+        PinPair p = CANDIDATES[i];
+
+        Wire.end();
+        delay(10);
+        Wire.begin(p.sda, p.scl);
+        Wire.setTimeOut(50);
+
+        Serial.printf("  SDA=%2d SCL=%2d: ", p.sda, p.scl);
+
+        int found = 0;
+        for (uint8_t addr = 1; addr < 127; addr++) {
+            Wire.beginTransmission(addr);
+            if (Wire.endTransmission() == 0) {
+                Serial.printf("0x%02X ", addr);
+                found++;
+            }
+        }
+        Serial.println(found ? "<-- FOUND" : "-");
+    }
+
+    Serial.println("\n=== done ===");
+}
+
+void loop() {
+}

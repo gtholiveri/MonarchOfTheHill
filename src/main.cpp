@@ -52,11 +52,12 @@ static bool accelOk = false;
 // wrong way after an overshoot), swap which axis feeds atan2f() in there.
 //
 // The tilt sensor also cannot tell WHERE on the 1 ft mesa the vehicle is -
-// it reads "flat" the whole way across. CENTER_DRIVE_MS below is a timed
-// nudge forward once flat is detected, to land roughly mid-mesa instead of
-// stopping right at the near edge. It has to be tuned on the real ramp at
-// DRIVE_SPEED: time a run from "tilt goes flat" to "front wheels reach the
-// middle of the mesa" and use that.
+// it reads "flat" the whole way across. So once flat is detected, we keep
+// driving forward for a calculated time instead of stopping immediately:
+// dead reckoning, distance = speed x time, so time = distance / speed. The
+// distance is half the mesa (known, from the contest rules). The speed has
+// to come from you timing the real vehicle - see centerDriveMs() below for
+// exactly how.
 
 static const unsigned long SAMPLE_MS = 20;    // 50 Hz
 static const unsigned long PRINT_MS = 500;
@@ -67,8 +68,41 @@ static const float PITCH_THRESHOLD_DEG = 15.0f;  // magnitude; climb above +this
 
 static const int DRIVE_SPEED = 200;
 
-// TODO tune on the real ramp - see note above.
-static const unsigned long CENTER_DRIVE_MS = 300;
+// --- dead reckoning for the centering nudge ---------------------------------
+//
+// How to measure MEASURED_SPEED_IN_PER_S:
+//   1. On a flat floor, mark a straight 24 inch line.
+//   2. Power up so it drives at DRIVE_SPEED (same speed used for the climb),
+//      starting at the mark, and time it with a stopwatch until the front of
+//      the vehicle crosses the 24 inch mark.
+//   3. Set MEASURED_SPEED_IN_PER_S = 24.0 / (seconds you measured).
+//      A longer run (24 in rather than 6 in) makes stopwatch reaction time a
+//      smaller fraction of the error.
+//
+// Left at 0, centerDriveMs() falls back to FALLBACK_CENTER_DRIVE_MS instead
+// of dividing by zero, so the robot still does *something* reasonable before
+// you've measured a real speed.
+//
+// This assumes flat is detected right as the vehicle reaches the mesa. In
+// practice the chassis may already be partway onto the mesa by the time it
+// reads level, since the sensor isn't at the very front. If testing shows it
+// consistently lands short of or past center by roughly the same amount
+// every time, adjust CENTER_OFFSET_IN to correct for it - positive drives a
+// bit further, negative a bit less.
+
+static const float MESA_LENGTH_IN = 12.0f;             // full flat top, from the contest rules
+static const float MEASURED_SPEED_IN_PER_S = 0.0f;     // TODO: measure, see above
+static const float CENTER_OFFSET_IN = 0.0f;             // TODO: adjust after real-ramp testing
+static const unsigned long FALLBACK_CENTER_DRIVE_MS = 300;  // used only until speed is measured
+
+static unsigned long centerDriveMs() {
+    if (MEASURED_SPEED_IN_PER_S <= 0.0f) return FALLBACK_CENTER_DRIVE_MS;
+
+    float distanceIn = (MESA_LENGTH_IN / 2.0f) + CENTER_OFFSET_IN;
+    float seconds = distanceIn / MEASURED_SPEED_IN_PER_S;
+    if (seconds < 0.0f) seconds = 0.0f;
+    return (unsigned long) (seconds * 1000.0f);
+}
 
 // Safety cap so a reverse-out-of-overshoot can't run forever if the pitch
 // reading never settles back to flat (e.g. it drove off the ramp entirely).
@@ -171,6 +205,10 @@ void setup() {
     // boot is impossible to tell apart from a dead upload.
     Serial.println();
     Serial.println("booted");
+    if (MEASURED_SPEED_IN_PER_S <= 0.0f) {
+        Serial.println("center drive: no speed measured yet, using fallback - see centerDriveMs()");
+    }
+    Serial.printf("center drive: %lu ms\n", centerDriveMs());
 
     accelOk = accel.begin();
 
@@ -258,13 +296,13 @@ void loop() {
             if (confirmedFlat) {
                 // Reached the mesa. Keep driving a bit longer to reach the
                 // middle instead of stopping right at the near edge - see
-                // CENTER_DRIVE_MS note above the state machine.
+                // the dead-reckoning note above the state machine.
                 enterState(CENTERING, now);
             }
             break;
 
         case CENTERING:
-            if (now - stateEnteredAt >= CENTER_DRIVE_MS) {
+            if (now - stateEnteredAt >= centerDriveMs()) {
                 stopAll();
                 enterState(STOPPED, now);
             }

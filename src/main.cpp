@@ -37,28 +37,59 @@ static bool accelOk = false;
 
 // --- tilt-driving behaviour -------------------------------------------------
 //
-// Drive forward whenever the chassis is tilted past a threshold off vertical,
-// stop when it is back under it.
+// Drive forward while climbing, stop on the flat mesa, and reverse back onto
+// it if the vehicle carries past the far edge.
 //
-// Tilt is the angle between the smoothed gravity vector and +Z, which holds
-// because the mounting fixes the sensor's Z axis pointing up.
+// A magnitude-only tilt reading (angle off vertical, no sign) cannot tell
+// this apart from "climbing the near ramp": both read the same angle. So
+// pitch here is SIGNED - positive nose-up (climbing), negative nose-down
+// (descending the far ramp after overshooting) - computed from two axes
+// instead of the angle-to-vertical trick used previously.
+//
+// signedPitchDeg() below assumes the sensor's local X axis points toward the
+// front of the vehicle and Z points up when the chassis is level. If the
+// sign comes out backwards on the bench (drives fine uphill but reverses the
+// wrong way after an overshoot), swap which axis feeds atan2f() in there.
+//
+// The tilt sensor also cannot tell WHERE on the 1 ft mesa the vehicle is -
+// it reads "flat" the whole way across. CENTER_DRIVE_MS below is a timed
+// nudge forward once flat is detected, to land roughly mid-mesa instead of
+// stopping right at the near edge. It has to be tuned on the real ramp at
+// DRIVE_SPEED: time a run from "tilt goes flat" to "front wheels reach the
+// middle of the mesa" and use that.
 
 static const unsigned long SAMPLE_MS = 20;    // 50 Hz
 static const unsigned long PRINT_MS = 500;
 
 static const float EMA_ALPHA = 0.2f;          // ~0.1 s to settle at 50 Hz
 
-static const float TILT_THRESHOLD_DEG = 30.0f;   // at or past this -> drive
+static const float PITCH_THRESHOLD_DEG = 15.0f;  // magnitude; climb above +this, overshoot below -this
 
 static const int DRIVE_SPEED = 200;
 
-// Upright reference. Only the direction matters - angleBetweenDeg normalises.
-// If the board reads ~180 deg sitting flat, the sensor's Z points down and
-// this wants to be {0, 0, -1}.
-static const Vec3 UP{0, 0, 1};
+// TODO tune on the real ramp - see note above.
+static const unsigned long CENTER_DRIVE_MS = 300;
+
+// Safety cap so a reverse-out-of-overshoot can't run forever if the pitch
+// reading never settles back to flat (e.g. it drove off the ramp entirely).
+static const unsigned long MAX_REVERSE_MS = 1500;
+
+// How long pitch must stay flat before we trust "we've stopped tilting"
+// (mid-climb bumps and sensor noise near the threshold otherwise flicker
+// this back and forth).
+static const unsigned long FLAT_CONFIRM_MS = 150;
+
+// Same idea for the start of the climb, so a bump at power-on isn't
+// mistaken for actually being on the ramp.
+static const unsigned long CLIMB_CONFIRM_MS = 100;
 
 static Vec3 smoothed{0, 0, 0};
-static bool driving = false;
+
+enum ClimbState { WAIT_CLIMB, CLIMBING, CENTERING, STOPPED, REVERSING };
+static ClimbState state = WAIT_CLIMB;
+static unsigned long stateEnteredAt = 0;
+static unsigned long flatSince = 0;
+static unsigned long climbSince = 0;
 
 // Reports every address that ACKs, so a miswired or differently-addressed
 // sensor shows up instead of just going quiet.
@@ -104,6 +135,10 @@ void driveForward(int speed) {
     for (uint8_t m = 1; m <= 4; m++) motorControl(m, speed);
 }
 
+void driveReverse(int speed) {
+    driveForward(-abs(speed));
+}
+
 // --- vector helpers ---------------------------------------------------------
 
 static Vec3 ema(const Vec3 &prev, const Vec3 &sample, float alpha) {
@@ -112,15 +147,13 @@ static Vec3 ema(const Vec3 &prev, const Vec3 &sample, float alpha) {
                 prev.z + alpha * (sample.z - prev.z)};
 }
 
-// Angle between two vectors, in degrees.
-static float angleBetweenDeg(const Vec3 &a, const Vec3 &b) {
-    float ma = a.magnitude();
-    float mb = b.magnitude();
-    if (ma < 0.01f || mb < 0.01f) return 0.0f;
-
-    float cosine = (a.x * b.x + a.y * b.y + a.z * b.z) / (ma * mb);
-    cosine = constrain(cosine, -1.0f, 1.0f);    // guard acos against rounding
-    return degrees(acosf(cosine));
+// Signed pitch, in degrees. Positive = nose up (climbing the near ramp).
+// Negative = nose down (descending the far ramp after an overshoot).
+// Assumes the sensor's local X axis points to the front of the vehicle and Z
+// points up when the chassis is level - confirm this on the bench (see the
+// note above the state machine) before trusting the sign.
+static float signedPitchDeg(const Vec3 &g) {
+    return degrees(atan2f(g.x, g.z));
 }
 
 void setup() {
@@ -147,15 +180,31 @@ void setup() {
         // Seed the filter with a real reading, otherwise it ramps up from
         // zero and reports a bogus 0 deg for the first fraction of a second.
         smoothed = accel.read();
-        Serial.printf("start: %.2f %.2f %.2f  tilt=%.1f deg\n",
+        Serial.printf("start: %.2f %.2f %.2f  pitch=%.1f deg\n",
                       smoothed.x, smoothed.y, smoothed.z,
-                      angleBetweenDeg(smoothed, UP));
+                      signedPitchDeg(smoothed));
 
-        Serial.println("tilt(deg)\tdriving");
+        Serial.println("pitch(deg)\tstate");
     } else {
         Serial.println("ADXL345 not responding at 0x53 - scanning bus...");
         scanI2C();
     }
+}
+
+static void enterState(ClimbState next, unsigned long now) {
+    state = next;
+    stateEnteredAt = now;
+}
+
+static const char *stateName(ClimbState s) {
+    switch (s) {
+        case WAIT_CLIMB: return "wait_climb";
+        case CLIMBING:   return "climbing";
+        case CENTERING:  return "centering";
+        case STOPPED:    return "stopped";
+        case REVERSING:  return "reversing";
+    }
+    return "?";
 }
 
 void loop() {
@@ -169,25 +218,73 @@ void loop() {
     lastSample = now;
 
     smoothed = ema(smoothed, accel.read(), EMA_ALPHA);
-    float tilt = angleBetweenDeg(smoothed, UP);
+    float pitch = signedPitchDeg(smoothed);
 
-    // Only send on a state change. The shield link is 9600 baud and each
-    // update is 4 motors x 5 bytes = 20 bytes; at 50 Hz that is 1000 B/s
-    // against a ~960 B/s budget, so resending every sample would back the
-    // serial buffer up and the motors would lag behind the tilt.
-    bool shouldDrive = tilt >= TILT_THRESHOLD_DEG;
+    bool climbingTilt = pitch >= PITCH_THRESHOLD_DEG;
+    bool overshootTilt = pitch <= -PITCH_THRESHOLD_DEG;
+    bool flatTilt = !climbingTilt && !overshootTilt;
 
-    if (shouldDrive != driving) {
-        driving = shouldDrive;
-        if (driving) {
-            driveForward(DRIVE_SPEED);
-        } else {
-            stopAll();
-        }
+    if (flatTilt) {
+        if (flatSince == 0) flatSince = now;
+    } else {
+        flatSince = 0;
+    }
+    bool confirmedFlat = flatTilt && flatSince != 0 && (now - flatSince >= FLAT_CONFIRM_MS);
+
+    if (climbingTilt) {
+        if (climbSince == 0) climbSince = now;
+    } else {
+        climbSince = 0;
+    }
+    bool confirmedClimb = climbingTilt && climbSince != 0 && (now - climbSince >= CLIMB_CONFIRM_MS);
+
+    // Overshoot can be reached from any driving state - check it first,
+    // regardless of what we were doing when it happened.
+    if (overshootTilt && state != REVERSING && state != WAIT_CLIMB) {
+        driveReverse(DRIVE_SPEED);
+        enterState(REVERSING, now);
+    }
+
+    switch (state) {
+
+        case WAIT_CLIMB:
+            if (confirmedClimb) {
+                driveForward(DRIVE_SPEED);
+                enterState(CLIMBING, now);
+            }
+            break;
+
+        case CLIMBING:
+            if (confirmedFlat) {
+                // Reached the mesa. Keep driving a bit longer to reach the
+                // middle instead of stopping right at the near edge - see
+                // CENTER_DRIVE_MS note above the state machine.
+                enterState(CENTERING, now);
+            }
+            break;
+
+        case CENTERING:
+            if (now - stateEnteredAt >= CENTER_DRIVE_MS) {
+                stopAll();
+                enterState(STOPPED, now);
+            }
+            break;
+
+        case STOPPED:
+            // Sit tight. The overshoot check above will pull us out of this
+            // if we get bumped past the far edge.
+            break;
+
+        case REVERSING:
+            if (confirmedFlat || now - stateEnteredAt >= MAX_REVERSE_MS) {
+                stopAll();
+                enterState(STOPPED, now);
+            }
+            break;
     }
 
     if (now - lastPrint >= PRINT_MS) {
         lastPrint = now;
-        Serial.printf("%.1f\t\t%s\n", tilt, driving ? "yes" : "no");
+        Serial.printf("%.1f\t\t%s\n", pitch, stateName(state));
     }
 }

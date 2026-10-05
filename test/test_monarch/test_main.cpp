@@ -297,6 +297,31 @@ void test_holding_reaims_only_after_a_big_turn() {
     TEST_ASSERT_FLOAT_WITHIN(12.0f, 0.0f, (s.psi - h0) * DEGS);
 }
 
+// With the nudge off, the robot stops as soon as it reads level: it never
+// enters Centering, and it ends up on the mesa near the near edge.
+void test_stops_at_first_level_reading_when_nudge_is_off() {
+    StrategyConfig c;
+    c.centerNudge = false;
+    Sim s(c);
+    s.start();
+    bool sawCentering = false;
+    int n = (int) (25.0f / s.dt);
+    for (int i = 0; i < n; i++) {
+        s.step();
+        if (s.strat.phase() == Phase::Centering) sawCentering = true;
+        if (s.strat.phase() == Phase::Holding) break;
+    }
+    s.run(1.0f);
+    printf("   nudge off: stopped at %.1f in (mesa %.0f to %.0f)\n",
+           s.ell, s.hill.mesaStart(), s.hill.mesaEnd());
+    TEST_ASSERT_FALSE(sawCentering);
+    TEST_ASSERT_EQUAL(Phase::Holding, s.strat.phase());
+    TEST_ASSERT_TRUE(onMesa(s));
+    TEST_ASSERT_LESS_THAN_FLOAT(s.hill.mesaCenter(), s.ell);
+    TEST_ASSERT_EQUAL(0, s.cmd.left);
+    TEST_ASSERT_EQUAL(0, s.cmd.right);
+}
+
 int main() {
     UNITY_BEGIN();
     RUN_TEST(test_static_pose_outputs);
@@ -307,6 +332,7 @@ int main() {
     RUN_TEST(test_calibrator_finds_bias_and_accepts_calm_data);
     RUN_TEST(test_calibrator_rejects_data_taken_while_handled);
     RUN_TEST(test_waiting_robot_does_not_move_on_flat_ground);
+    RUN_TEST(test_stops_at_first_level_reading_when_nudge_is_off);
     RUN_TEST(test_climbs_and_stops_near_mesa_center);
     RUN_TEST(test_wrong_speed_estimate_still_stays_on_mesa);
     RUN_TEST(test_overshoot_backs_up_onto_mesa);

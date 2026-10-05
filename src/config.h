@@ -50,11 +50,15 @@ static const uint8_t STBY_PIN = 4;
 static const uint32_t PWM_HZ = 20000;          // above hearing range; the chip allows up to 100 kHz
 
 // ---------------------------------------------------------------------------
-// 3. Calibration. These two numbers can only come from the real robot.
+// 3. Stopping on the mesa.
 //
-// The tilt sensors cannot say WHERE on the 1 ft mesa the robot is, so after it
-// first reads level it drives for a calculated time:
+// NUDGE_TO_CENTER = false: the robot stops as soon as it reads level. Fastest
+//   way to get testing; it will stop near the near edge of the mesa.
+// NUDGE_TO_CENTER = true: after it first reads level it keeps driving to
+//   reach mid-mesa. The tilt sensors cannot say WHERE on the 1 ft mesa the
+//   robot is, so it drives for a calculated time:
 //     time = (half the mesa + CENTER_OFFSET_IN) / MEASURED_SPEED_IN_PER_S
+//   Needs the two numbers below, which can only come from the real robot.
 //
 // MEASURED_SPEED_IN_PER_S: robot speed in inches per second at the nudge speed
 //   (CENTER_SPEED above). Measure it with the bench 'c' key (main.cpp).
@@ -65,6 +69,7 @@ static const uint32_t PWM_HZ = 20000;          // above hearing range; the chip 
 //   -2 comes from simulating an 8 to 10 inch chassis. On the real ramp: if it
 //   stops short of center, raise it; if past, lower it.
 // ---------------------------------------------------------------------------
+static const bool NUDGE_TO_CENTER = false;
 static const float MEASURED_SPEED_IN_PER_S = 0.0f;
 static const float CENTER_OFFSET_IN = -2.0f;
 

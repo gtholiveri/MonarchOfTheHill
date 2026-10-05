@@ -29,9 +29,10 @@
 //      must go positive.  If not, BODY_UP is pointing the wrong way.
 //   5. Send 'l' then 'r' (one side at a time, tracks off the table). Each side
 //      must drive FORWARD. Flip that side's invert flag in config.h if not.
-//   6. Send 'c': it drives straight at CENTER_SPEED for exactly 2 seconds.
-//      Measure how far it went, in inches, on flat ground. Put inches / 2.0
-//      into MEASURED_SPEED_IN_PER_S in config.h.
+//   6. (Only if you turn NUDGE_TO_CENTER on.) Send 'c': it drives straight at
+//      CENTER_SPEED for exactly 2 seconds. Measure how far it went, in
+//      inches, on flat ground. Put inches / 2.0 into MEASURED_SPEED_IN_PER_S
+//      in config.h.
 //   7. Flash the normal environment (esp32dev). HAND TEST before the ramp, with
 //      the tracks off the table and the serial monitor open (it prints
 //      phase, tilt, uphill bearing, yaw, left and right command):
@@ -40,9 +41,11 @@
 //        - hold the nose down about 30 degrees: "slope(rev)", both backward.
 //        - hold it tilted with the left side up: the tracks turn opposite
 //          ways, turning the nose toward the high side.
-//        - tilt, then level it: "centering" for a moment, then "holding".
-//   8. Then the ramp. If it stops short of the middle, raise CENTER_OFFSET_IN
-//      in config.h; if past it, lower it.
+//        - tilt, then level it: the tracks stop and the phase becomes "holding"
+//          (with NUDGE_TO_CENTER on it shows "centering" for a moment first).
+//   8. Then the ramp. To aim for the middle of the mesa instead of stopping at
+//      the first level reading, set NUDGE_TO_CENTER = true and tune
+//      CENTER_OFFSET_IN (raise it if it stops short, lower it if past).
 //
 // Bench keys: w forward, s back, a spin left, d spin right, x stop,
 //             l left side only, r right side only, c speed-measurement run.
@@ -57,6 +60,7 @@ static StrategyConfig makeStrategyConfig() {
     c.centerSpeed = CENTER_SPEED;
     c.slowBelowTiltDeg = SLOW_BELOW_TILT_DEG;
     c.holdDeadbandDeg = HOLD_REAIM_DEG;
+    c.centerNudge = NUDGE_TO_CENTER;
     c.measuredSpeedInPerS = MEASURED_SPEED_IN_PER_S;
     c.centerOffsetIn = CENTER_OFFSET_IN;
     return c;

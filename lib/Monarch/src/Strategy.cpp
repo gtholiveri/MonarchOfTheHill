@@ -60,6 +60,7 @@ const char *Strategy::phaseName() const {
 
 // time = distance / speed. Distance is half the mesa plus any tuning offset.
 uint32_t Strategy::centerDriveMs() const {
+    if (!_cfg.centerNudge) return 0;
     if (_cfg.measuredSpeedInPerS <= 0.0f) {
         return (uint32_t) (_cfg.fallbackCenterMs * _nudgeScale);
     }
@@ -127,7 +128,7 @@ DriveCommand Strategy::update(const StrategyInputs &in) {
                 _centerDir = _reversing ? -1 : 1;
                 _holdHeadingDeg = _centerDir > 0 ? _headingTargetDeg
                                                  : wrap180(_headingTargetDeg + 180.0f);
-                enter(Phase::Centering, in.nowMs);
+                enter(_cfg.centerNudge ? Phase::Centering : Phase::Holding, in.nowMs);
             }
             break;
     }

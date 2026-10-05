@@ -53,6 +53,7 @@ struct StrategyConfig {
     float reverseExitDeg = 110.0f;
 
     // --- mesa dead reckoning ---
+    bool centerNudge = true;                  // false: stop as soon as the chassis reads level
     float mesaLengthIn = 12.0f;               // from the contest rules
     float measuredSpeedInPerS = 0.0f;         // MEASURE at centerSpeed. 0 = use the fallback
     float centerOffsetIn = 0.0f;              // tune: + drives further, - less

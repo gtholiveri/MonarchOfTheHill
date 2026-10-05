@@ -57,11 +57,14 @@ static const AxisMap BODY_UP = {2, +1};
 // ---------------------------------------------------------------------------
 
 #if DRIVE_BACKEND == DRIVE_TB6612FNG
-// TODO: replace every pin number with what is actually wired on your robot.
-// (Avoid GPIO 0, 2, 12, 15 - the ESP32 reads them at boot - and 6-11, 21, 22,
-// 34-39. 21/22 are the I2C pins used by the MPU-6050.)
-// One TB6612FNG board drives two motors (channels A and B). Four motors need
-// two boards: give the second board its own pins and STBY.
+// Two motors on ONE TB6612FNG board: channel A = left motor, channel B = right
+// motor. These pins match wire.md; if you wire differently, change them here.
+// (Avoid GPIO 0, 2, 5, 12, 15 - the ESP32 reads them at boot - and 6-11,
+// 21, 22, 34-39. 21/22 are the I2C pins used by the MPU-6050.)
+//
+// invert = true flips a motor that spins backward for a forward command. The
+// two motors face opposite ways on the chassis, so one of them usually needs it.
+// Find out with the bench keys 'l' and 'r' (see main.cpp), then flip it here.
 struct MotorChannel {
     uint8_t pwm;
     uint8_t in1;
@@ -69,14 +72,12 @@ struct MotorChannel {
     bool invert;
 };
 static const MotorChannel LEFT_MOTORS[] = {
-    {25, 26, 27, false},       // TODO left motor 1: PWM, IN1, IN2
-    {32, 33, 14, false},       // TODO left motor 2 (delete this line if one motor per side)
+    {25, 26, 27, false},       // channel A: PWMA = 25, AIN1 = 26, AIN2 = 27
 };
 static const MotorChannel RIGHT_MOTORS[] = {
-    {13, 18, 19, false},       // TODO right motor 1
-    {4, 5, 23, false},         // TODO right motor 2 (delete if one motor per side)
+    {32, 33, 13, true},        // channel B: PWMB = 32, BIN1 = 33, BIN2 = 13
 };
-static const uint8_t STBY_PINS[] = {16, 17};   // TODO one per TB6612FNG board
+static const uint8_t STBY_PINS[] = {4};        // STBY = 4
 static const uint32_t PWM_HZ = 20000;          // above hearing range; TB6612FNG allows up to 100 kHz
 #endif
 

@@ -1,135 +1,97 @@
 #include <Arduino.h>
 #include <Wire.h>
 
-#include "Accelerometer.h"
+#include "Attitude.h"
+#include "DriveTrain.h"
+#include "GyroCalibrator.h"
+#include "Mpu6050.h"
+#include "Strategy.h"
+#include "config.h"
 
 // ---------------------------------------------------------------------------
-// ACEBOTT ESP32 Car Shield V2.0 - motor interface
+// Monarch of the Hill
 //
-// The V2.0 shield does NOT expose the H-bridge to the ESP32. A motor
-// co-processor on the shield does the switching, and the ESP32 drives it over
-// a 9600-baud serial link. One command is a 5-byte packet:
+// Reads the MPU-6050 (gyro + accelerometer), works out which way is uphill,
+// and drives the tracks to climb, stop mid-mesa and hold. The decision logic
+// is in lib/Monarch (Attitude, Strategy) and is unit-tested on a PC with
+// `pio test -e native`; this file only does the hardware plumbing.
 //
-//     byte 0   motor index   1-4
-//     byte 1   direction     1 = forward, 2 = reverse
-//     byte 2   speed         0-100
-//     byte 3   '\r'
-//     byte 4   '\n'
+// FIRST TIME ON THE REAL ROBOT - use the bench environment (esp32dev_bench):
+// it never runs the strategy, it just prints sensor values and lets you drive
+// from the serial monitor. Work down this list:
 //
-// GPIO16/17 are RX/TX - the ESP32's default Serial2 pins, which is why ACEBOTT
-// chose them. Their own library bit-bangs this with SoftwareSerial; hardware
-// UART2 is used here instead.
+//   1. Edit config.h: pick the motor driver, fill in the pin numbers.
+//   2. Robot level on a table. pitch and roll should read near 0, tilt < 3.
+//   3. Lift the NOSE. pitch must go positive.  If negative, flip the sign of
+//      BODY_FORWARD in config.h (or fix the axis).
+//   4. Lift the LEFT side (as seen from behind the robot). roll must go
+//      positive.  If negative, flip the sign of BODY_LEFT.
+//   5. Turn the robot counter-clockwise by hand (viewed from above). yawRate
+//      must go positive.  If not, BODY_UP is pointing the wrong way.
+//   6. Send 'l' then 'r' (one side at a time, wheels off the table). Each side
+//      must drive FORWARD. Flip the invert flag for a side that doesn't.
+//   7. Send 'c': it drives straight at centerSpeed for exactly 2 seconds.
+//      Measure how far it went, in inches, on flat ground. Put inches / 2.0
+//      into MEASURED_SPEED_IN_PER_S in config.h.
+//   8. Flash the normal environment (esp32dev) and run it on the ramp.
 //
-// Quirks inherited from ACEBOTT's library, kept deliberately:
-//   - Motors 1/2 and 3/4 have MIRRORED direction conventions, because they are
-//     mounted facing opposite ways on the two sides of the chassis. Positive
-//     speed to M1 and M2 spins them the same rotational direction.
-//   - map() lands on 40 at an input of ~102, which the protocol treats as stop.
-//     A speed ramp passing through 102 will briefly cut the motor.
+// Bench keys: w forward, s back, a spin left, d spin right, x stop,
+//             l left side only, r right side only, c speed-measurement run.
 // ---------------------------------------------------------------------------
 
-static const int MOTOR_RX_PIN = 16;
-static const int MOTOR_TX_PIN = 17;
-static const long MOTOR_BAUD = 9600;
+// ---- tuning that depends on the real robot (see config.h) -----------------
 
-static Accelerometer accel;
-static bool accelOk = false;
-
-// --- tilt-driving behaviour -------------------------------------------------
-//
-// Drive forward while climbing, stop on the flat mesa, and reverse back onto
-// it if the vehicle carries past the far edge.
-//
-// A magnitude-only tilt reading (angle off vertical, no sign) cannot tell
-// this apart from "climbing the near ramp": both read the same angle. So
-// pitch here is SIGNED - positive nose-up (climbing), negative nose-down
-// (descending the far ramp after overshooting) - computed from two axes
-// instead of the angle-to-vertical trick used previously.
-//
-// signedPitchDeg() below assumes the sensor's local X axis points toward the
-// front of the vehicle and Z points up when the chassis is level. If the
-// sign comes out backwards on the bench (drives fine uphill but reverses the
-// wrong way after an overshoot), swap which axis feeds atan2f() in there.
-//
-// The tilt sensor also cannot tell WHERE on the 1 ft mesa the vehicle is -
-// it reads "flat" the whole way across. So once flat is detected, we keep
-// driving forward for a calculated time instead of stopping immediately:
-// dead reckoning, distance = speed x time, so time = distance / speed. The
-// distance is half the mesa (known, from the contest rules). The speed has
-// to come from you timing the real vehicle - see centerDriveMs() below for
-// exactly how.
-
-static const unsigned long SAMPLE_MS = 20;    // 50 Hz
-static const unsigned long PRINT_MS = 500;
-
-static const float EMA_ALPHA = 0.2f;          // ~0.1 s to settle at 50 Hz
-
-static const float PITCH_THRESHOLD_DEG = 15.0f;  // magnitude; climb above +this, overshoot below -this
-
-static const int DRIVE_SPEED = 200;
-
-// --- dead reckoning for the centering nudge ---------------------------------
-//
-// How to measure MEASURED_SPEED_IN_PER_S:
-//   1. On a flat floor, mark a straight 24 inch line.
-//   2. Power up so it drives at DRIVE_SPEED (same speed used for the climb),
-//      starting at the mark, and time it with a stopwatch until the front of
-//      the vehicle crosses the 24 inch mark.
-//   3. Set MEASURED_SPEED_IN_PER_S = 24.0 / (seconds you measured).
-//      A longer run (24 in rather than 6 in) makes stopwatch reaction time a
-//      smaller fraction of the error.
-//
-// Left at 0, centerDriveMs() falls back to FALLBACK_CENTER_DRIVE_MS instead
-// of dividing by zero, so the robot still does *something* reasonable before
-// you've measured a real speed.
-//
-// This assumes flat is detected right as the vehicle reaches the mesa. In
-// practice the chassis may already be partway onto the mesa by the time it
-// reads level, since the sensor isn't at the very front. If testing shows it
-// consistently lands short of or past center by roughly the same amount
-// every time, adjust CENTER_OFFSET_IN to correct for it - positive drives a
-// bit further, negative a bit less.
-
-static const float MESA_LENGTH_IN = 12.0f;             // full flat top, from the contest rules
-static const float MEASURED_SPEED_IN_PER_S = 0.0f;     // TODO: measure, see above
-static const float CENTER_OFFSET_IN = 0.0f;             // TODO: adjust after real-ramp testing
-static const unsigned long FALLBACK_CENTER_DRIVE_MS = 300;  // used only until speed is measured
-
-static unsigned long centerDriveMs() {
-    if (MEASURED_SPEED_IN_PER_S <= 0.0f) return FALLBACK_CENTER_DRIVE_MS;
-
-    float distanceIn = (MESA_LENGTH_IN / 2.0f) + CENTER_OFFSET_IN;
-    float seconds = distanceIn / MEASURED_SPEED_IN_PER_S;
-    if (seconds < 0.0f) seconds = 0.0f;
-    return (unsigned long) (seconds * 1000.0f);
+static StrategyConfig makeStrategyConfig() {
+    StrategyConfig c;
+    c.measuredSpeedInPerS = MEASURED_SPEED_IN_PER_S;
+    c.centerOffsetIn = CENTER_OFFSET_IN;
+    return c;
 }
 
-// Safety cap so a reverse-out-of-overshoot can't run forever if the pitch
-// reading never settles back to flat (e.g. it drove off the ramp entirely).
-static const unsigned long MAX_REVERSE_MS = 1500;
+// ---- globals ----------------------------------------------------------------
 
-// How long pitch must stay flat before we trust "we've stopped tilting"
-// (mid-climb bumps and sensor noise near the threshold otherwise flicker
-// this back and forth).
-static const unsigned long FLAT_CONFIRM_MS = 150;
+static Mpu6050 imu;
+static DriveTrain drive;
+static Attitude attitude;
+static Strategy strategy(makeStrategyConfig());
 
-// Same idea for the start of the climb, so a bump at power-on isn't
-// mistaken for actually being on the ramp.
-static const unsigned long CLIMB_CONFIRM_MS = 100;
+static Vec3 gyroBias{0, 0, 0};
+static float gyroSign = 1.0f;          // -1 if the axis map is a mirror image
+static bool imuOk = false;
 
-static Vec3 smoothed{0, 0, 0};
+static const uint32_t IMU_STALE_MS = 250;   // no good reading for this long -> stop the motors
 
-enum ClimbState { WAIT_CLIMB, CLIMBING, CENTERING, STOPPED, REVERSING };
-static ClimbState state = WAIT_CLIMB;
-static unsigned long stateEnteredAt = 0;
-static unsigned long flatSince = 0;
-static unsigned long climbSince = 0;
+// ---- axis mapping -------------------------------------------------------------
 
-// Reports every address that ACKs, so a miswired or differently-addressed
-// sensor shows up instead of just going quiet.
-void scanI2C() {
+static Vec3 toBodyAxes(const Vec3 &s) {
+    return Vec3{BODY_FORWARD.sign * s.at(BODY_FORWARD.axis),
+                BODY_LEFT.sign * s.at(BODY_LEFT.axis),
+                BODY_UP.sign * s.at(BODY_UP.axis)};
+}
+
+// Accelerometer readings are polar vectors and gyro readings are axial ones:
+// they only transform the same way under a proper rotation. A mapping that
+// is a mirror image (determinant -1) needs the gyro negated to stay correct.
+static bool checkAxisMap(float &gyroSignOut) {
+    const AxisMap *m[3] = {&BODY_FORWARD, &BODY_LEFT, &BODY_UP};
+
+    if (m[0]->axis == m[1]->axis || m[0]->axis == m[2]->axis || m[1]->axis == m[2]->axis) {
+        return false;                               // an axis was used twice
+    }
+    float r[3][3] = {{0}};
+    for (int i = 0; i < 3; i++) r[i][m[i]->axis] = (float) m[i]->sign;
+
+    float det = r[0][0] * (r[1][1] * r[2][2] - r[1][2] * r[2][1])
+                - r[0][1] * (r[1][0] * r[2][2] - r[1][2] * r[2][0])
+                + r[0][2] * (r[1][0] * r[2][1] - r[1][1] * r[2][0]);
+    gyroSignOut = det < 0 ? -1.0f : 1.0f;
+    return true;
+}
+
+// ---- helpers ----------------------------------------------------------------
+
+static void scanI2C() {
     int found = 0;
-
     for (uint8_t addr = 1; addr < 127; addr++) {
         Wire.beginTransmission(addr);
         if (Wire.endTransmission() == 0) {
@@ -137,192 +99,198 @@ void scanI2C() {
             found++;
         }
     }
-
-    if (found == 0) Serial.println("  nothing on the bus - check wiring/pull-ups");
+    if (found == 0) Serial.println("  nothing on the bus - check wiring and pull-ups");
 }
 
-// speed: -255..255. Sign sets direction, magnitude sets speed. 0 stops.
-void motorControl(uint8_t motor, int speed) {
-    if (motor < 1 || motor > 4) return;
-
-    speed = constrain(speed, -255, 255);
-
-    uint8_t dir = (motor <= 2)
-                      ? (speed > 0 ? 1 : 2)
-                      : (speed > 0 ? 2 : 1);
-
-    uint8_t speed_value = map(abs(speed), 0, 255, 0, 100);
-    if (speed_value == 40) speed_value = 0; // protocol quirk, see above
-
-    Serial2.write(motor);
-    Serial2.write(dir);
-    Serial2.write(speed_value);
-    Serial2.write('\r');
-    Serial2.write('\n');
+static void haltForever(const char *why) {
+    drive.stop();
+    for (;;) {
+        Serial.println(why);
+        delay(1000);
+    }
 }
 
-void stopAll() {
-    for (uint8_t m = 1; m <= 4; m++) motorControl(m, 0);
+// Averages the gyro while the robot sits still, and seeds the attitude
+// estimate from the average accelerometer reading. Takes about half a second.
+static void calibrateImu() {
+    const int MIN_SAMPLES = 100;
+    const float MAX_SPREAD_DPS = 1.0f;
+    const uint32_t TIMEOUT_MS = 2000;
+
+    GyroCalibrator cal;
+    Vec3 accelSum{0, 0, 0};
+    int accelN = 0;
+    uint32_t start = millis();
+
+    while (millis() - start < TIMEOUT_MS) {
+        ImuSample s;
+        if (imu.read(s)) {
+            cal.add(toBodyAxes(s.gyroDps) * gyroSign);
+            accelSum = accelSum + toBodyAxes(s.accelG);
+            accelN++;
+            if (cal.still(MIN_SAMPLES, MAX_SPREAD_DPS)) break;
+        }
+        delay(5);
+    }
+
+    if (accelN == 0) haltForever("IMU gave no readings during calibration");
+
+    gyroBias = cal.bias();
+    attitude.reset(accelSum * (1.0f / accelN));
+
+    if (!cal.still(MIN_SAMPLES, MAX_SPREAD_DPS)) {
+        Serial.printf("WARNING: robot was moving during gyro calibration (spread %.2f dps) - heading may drift\n",
+                      cal.spreadDps());
+    }
+    Serial.printf("gyro bias: %.2f %.2f %.2f dps (%d samples)\n", gyroBias.x, gyroBias.y, gyroBias.z, cal.count());
 }
 
-void driveForward(int speed) {
-    for (uint8_t m = 1; m <= 4; m++) motorControl(m, speed);
+// Reads the IMU, updates the attitude estimate. Returns true on a good reading.
+static bool pollImu() {
+    static uint32_t lastUs = 0;
+
+    ImuSample s;
+    if (!imu.read(s)) return false;
+
+    uint32_t nowUs = micros();
+    float dt = (nowUs - lastUs) * 1e-6f;
+    lastUs = nowUs;
+    if (dt <= 0.0f || dt > 0.05f) dt = IMU_PERIOD_MS * 1e-3f;     // first call, or a long gap
+
+    Vec3 gyro = toBodyAxes(s.gyroDps) * gyroSign - gyroBias;
+    attitude.update(toBodyAxes(s.accelG), gyro, dt);
+    return true;
 }
 
-void driveReverse(int speed) {
-    driveForward(-abs(speed));
-}
-
-// --- vector helpers ---------------------------------------------------------
-
-static Vec3 ema(const Vec3 &prev, const Vec3 &sample, float alpha) {
-    return Vec3{prev.x + alpha * (sample.x - prev.x),
-                prev.y + alpha * (sample.y - prev.y),
-                prev.z + alpha * (sample.z - prev.z)};
-}
-
-// Signed pitch, in degrees. Positive = nose up (climbing the near ramp).
-// Negative = nose down (descending the far ramp after an overshoot).
-// Assumes the sensor's local X axis points to the front of the vehicle and Z
-// points up when the chassis is level - confirm this on the bench (see the
-// note above the state machine) before trusting the sign.
-static float signedPitchDeg(const Vec3 &g) {
-    return degrees(atan2f(g.x, g.z));
-}
+// ---------------------------------------------------------------------------
 
 void setup() {
-    Serial.begin(115200); // main serial monitor
-    Serial2.begin(MOTOR_BAUD, SERIAL_8N1, MOTOR_RX_PIN, MOTOR_TX_PIN); // send specific serial bytes to relevant pins on shield
+    Serial.begin(115200);
     delay(200);
-
-    stopAll();
-
-    delay(100);
-    // motorControl(1, 255);
-    // motorControl(4, 255);
-
-    // Banner first: anything that touches the I2C bus can stall, and a silent
-    // boot is impossible to tell apart from a dead upload.
     Serial.println();
     Serial.println("booted");
-    if (MEASURED_SPEED_IN_PER_S <= 0.0f) {
-        Serial.println("center drive: no speed measured yet, using fallback - see centerDriveMs()");
+
+    if (!checkAxisMap(gyroSign)) {
+        Serial.println("config.h: BODY_FORWARD / BODY_LEFT / BODY_UP must use three different sensor axes");
+        for (;;) delay(1000);
     }
-    Serial.printf("center drive: %lu ms\n", centerDriveMs());
 
-    accelOk = accel.begin();
+    if (!drive.begin()) Serial.println("WARNING: motor driver did not respond - check wiring");
+    drive.stop();
 
-    if (accelOk) {
-        Serial.println("ADXL345 ok");
-
-        // Seed the filter with a real reading, otherwise it ramps up from
-        // zero and reports a bogus 0 deg for the first fraction of a second.
-        smoothed = accel.read();
-        Serial.printf("start: %.2f %.2f %.2f  pitch=%.1f deg\n",
-                      smoothed.x, smoothed.y, smoothed.z,
-                      signedPitchDeg(smoothed));
-
-        Serial.println("pitch(deg)\tstate");
-    } else {
-        Serial.println("ADXL345 not responding at 0x53 - scanning bus...");
+    imuOk = imu.begin(MPU_I2C_ADDR, I2C_SDA_PIN, I2C_SCL_PIN, I2C_CLOCK_HZ);
+    if (!imuOk) {
+        Serial.printf("MPU-6050 not responding at 0x%02X (WHO_AM_I read 0x%02X) - scanning bus...\n",
+                      MPU_I2C_ADDR, imu.whoAmI());
         scanI2C();
+        haltForever("no IMU, motors held off");
     }
+    Serial.printf("MPU-6050 ok (WHO_AM_I 0x%02X)\n", imu.whoAmI());
+
+    calibrateImu();
+
+#ifdef BENCH_MODE
+    Serial.println("BENCH MODE: strategy disabled. See the checklist at the top of main.cpp.");
+    Serial.println("keys: w s a d x l r c");
+#else
+    strategy.begin(millis());
+    Serial.printf("center drive: %lu ms%s\n", (unsigned long) strategy.centerDriveMs(),
+                  MEASURED_SPEED_IN_PER_S > 0.0f ? "" : "  (FALLBACK - MEASURED_SPEED_IN_PER_S not set)");
+    Serial.println("phase\ttilt\tbearing\tyaw\tL\tR");
+#endif
 }
 
-static void enterState(ClimbState next, unsigned long now) {
-    state = next;
-    stateEnteredAt = now;
-}
+#ifdef BENCH_MODE
 
-static const char *stateName(ClimbState s) {
-    switch (s) {
-        case WAIT_CLIMB: return "wait_climb";
-        case CLIMBING:   return "climbing";
-        case CENTERING:  return "centering";
-        case STOPPED:    return "stopped";
-        case REVERSING:  return "reversing";
+static const int BENCH_SPEED = 150;
+static uint32_t benchRunUntilMs = 0;      // for the timed 'c' run
+
+static void benchKeys() {
+    StrategyConfig c;
+    while (Serial.available()) {
+        switch (tolower(Serial.read())) {
+            case 'w': drive.drive(BENCH_SPEED, BENCH_SPEED); break;
+            case 's': drive.drive(-BENCH_SPEED, -BENCH_SPEED); break;
+            case 'a': drive.drive(-BENCH_SPEED, BENCH_SPEED); break;
+            case 'd': drive.drive(BENCH_SPEED, -BENCH_SPEED); break;
+            case 'l': drive.drive(BENCH_SPEED, 0); break;
+            case 'r': drive.drive(0, BENCH_SPEED); break;
+            case 'x': drive.stop(); benchRunUntilMs = 0; break;
+            case 'c':
+                Serial.printf("driving at %d for 2.0 s - measure the distance\n", c.centerSpeed);
+                drive.drive(c.centerSpeed, c.centerSpeed);
+                benchRunUntilMs = millis() + 2000;
+                break;
+            default: break;
+        }
     }
-    return "?";
+    if (benchRunUntilMs != 0 && (int32_t) (millis() - benchRunUntilMs) >= 0) {
+        drive.stop();
+        benchRunUntilMs = 0;
+        Serial.println("done. MEASURED_SPEED_IN_PER_S = inches traveled / 2.0");
+    }
 }
 
 void loop() {
-    static unsigned long lastSample = 0;
-    static unsigned long lastPrint = 0;
+    static uint32_t lastImu = 0, lastPrint = 0;
+    uint32_t now = millis();
 
-    if (!accelOk) return;
-
-    unsigned long now = millis();
-    if (now - lastSample < SAMPLE_MS) return;
-    lastSample = now;
-
-    smoothed = ema(smoothed, accel.read(), EMA_ALPHA);
-    float pitch = signedPitchDeg(smoothed);
-
-    bool climbingTilt = pitch >= PITCH_THRESHOLD_DEG;
-    bool overshootTilt = pitch <= -PITCH_THRESHOLD_DEG;
-    bool flatTilt = !climbingTilt && !overshootTilt;
-
-    if (flatTilt) {
-        if (flatSince == 0) flatSince = now;
-    } else {
-        flatSince = 0;
+    if (now - lastImu >= IMU_PERIOD_MS) {
+        lastImu = now;
+        pollImu();
     }
-    bool confirmedFlat = flatTilt && flatSince != 0 && (now - flatSince >= FLAT_CONFIRM_MS);
+    benchKeys();
 
-    if (climbingTilt) {
-        if (climbSince == 0) climbSince = now;
-    } else {
-        climbSince = 0;
-    }
-    bool confirmedClimb = climbingTilt && climbSince != 0 && (now - climbSince >= CLIMB_CONFIRM_MS);
-
-    // Overshoot can be reached from any driving state - check it first,
-    // regardless of what we were doing when it happened.
-    if (overshootTilt && state != REVERSING && state != WAIT_CLIMB) {
-        driveReverse(DRIVE_SPEED);
-        enterState(REVERSING, now);
-    }
-
-    switch (state) {
-
-        case WAIT_CLIMB:
-            if (confirmedClimb) {
-                driveForward(DRIVE_SPEED);
-                enterState(CLIMBING, now);
-            }
-            break;
-
-        case CLIMBING:
-            if (confirmedFlat) {
-                // Reached the mesa. Keep driving a bit longer to reach the
-                // middle instead of stopping right at the near edge - see
-                // the dead-reckoning note above the state machine.
-                enterState(CENTERING, now);
-            }
-            break;
-
-        case CENTERING:
-            if (now - stateEnteredAt >= centerDriveMs()) {
-                stopAll();
-                enterState(STOPPED, now);
-            }
-            break;
-
-        case STOPPED:
-            // Sit tight. The overshoot check above will pull us out of this
-            // if we get bumped past the far edge.
-            break;
-
-        case REVERSING:
-            if (confirmedFlat || now - stateEnteredAt >= MAX_REVERSE_MS) {
-                stopAll();
-                enterState(STOPPED, now);
-            }
-            break;
-    }
-
-    if (now - lastPrint >= PRINT_MS) {
+    if (now - lastPrint >= 200) {
         lastPrint = now;
-        Serial.printf("%.1f\t\t%s\n", pitch, stateName(state));
+        Serial.printf("pitch %6.1f  roll %6.1f  tilt %5.1f  bearing %6.1f  yaw %7.1f  yawRate %6.1f  pitchRate %6.1f\n",
+                      attitude.pitchDeg(), attitude.rollDeg(), attitude.tiltDeg(),
+                      attitude.uphillBearingDeg(), attitude.yawDeg(),
+                      attitude.yawRateDps(), attitude.pitchRateDps());
     }
 }
+
+#else   // normal run
+
+void loop() {
+    static uint32_t lastImu = 0, lastDrive = 0, lastPrint = 0, lastGoodImu = 0, lastRecover = 0;
+    uint32_t now = millis();
+
+    if (now - lastImu >= IMU_PERIOD_MS) {
+        lastImu = now;
+        if (pollImu()) lastGoodImu = now;
+    }
+
+    if (now - lastDrive >= DRIVE_PERIOD_MS) {
+        lastDrive = now;
+
+        if (now - lastGoodImu > IMU_STALE_MS) {
+            // Blind: don't keep driving on a stale attitude. Try to bring the
+            // chip back once a second (a brown-out resets it to sleep mode).
+            drive.stop();
+            if (now - lastRecover > 1000) {
+                lastRecover = now;
+                imu.begin(MPU_I2C_ADDR, I2C_SDA_PIN, I2C_SCL_PIN, I2C_CLOCK_HZ);
+            }
+        } else {
+            StrategyInputs in;
+            in.nowMs = now;
+            in.tiltDeg = attitude.tiltDeg();
+            in.bearingDeg = attitude.uphillBearingDeg();
+            in.yawDeg = attitude.yawDeg();
+            in.yawRateDps = attitude.yawRateDps();
+            DriveCommand cmd = strategy.update(in);
+            drive.drive(cmd.left, cmd.right);
+        }
+    }
+
+    if (now - lastPrint >= 250) {
+        lastPrint = now;
+        Serial.printf("%s%s\t%.1f\t%.0f\t%.0f\t%d\t%d\n",
+                      strategy.phaseName(), strategy.reversing() ? "(rev)" : "",
+                      attitude.tiltDeg(), attitude.uphillBearingDeg(), attitude.yawDeg(),
+                      drive.lastLeft(), drive.lastRight());
+    }
+}
+
+#endif

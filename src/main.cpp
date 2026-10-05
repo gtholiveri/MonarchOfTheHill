@@ -18,22 +18,31 @@
 //
 // FIRST TIME ON THE REAL ROBOT - use the bench environment (esp32dev_bench):
 // it never runs the strategy, it just prints sensor values and lets you drive
-// from the serial monitor. Work down this list:
+// from the serial monitor. Wire it per wire.md first, then work down this list:
 //
-//   1. Edit config.h: pick the motor driver, fill in the pin numbers.
-//   2. Robot level on a table. pitch and roll should read near 0, tilt < 3.
-//   3. Lift the NOSE. pitch must go positive.  If negative, flip the sign of
+//   1. Robot level on a table. pitch and roll should read near 0, tilt < 3.
+//   2. Lift the NOSE. pitch must go positive.  If negative, flip the sign of
 //      BODY_FORWARD in config.h (or fix the axis).
-//   4. Lift the LEFT side (as seen from behind the robot). roll must go
+//   3. Lift the LEFT side (as seen from behind the robot). roll must go
 //      positive.  If negative, flip the sign of BODY_LEFT.
-//   5. Turn the robot counter-clockwise by hand (viewed from above). yawRate
+//   4. Turn the robot counter-clockwise by hand (viewed from above). yawRate
 //      must go positive.  If not, BODY_UP is pointing the wrong way.
-//   6. Send 'l' then 'r' (one side at a time, wheels off the table). Each side
-//      must drive FORWARD. Flip the invert flag for a side that doesn't.
-//   7. Send 'c': it drives straight at centerSpeed for exactly 2 seconds.
+//   5. Send 'l' then 'r' (one side at a time, tracks off the table). Each side
+//      must drive FORWARD. Flip that side's invert flag in config.h if not.
+//   6. Send 'c': it drives straight at CENTER_SPEED for exactly 2 seconds.
 //      Measure how far it went, in inches, on flat ground. Put inches / 2.0
 //      into MEASURED_SPEED_IN_PER_S in config.h.
-//   8. Flash the normal environment (esp32dev) and run it on the ramp.
+//   7. Flash the normal environment (esp32dev). HAND TEST before the ramp, with
+//      the tracks off the table and the serial monitor open (it prints
+//      phase, tilt, uphill bearing, yaw, left and right command):
+//        - level: phase "waiting", tracks still.
+//        - hold the nose up about 30 degrees: "slope", both tracks forward.
+//        - hold the nose down about 30 degrees: "slope(rev)", both backward.
+//        - hold it tilted with the left side up: the tracks turn opposite
+//          ways, turning the nose toward the high side.
+//        - tilt, then level it: "centering" for a moment, then "holding".
+//   8. Then the ramp. If it stops short of the middle, raise CENTER_OFFSET_IN
+//      in config.h; if past it, lower it.
 //
 // Bench keys: w forward, s back, a spin left, d spin right, x stop,
 //             l left side only, r right side only, c speed-measurement run.
@@ -43,6 +52,11 @@
 
 static StrategyConfig makeStrategyConfig() {
     StrategyConfig c;
+    c.driveSpeed = DRIVE_SPEED;
+    c.crestSpeed = CREST_SPEED;
+    c.centerSpeed = CENTER_SPEED;
+    c.slowBelowTiltDeg = SLOW_BELOW_TILT_DEG;
+    c.holdDeadbandDeg = HOLD_REAIM_DEG;
     c.measuredSpeedInPerS = MEASURED_SPEED_IN_PER_S;
     c.centerOffsetIn = CENTER_OFFSET_IN;
     return c;
@@ -206,7 +220,7 @@ static const int BENCH_SPEED = 150;
 static uint32_t benchRunUntilMs = 0;      // for the timed 'c' run
 
 static void benchKeys() {
-    StrategyConfig c;
+    const StrategyConfig c = makeStrategyConfig();
     while (Serial.available()) {
         switch (tolower(Serial.read())) {
             case 'w': drive.drive(BENCH_SPEED, BENCH_SPEED); break;

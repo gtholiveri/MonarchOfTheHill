@@ -4,9 +4,9 @@
 #include <Arduino.h>
 
 // ---------------------------------------------------------------------------
-// Left/right drive for a skid-steer (tracked) robot, on whichever motor driver
-// board config.h selects. The strategy only ever says "left side this fast,
-// right side that fast"; everything board-specific stays in DriveTrain.cpp.
+// Left/right drive for a skid-steer (tracked) robot on the TB6612FNG board
+// (pins in config.h). The strategy only ever says "left side this fast, right
+// side that fast"; everything board-specific stays in DriveTrain.cpp.
 //
 // Speeds are -255..255, positive = the robot moves forward. A speed of 0 on
 // both sides holds the robot still (short brake where the board supports it,
@@ -14,8 +14,7 @@
 // ---------------------------------------------------------------------------
 class DriveTrain {
 public:
-    // Returns false if the board can't be reached (only the I2C board can
-    // actually tell).
+    // Sets the pins up with both motors held in brake, then enables the driver.
     bool begin();
 
     void drive(int left, int right);

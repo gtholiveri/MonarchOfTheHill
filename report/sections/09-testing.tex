@@ -1,0 +1,26 @@
+\section{Testing summary}
+\label{sec:testing}
+
+Table~\ref{tab:tests} lists every test, what it varied and measured, and the decision it drove. Tests marked ``new'' were run after the contest for this report.
+
+\begin{table}[htbp]
+  \centering
+  \caption{All tests, with the cause (what we varied) to the left of the effect.}
+  \label{tab:tests}
+  {\small
+  \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.17\textwidth} L L L L@{}}
+    \toprule
+    Test & What we varied & What we measured & Result & Decision it drove \\
+    \midrule
+    Stall current & none & Current at stall & \qty{1.4}{A} per motor & Acceptable for brief stalls \\
+    Regulator bench test & none & Output voltage & \qty{5.05}{V} & Safe to power the Photon through VUSB \\
+    Resets under impulse & Motors driven vs.\ idle, hand rotation & Whether the Photon restarted & Restarted with motors idle & Fastened the battery box and cells \\
+    Timed climbs & none & Climb time by stopwatch & about \qty{3.3}{s} & Set the Climb backstop \tbd{to \mbox{\qty{3000}{ms}}} \\
+    Straight-line trim & Power split between motors & Drift direction & \tbd{\ } & \tbd{\ } \\
+    Friction (new) & Surface, normal force & Friction force at slip & \tbd{\ } & \tbd{\ } \\
+    Pitch accuracy (new) & Known angles and paths & Pitch error & \tbd{\ } & \tbd{\ } \\
+    Hold strength (new) & Short brake vs.\ open terminals vs.\ hold active & Force to push off the mesa & \tbd{\ } & \tbd{\ } \\
+    \bottomrule
+  \end{tabularx}
+  }
+\end{table}

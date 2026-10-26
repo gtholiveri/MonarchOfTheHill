@@ -1,0 +1,138 @@
+% Monarch of the Hill group report (AME 101, Fall 2026, Team 2)
+% Compile with pdfLaTeX (Overleaf default). Body text lives in sections/.
+
+\documentclass[12pt,letterpaper]{article}
+
+% ---------------------------------------------------------------------------
+% Draft switch: \showtbdtrue highlights every open placeholder in yellow.
+% Set to \showtbdfalse for the final PDF only once no \tbd{} remain;
+% with it off, any leftover \tbd{} prints as plain bracketed text.
+% ---------------------------------------------------------------------------
+\newif\ifshowtbd
+\showtbdtrue
+
+% Fonts and page
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{newtxtext}
+\usepackage{newtxmath}
+\usepackage[scaled=0.92]{inconsolata}
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage[final]{microtype}
+\usepackage{setspace}
+\setstretch{1.05}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.55\baselineskip}
+\raggedbottom
+
+% Math, units, symbols
+\usepackage{amsmath}
+\usepackage{bm}
+\usepackage[per-mode=symbol,detect-all]{siunitx}
+\sisetup{inter-unit-product=\ensuremath{\cdot},range-phrase=\text{ to },range-units=single,list-units=single,product-units=single}
+\DeclareSIUnit\inch{in}
+\DeclareSIUnit\lbf{lbf}
+\DeclareSIUnit\rpm{rpm}
+
+% Figures and tables
+\usepackage{graphicx}
+\graphicspath{{figures/}}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+\usepackage[font=small,labelfont=bf,labelsep=period,justification=justified,singlelinecheck=true,skip=6pt]{caption}
+\captionsetup[table]{position=top}
+\usepackage[section]{placeins}
+\setlength{\textfloatsep}{14pt plus 4pt minus 4pt}
+\setlength{\floatsep}{12pt plus 3pt minus 3pt}
+\renewcommand{\arraystretch}{1.15}
+
+% Placeholders and highlights
+\usepackage{xcolor}
+\definecolor{tbdyellow}{HTML}{FFF29A}
+\definecolor{linkblue}{HTML}{1F4E8C}
+\usepackage{soul}
+\sethlcolor{tbdyellow}
+\usepackage{tikz}
+\ifshowtbd
+  \newcommand{\tbd}[1]{\hl{[#1]}}
+\else
+  \newcommand{\tbd}[1]{[#1]}
+\fi
+% \placeholderfig{height}{text}: a dashed yellow box where a figure still has to go
+\newcommand{\placeholderfig}[2]{%
+  \begin{tikzpicture}
+    \node[draw=black!65,dashed,line width=0.8pt,fill=tbdyellow,
+          minimum width=0.92\linewidth,minimum height=#1,
+          text width=0.8\linewidth,align=center,font=\small]{#2};
+  \end{tikzpicture}}
+
+% Headings: numbered, bold, no color
+\usepackage[explicit]{titlesec}
+\titleformat{\section}{\normalfont\large\bfseries}{\thesection}{0.8em}{#1}
+\titleformat{\subsection}{\normalfont\normalsize\bfseries}{\thesubsection}{0.8em}{#1}
+\titleformat{\paragraph}[runin]{\normalfont\normalsize\bfseries}{}{0pt}{#1.}
+\titleformat{name=\section,numberless}{\normalfont\large\bfseries}{}{0pt}{#1}
+\titlespacing*{\section}{0pt}{1.6ex plus 0.6ex minus 0.2ex}{0.4ex}
+\titlespacing*{\subsection}{0pt}{1.2ex plus 0.4ex minus 0.2ex}{0.2ex}
+\titlespacing*{\paragraph}{0pt}{0pt}{0.5em}
+
+% Code listings (Appendix A)
+\usepackage{listings}
+\lstset{
+  language=C++,
+  basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\bfseries,
+  commentstyle=\color{black!60},
+  stringstyle=\color{black!80},
+  numbers=left,numberstyle=\tiny\color{black!45},numbersep=6pt,
+  breaklines=true,breakatwhitespace=false,postbreak=\mbox{$\hookrightarrow$\space},
+  columns=fullflexible,keepspaces=true,showstringspaces=false,
+  tabsize=4,frame=none,xleftmargin=14pt,
+}
+
+% Citations and links (ASME numbered style)
+\usepackage[nocompress]{cite}
+\renewcommand{\citepunct}{, }
+\usepackage[hyphens]{url}
+\usepackage[colorlinks=true,linkcolor=black,citecolor=black,urlcolor=linkblue,
+            pdftitle={Taking the Low Road to the High Ground},
+            pdfauthor={Gabriel Oliveri, Charlie Haldeman, Efe Altinkaya, Ashley Valdez}]{hyperref}
+\urlstyle{same}
+\soulregister{\cite}{7}
+\soulregister{\ref}{7}
+\soulregister{\eqref}{7}
+
+% Table of contents spacing
+\usepackage{tocloft}
+\setlength{\cftbeforesecskip}{3pt}
+\renewcommand{\cftsecfont}{\normalfont}
+\renewcommand{\cftsecpagefont}{\normalfont}
+\renewcommand{\cfttoctitlefont}{\large\bfseries}
+\setlength{\cftbeforetoctitleskip}{0.6ex}
+\setlength{\cftaftertoctitleskip}{0.8ex}
+
+% Headers/footers: page number only
+\pagestyle{plain}
+
+\begin{document}
+
+\input{sections/00-front-matter}
+\input{sections/01-introduction}
+\input{sections/02-concepts}
+\input{sections/03-drivetrain}
+\input{sections/04-traction}
+\input{sections/05-chassis}
+\input{sections/06-electronics}
+\input{sections/07-sensing}
+\input{sections/08-control}
+\input{sections/09-testing}
+\input{sections/10-results}
+\input{sections/11-lessons}
+\input{sections/12-conclusion}
+\input{sections/references}
+\input{sections/appendices}
+
+\end{document}

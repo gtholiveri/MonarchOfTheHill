@@ -1,0 +1,23 @@
+\section{Autonomous control}
+\label{sec:control}
+
+\subsection{The run: climb, decelerate, hold}
+\label{sec:run}
+
+An autonomous run has three stages (Fig.~\ref{fig:states}). In Climb, both motors run at full power. Climb ends when the pitch stays below the crest threshold for \qty{40}{ms} (ignored for the first \qty{0.3}{s}), or at a set time as a backstop. In Decelerate, the drive power ramps linearly from full to zero over a set time. The robot does not brake in this stage; momentum carries it from the ridge onto the mesa. It then enters Hold.
+
+In Hold, the robot does not just set its motor power to zero. It commands the driver into its short-brake mode, which connects each motor's two terminals together. A motor turned by an outside force then acts as a generator driving current through its own windings, and that current makes a torque opposing the motion, $\tau_\mathrm{brake} = k^2 \omega / R$ for a motor with torque constant $k$ turned at speed $\omega$. Compared with leaving the terminals open, this resists being pushed \tbd{confirm with the hold-strength test}. On top of that, the robot drives forward at \tbd{full} power if its nose rises more than \ang{6} (an opponent lifting it or pushing it back down the ramp) and backs up at power \tbd{110} of 255 if its nose drops more than \ang{6} (about to go over the far side). It stops correcting once the pitch is back within \ang{3}, so it does not chatter at the edge.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.85\textwidth]{fig12_state_machine.png}
+  \caption{The autonomous run. Only one sensor test ends the climb: pitch below \ang{18} for \qty{40}{ms}, or the time backstop. In Hold the robot reacts to pitch alone.}
+  \label{fig:states}
+\end{figure}
+
+\subsection{Tuning}
+\label{sec:tuning}
+
+We timed the climb by stopwatch at about \qty{3.3}{s} and set the Climb time backstop to \qty{3000}{ms} and the Decelerate ramp to \qty{150}{ms} \tbd{final values used in the contest}. We also built a trim tool for straight-line driving: each press shifts power \qty{16}{\percent} toward the lagging side, and the step halves every time the drift reverses. The larger problem turned out not to be the robot pulling sideways but the side guards rubbing on the treads (Section~\ref{sec:layout}). \tbd{What oscillation we saw on the mesa, and what we changed in the hold settings.}
+
+From our average climb speed of \qty{0.46}{m/s}, stopping takes $v^2/(2a)$: \qty{11}{cm} at \qty{1}{m/s^2} and \qty{4}{cm} at \qty{3}{m/s^2}, both inside the \qty{30}{cm} mesa. We never ran the robot without the Decelerate stage, so we cannot say whether overshooting the mesa was a real risk.

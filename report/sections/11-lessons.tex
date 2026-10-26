@@ -1,0 +1,23 @@
+\section{Lessons learned}
+\label{sec:lessons}
+
+\paragraph{Triage, and build the minimum viable robot first}
+This is the lesson that mattered most. We dropped ideas that were too complex for the time we had (the servo wall brace and the side lifter), and chose not to fix some things we knew were imperfect: side guards that wrapped fully around the treads (we had CAD for them, but they were too ambitious to make work in time), a ground-up sprocket redesign for a controlled diameter, proper electronics mounts in place of hot glue, metal couplers that would not deflect, a soldered protoboard, and modular wedges. That kept enough time to test the robot and its software, and without that testing the autonomous run would not have worked.
+
+\paragraph{Isolate faults one connection at a time}
+Our two longest debugging sessions were a breadboard jumper whose trimmed leg never seated and a cold solder joint on the IMU's power header. Both passed every check we made until we measured the voltage at each connection in turn, from the supply to the part.
+
+\paragraph{Check stiffness as well as strength}
+The side guards we cut down to fit never broke, but they flexed into the treads and dragged on them in every run. The motors had the margin to push through it (Section~\ref{sec:drivetrain-result}), but a part that bends too far can stop doing its job long before it breaks.
+
+\paragraph{Treat print orientation as a design variable}
+We printed both coupler orientations and chose the upright one because it fit the D-shaft more closely, and we judged its strength by feel. Upright, the bending load runs across the layer bonds, and those couplers broke; reprinted lying down, they held. A few more test prints, with the lying print's bore compensated for sag, would have given us the close fit and the strength together.
+
+\paragraph{Measure position instead of timing it}
+The advance past the crest was set by time, so anything that changed the robot's speed, such as vibration, track slip or an opponent, changed where it stopped. Wheel or motor encoders would not fix this, because they cannot tell when the tracks slip. An absolute position reference would: a time-of-flight sensor ranging to a beacon, or a camera such as an ESP32-CAM watching AprilTags or the guide rails.
+
+\paragraph{Fasten anything that carries a spring contact}
+The cells sat in a plastic holder with spring contacts. A sharp jolt let a cell compress its spring past the contact's interference and lose contact for an instant, which restarted the controller. Fastening the holder so it could not take shock loads stopped the restarts.
+
+\paragraph{Spend analysis where the eye cannot see}
+Many questions answered themselves by watching: whether the tracks slipped, whether the robot tipped, whether it stopped on the mesa. We tuned those by eye and stopwatch, which was good enough, and saved instrumentation for what the eye cannot judge, such as the pitch estimate during a climb.

@@ -1,0 +1,43 @@
+\section{Traction}
+\label{sec:traction}
+
+Section~\ref{sec:drivetrain} showed that traction caps how much of the motors' torque the robot can use, so the track surface is the most leveraged part of the drivetrain.
+
+The stock tracks are hard plastic links. \tbd{Describe what we saw with them on the ramp.} We tried tennis grip tape on the tracks for more contact area, but the tape slipped off because of the angle the tracks sit at. The final surface is strips of 80 grit sandpaper taped onto the stock tracks (Fig.~\ref{fig:tracks}).
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.34\textwidth]{fig05_tracks.jpg}
+  \caption{\tbd{Caption.}}
+  \label{fig:tracks}
+\end{figure}
+
+To measure $\mu_s$ we \tbd{placed the robot on the ramp surface and raised the angle until it slipped, so \mbox{$\mu_s = \tan\theta_\mathrm{slip}$}; or pulled it with a luggage scale until it slid, so \mbox{$\mu_s = F/N$}}. We tested each surface \tbd{three times at each of three normal forces, adding \_\_\_ g of mass between sets} (Table~\ref{tab:friction}).
+
+\begin{table}[htbp]
+  \centering
+  \caption{Measured static friction coefficients.}
+  \label{tab:friction}
+  \begin{tabular}{@{}l c c c c c@{}}
+    \toprule
+    Surface & Normal force (\unit{N}) & Trial 1 & Trial 2 & Trial 3 & Mean $\mu_s$ \\
+    \midrule
+    Stock tracks & \tbd{\ } & \tbd{\ } & \tbd{\ } & \tbd{\ } & \tbd{\ } \\
+    Stock tracks & \tbd{\ } & \tbd{\ } & \tbd{\ } & \tbd{\ } & \tbd{\ } \\
+    Stock tracks & \tbd{\ } & \tbd{\ } & \tbd{\ } & \tbd{\ } & \tbd{\ } \\
+    \midrule
+    Sandpaper    & \tbd{\ } & \tbd{\ } & \tbd{\ } & \tbd{\ } & \tbd{\ } \\
+    Sandpaper    & \tbd{\ } & \tbd{\ } & \tbd{\ } & \tbd{\ } & \tbd{\ } \\
+    Sandpaper    & \tbd{\ } & \tbd{\ } & \tbd{\ } & \tbd{\ } & \tbd{\ } \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{figure}[htbp]
+  \centering
+  \placeholderfig{2.4in}{\textbf{\large Figure: plot here}\\[4pt]Friction force at slip vs.\ normal force, one series per surface (stock tracks, sandpaper), line $\mu_s = \tan\theta = 0.66$ (minimum to climb) and line for the $\mu_s$ needed at our acceleration.}
+  \caption{\tbd{Caption: e.g. which surfaces clear the line needed to climb, and by how much.}}
+  \label{fig:friction}
+\end{figure}
+
+\tbd{Result: sandpaper raised \mbox{$\mu_s$} from \_\_\_ to \_\_\_, which by Eq.~\eqref{eq:traction} raises the traction ceiling on the ramp from \_\_\_ to \_\_\_ N.}

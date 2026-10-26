@@ -1,0 +1,23 @@
+\section{Electronics and power}
+\label{sec:electronics}
+
+\subsection{Architecture}
+\label{sec:architecture}
+
+Figure~\ref{fig:electronics} shows the wiring. A Particle Photon~2~\cite{photon2} runs the robot. It replaced the kit's ESP32 board, which failed during bench wiring for reasons we could not determine. The kit's motor shield drives its motors through a co-processor commanded over a serial link; we replaced it with a SparkFun TB6612FNG dual motor driver~\cite{sparkfun} we had on hand, controlled directly from the Photon's pins and with its motor supply wired straight to the battery. An MPU6050~\cite{mpu6050} gyro and accelerometer on the I\textsuperscript{2}C bus does all the sensing. An ADXL345~\cite{adxl345} accelerometer is also wired to the bus, but the final firmware, written mostly with Claude Code~\cite{claude}, only checks that it is present and never reads it. Power comes from the supplied 2S pack of 18650 cells \tbd{confirm capacity: 2,500 or 3,000 mAh}. A judge starts the run with a single switch, which the Photon reads directly.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{fig10_electronics.png}
+  \caption{Electronics block diagram. The 2S pack feeds the motor driver directly and the Photon~2 through the 7805 regulator; a voltage divider lets the Photon read the pack voltage on A0. The Photon reads both sensors over I\textsuperscript{2}C and drives the TB6612FNG.}
+  \label{fig:electronics}
+\end{figure}
+
+The TB6612FNG switches the motors with MOSFETs and loses about \qty{0.5}{V} at \qty{1}{A}, against about \qty{2}{V} for the bipolar L298 used on many hobby driver boards, so more of the pack voltage reaches the motors~\cite{tb6612,l298}.
+
+The Photon takes \qty{5}{V} on its VUSB pin and makes its own \qty{3.3}{V} for logic, so every sensor and signal line runs at \qty{3.3}{V}. A 7805 linear regulator makes the \qty{5}{V} from the pack. It needs about \qty{2}{V} of headroom, so it holds \qty{5}{V} only while the pack stays above about \qty{7}{V}; a 2S pack runs from \qty{8.4}{V} full to about \qty{6.4}{V} empty~\cite{cell}. We bench-tested the regulator with the capacitors we had, \tbd{two \mbox{\qty{100}{nF}} in parallel on the input and one \mbox{\qty{100}{nF}} on the output}, below the \qty{0.33}{\micro F} input capacitor the datasheet calls for~\cite{reg7805}, and measured \qty{5.05}{V} out. There is no reverse-polarity diode; we checked polarity with a multimeter before every connection.
+
+\subsection{Resets from a loose cell}
+\label{sec:resets}
+
+During bench testing the Photon sometimes restarted when the robot was jolted. Stalling both motors never caused a restart, but snapping the robot back and forth by hand with the motors idle did, which ruled out a supply dip from motor current. The cells sit in a plastic holder with spring contacts, and the jolt let a cell compress its spring far enough to lose contact for an instant. Fastening the holder so it could not snap against its stop ended the restarts \tbd{confirm}.

@@ -1,0 +1,85 @@
+\section{Chassis, wedge, forks and side guards}
+\label{sec:chassis}
+
+\subsection{Layout and construction}
+\label{sec:layout}
+
+The chassis is fully custom and 3D printed in PLA (Fig.~\ref{fig:chassis}). The wedge plate and forks form the front of the chassis. The battery holder sits in the front half, with the breadboard carrying the controller, motor driver and sensors beside it. The two gearmotors sit at the rear, each driving a stock sprocket, and the start switch is on the side where the judge can reach it.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{fig07_chassis.jpg}
+  \caption{Inside the chassis with the top plate removed: the wedge plate at the front, the battery holder, the breadboard carrying the controller, motor driver and sensors, the two gearmotors and the start switch.}
+  \label{fig:chassis}
+\end{figure}
+
+We started from a master model holding reference geometry for the motors, controller board, tracks and battery box. Test prints checked the battery box and board mounting patterns: the battery box worked after one round of iteration, and the board mount needed further adjustment. In the final build we hot glued these parts in place. A full prototype chassis followed, then the shaft couplers and motor mounts. One motor mount did not fit because horizontal printed holes sag at the top and come out undersized vertically. We set clearances for slip and press fits from test prints (\tbd{values}) and added alignment ridges and countersinks on the top plate for assembly. Side guards along each side keep the robot aligned with the guide rail and stop it riding over the edge. They were a late addition: as printed they interfered with other parts, so we cut them to fit with a Dremel, a hacksaw and a band saw, and the cut-down guards flexed into the treads and rubbed on them in every run (Section~\ref{sec:drivetrain-result}). At about \qty{4}{in} tall on an \qty{11.75}{in} by \qty{11.4}{in} footprint, the robot cannot tip backward on the \ang{33.4} ramp, and it never came close in testing.
+
+\subsection{Wedge and fork geometry}
+\label{sec:wedge}
+
+We set the wedge and fork angles from the ramp angle. \tbd{Explain the \mbox{\ang{33}}, \mbox{\ang{57}} and \mbox{\ang{147}} construction from the notebook sketch, what the vulnerability window is, and why the minimum fork angle is \mbox{\ang{33}}.} We left the edge slightly blunt so it would not snap. The forks are shaped to sit flush on the mesa while the tracks are still on the ramp, so the front edge is never raised as the robot arrives (Fig.~\ref{fig:wedge}).
+
+\begin{figure}[htbp]
+  \centering
+  \placeholderfig{2.2in}{\textbf{\large Figure: drawing here}\\[4pt]Wedge and fork geometry: the \ang{33}, \ang{57} and \ang{147} construction, and the forks sitting flush on the mesa while the tracks are still on the ramp.}
+  \caption{\tbd{Drawing of the wedge and fork geometry: the \mbox{\ang{33}}, \mbox{\ang{57}} and \mbox{\ang{147}} construction, and the forks sitting flush on the mesa while the tracks are still on the ramp.}}
+  \label{fig:wedge}
+\end{figure}
+
+\subsection{Shaft couplers}
+\label{sec:couplers}
+
+Printed couplers join each motor's \qty{4}{mm} D-shaft to the stock sprocket (Fig.~\ref{fig:coupler}). Each is \qty{25.3}{mm} long and \qty{7.8}{mm} in diameter, round with one flat, and it works as a shaft collar and an adapter at once. The motor shaft fills a \qty{9.3}{mm} deep D-shaped bore at one end and is clamped by a set screw. The outside of the coupler, with its flat, extends the motor's small D-shaft into the larger D-shaped bore of the sprocket, which fits over the first \qty{8}{mm} at the other end, and a self-tapping screw driven into the \qty{1.6}{mm} pilot hole along the axis fastens the sprocket on.
+
+The tracks have to be tight so they do not dip and scrape at the mesa edge. The first couplers, printed standing up, snapped under that tread tension, most of them during assembly rather than in operation. After the contest we treated the coupler as a cantilever and found the largest tread tension it can carry in each print orientation, to see whether orientation explains why those couplers broke and the reprints held.
+
+3D-printed parts are much weaker across their layers than along them, because only the bond between layers resists stress normal to the layer planes. A coupler printed standing up, with its axis along the build direction, carries its bending stress straight across the layer bonds. One printed lying down carries it along the extruded lines (Fig.~\ref{fig:coupler}).
+
+\begin{figure}[htbp]
+  \centering
+  \placeholderfig{2.2in}{\textbf{\large Figure: drawing here}\\[4pt]Coupler section view from CAD for both print orientations, showing layer direction, shaft bore, sprocket and the load at lever arm $\ell$.}
+  \caption{\tbd{Side-by-side slicer views of the coupler printed upright and lying down, with the layer lines visible.}}
+  \label{fig:coupler}
+\end{figure}
+
+Only one span of the coupler can break. Over its first \qty{8}{mm} it sits inside the rigid sprocket bore, and over its last \qty{9.3}{mm} it wraps the steel motor shaft, which carries the bending there. From 8 to \qty{16}{mm} the plastic carries the load alone.
+
+The tread pulls on the sprocket with a total force $T$, perpendicular to the shaft. Along the free span the bending moment grows toward the motor, so it peaks at the bottom of the motor bore, a distance $\ell$ from the line of the tread. The peak bending stress there is
+\begin{equation}
+  \sigma = \frac{M c}{I} = \frac{T \ell c}{I}
+  \label{eq:bending}
+\end{equation}
+and the largest pull it can carry before failing is
+\begin{equation}
+  T_\mathrm{max} = \frac{\sigma_\mathrm{allow}\,(I/c)}{\ell}
+  \label{eq:tmax}
+\end{equation}
+The section at the bottom of the bore is the full D profile with the \qty{1.6}{mm} pilot hole. The coupler turns with the shaft, so the load passes through every direction once per revolution. The worst direction puts the peak stress at a corner of the flat, where $I/c = \qty{36.7}{mm^3}$. The tread runs somewhere on the sprocket's \qty{8}{mm} hub, so $\ell$ lies between 8 and \qty{16}{mm} \tbd{confirm where the tread runs on the hub}.
+
+Assembly can also bend the coupler with no tread tension at all. A sideways push on the sprocket rim, parallel to the shaft, bends the free span with a lever arm equal to the \qty{25}{mm} sprocket radius, so Eq.~\eqref{eq:tmax} applies with $\ell = \qty{25}{mm}$.
+
+The two orientations fail in different ways. Printed upright, PLA fractures across its layers without yielding first, so for the upright print $\sigma_\mathrm{allow}$ is its tensile strength at break. Printed flat, it yields first and fractures only after several percent more strain, so the lying print does not snap at its limit: it bends permanently, at its yield strength. Both values come from the Ultimaker PLA data sheet~\cite{ultimaker} \tbd{confirm our filament brand}. Transverse shear is at most \qty{15}{\percent} of the bending stress over this range of $\ell$, and the motor's stall torque of about \qty{0.2}{N.m} adds only about \qty{3}{MPa} of shear, so bending governs.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Force on the sprocket at which each print orientation fails (upright by fracture, lying by yielding), $T_\mathrm{max}$ from Eq.~\eqref{eq:tmax} with $I/c = \qty{36.7}{mm^3}$.}
+  \label{tab:coupler}
+  \begin{tabular}{@{}l c c@{}}
+    \toprule
+    & Upright: stress & Lying: stress \\
+    & across the layers & along the layers \\
+    \midrule
+    $\sigma_\mathrm{allow}$~\cite{ultimaker} (\unit{MPa}) & 33.1, fracture & 52.5, yield (no fracture) \\
+    \midrule
+    Tread line at the inner edge of the hub, $\ell = \qty{8}{mm}$ & \qty{152}{N} (\qty{34}{\lbf}) & \qty{241}{N} (\qty{54}{\lbf}) \\
+    Tread line at mid-hub, $\ell = \qty{12}{mm}$ & \qty{101}{N} (\qty{23}{\lbf}) & \qty{161}{N} (\qty{36}{\lbf}) \\
+    Tread line at the outer face, $\ell = \qty{16}{mm}$ & \qty{76}{N} (\qty{17}{\lbf}) & \qty{120}{N} (\qty{27}{\lbf}) \\
+    Sideways push on the sprocket rim, $\ell = \qty{25}{mm}$ & \qty{49}{N} (\qty{11}{\lbf}) & \qty{77}{N} (\qty{17}{\lbf}) \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Lying down, the coupler carries 1.6 times the load of the upright print before it fails, and it then bends instead of snapping. We reprinted the couplers lying down and they did not break again.
+
+We never measured the forces during assembly, so Table~\ref{tab:coupler} compares the two orientations rather than predicting when either breaks. Ultimaker's specimens are printed at \qty{100}{\percent} infill with tuned settings, so our couplers were likely weaker than these values \tbd{confirm our print settings}. In operation the coupler is also bent back and forth once per revolution, so it could fail by fatigue below them.

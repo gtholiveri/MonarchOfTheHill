@@ -16,7 +16,6 @@ Source for the AME 101 Monarch of the Hill group report, "Win the Ground Game, W
 | `sections/` | One file per section: front matter (title page, abstract, contents, nomenclature), Sections 1 to 12, references, appendices |
 | `figures/` | Every figure. `fig04_gear_ratio.pdf` and `fig11_pitch.pdf` are vector plots |
 | `figures/src/` | matplotlib scripts that regenerate the two vector plots (`python fig04_gear_ratio.py`, `python fig11_pitch.py`, run from this folder) |
-| `code/` | Photon 2 firmware listed in Appendix A |
 
 ## Conventions
 

@@ -41,13 +41,13 @@ We designed and built an autonomous tracked robot for the AME 101 Monarch of the
 \section*{Nomenclature}
 \addcontentsline{toc}{section}{Nomenclature}
 
-{\small
+{\small\renewcommand{\arraystretch}{1.0}
 \begin{tabularx}{\textwidth}{@{}l L l@{}}
   \toprule
   \textbf{Symbol} & \textbf{Meaning} & \textbf{Units} \\
   \midrule
   $a$ & acceleration along the ramp & \unit{m/s^2} \\
-  $\hat{\bm{a}}$ & accelerometer reading & \unit{m/s^2} \\
+  $\bm{a}_\mathrm{m}$ & accelerometer reading & \unit{m/s^2} \\
   $c$ & distance from the neutral axis to the outermost fiber & \unit{mm} \\
   $F$ & traction force from both tracks & \unit{N} \\
   $F(v)$, $F_\mathrm{stall}$ & drive force from both motors at speed $v$; at stall & \unit{N} \\
@@ -72,6 +72,7 @@ We designed and built an autonomous tracked robot for the AME 101 Monarch of the
   $T_c$ & filter time constant & \unit{s} \\
   $\Delta t$ & filter update interval & \unit{s} \\
   $\bm{u}$ & estimated direction of gravity in the sensor frame (unit vector) & -- \\
+  $\hat{\bm{z}}$ & the robot's up direction in the sensor frame (unit vector) & -- \\
   $V$ & pack voltage & \unit{V} \\
   $V_\mathrm{term}$ & pack terminal voltage under load & \unit{V} \\
   $\Delta V_\mathrm{sag}$ & drop in pack voltage with both motors at stall & \unit{V} \\
@@ -81,7 +82,7 @@ We designed and built an autonomous tracked robot for the AME 101 Monarch of the
   \midrule
   \multicolumn{3}{@{}l}{\textit{Greek symbols}} \\
   $\eta$ & gearbox efficiency & -- \\
-  $\theta_\mathrm{apparent}$ & pitch implied by the accelerometer alone & \unit{\degree} \\
+  $\theta$, $\theta_\mathrm{apparent}$ & robot pitch; pitch implied by the accelerometer alone & \unit{\degree} \\
   $\mu_s$ & static friction coefficient, tracks on the ramp surface & -- \\
   $\sigma$, $\sigma_\mathrm{allow}$ & bending stress; failure stress of the print & \unit{MPa} \\
   $\bm{\omega}$ & gyro angular rate & \unit{rad/s} \\

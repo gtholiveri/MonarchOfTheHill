@@ -109,36 +109,26 @@ and the largest pull it can carry before failing is
 \end{equation}
 The section at the bottom of the bore is the full D profile with the \qty{1.6}{mm} pilot hole. The coupler turns with the shaft, so the load passes through every direction once per revolution. The worst direction puts the peak stress at a corner of the flat, where $I/c = \qty{36.7}{mm^3}$. The tread runs somewhere on the sprocket's \qty{8}{mm} hub, so $\ell$ lies between 8 and \qty{16}{mm} \tbd{confirm where the tread runs on the hub}.
 
-The upright couplers did not bend before they broke: they fractured cleanly across their layers. The limit that matters is therefore the stress at which a layer bond cracks, not a yield stress, and two things put that well below what test specimens show.
+The upright couplers did not bend before they broke: they fractured cleanly across their layers. Loaded across its layers, a printed part will probably fracture well before it yields, because the bond between layers cracks before the plastic around it deforms. The limit that matters is therefore the stress at which a layer bond cracks, not a yield stress, and two things put that well below what test specimens show.
 
 First, a crack starts at the worst flaw in the most stressed region. A dog-bone specimen is printed with care and loaded evenly along its gauge length. In the coupler the peak stress sits at the corner of the flat, beside the pilot hole, and any weak layer bond there starts the crack. Strengths from test specimens are therefore an upper bound for our part.
 
-Second, the coupler is loaded in fatigue. It turns with the motor while the tread pulls in one fixed direction, so every revolution bends it fully one way and then fully the other. This is rotating bending, the loading of a standard fatigue test. One climb of the \qty{1.524}{m} ramp turns the \qty{50}{mm} sprocket about 10 times, so testing and practice put hundreds to thousands of these cycles on each coupler \tbd{estimate how many climbs and how much driving each coupler saw}. Printed PLA fails at far lower stress this way than in a tensile test: horizontally printed rotating-bending specimens at \qty{60}{\percent} infill failed after a median of about 5{,}000 cycles at \qty{10}{MPa} and 3{,}400 cycles at \qty{12.5}{MPa}~\cite{azadi}.
-
-For design, Ezeh and Susmel propose a fatigue curve for printed PLA scaled to its static strength~\cite{ezeh}. The stress amplitude a part survives for $n$ cycles is
-\begin{equation}
-  \sigma_a(n) = 0.10\,\sigma_u \left(\frac{2 \times 10^6}{n}\right)^{1/5.5}
-  \label{eq:fatigue}
-\end{equation}
-where $\sigma_u$ is the static strength. Every specimen in their data was printed flat, and only the direction of the filaments within each layer varied. Static strength barely changed with that direction, and fatigue strength followed it. None of the specimens were loaded across their layers, as our upright couplers were. We assume the same fraction of static strength holds there, and scale the curve by each orientation's lowest course strength: \qty{20.5}{MPa} upright and \qty{58.2}{MPa} lying~\cite{ronney}.
+Second, the coupler is loaded in fatigue. It turns with the motor while the tread pulls in one fixed direction, so every revolution bends it fully one way and then fully the other. One climb of the \qty{1.524}{m} ramp turns the \qty{50}{mm} sprocket about 10 times, so every climb adds about 10 of these load cycles. Repeated loading like this cracks printed PLA at far lower stress than a single static load does~\cite{azadi}. We found no fatigue data for printed PLA loaded across its layers, so we do not put a number on this.
 
 The tread's pull also shears the coupler across its cross-section, the plane perpendicular to the shaft. Over this range of $\ell$ that shear stress is at most \qty{15}{\percent} of the bending stress, so bending governs.
 
 \begin{table}[htbp]
   \centering
-  \caption{Allowable stress and the tread tension it allows at mid-hub ($\ell = \qty{12}{mm}$, Eq.~\eqref{eq:tmax}, $I/c = \qty{36.7}{mm^3}$). With the tread at the inner edge of the hub ($\ell = \qty{8}{mm}$) every tension is 1.5 times higher; at the outer face ($\ell = \qty{16}{mm}$) it is 0.75 times.}
+  \caption{Static strength and the tread tension it allows at mid-hub ($\ell = \qty{12}{mm}$, Eq.~\eqref{eq:tmax}, $I/c = \qty{36.7}{mm^3}$), from the lowest course test value for each orientation~\cite{ronney}. With the tread at the inner edge of the hub ($\ell = \qty{8}{mm}$) each tension is 1.5 times higher; at the outer face ($\ell = \qty{16}{mm}$) it is 0.75 times.}
   \label{tab:coupler}
-  \begin{tabular}{@{}l cc cc@{}}
+  \begin{tabular}{@{}l c c@{}}
     \toprule
-    & \multicolumn{2}{c}{Upright: across the layers} & \multicolumn{2}{c}{Lying: along the layers} \\
-    \cmidrule(lr){2-3}\cmidrule(l){4-5}
-    Limit & $\sigma_\mathrm{allow}$ (\unit{MPa}) & $T_\mathrm{max}$ & $\sigma_\mathrm{allow}$ (\unit{MPa}) & $T_\mathrm{max}$ \\
+    Orientation & $\sigma_\mathrm{allow}$ (\unit{MPa}) & $T_\mathrm{max}$ \\
     \midrule
-    Static, course tests~\cite{ronney} & 20.5 & \qty{63}{N} (\qty{14}{\lbf}) & 58.2 & \qty{178}{N} (\qty{40}{\lbf}) \\
-    Fatigue, 1{,}000 cycles (Eq.~\eqref{eq:fatigue}) & 8.2 & \qty{25}{N} (\qty{5.6}{\lbf}) & 23.2 & \qty{71}{N} (\qty{16}{\lbf}) \\
-    Fatigue, 10{,}000 cycles (Eq.~\eqref{eq:fatigue}) & 5.4 & \qty{16}{N} (\qty{3.7}{\lbf}) & 15.3 & \qty{47}{N} (\qty{11}{\lbf}) \\
+    Upright: across the layers & 20.5 & \qty{63}{N} (\qty{14}{\lbf}) \\
+    Lying: along the layers & 58.2 & \qty{178}{N} (\qty{40}{\lbf}) \\
     \bottomrule
   \end{tabular}
 \end{table}
 
-Fatigue cuts the tension an upright coupler can survive to roughly 16 to \qty{25}{N} (Table~\ref{tab:coupler}), only a few pounds-force, before counting the flaw at the corner of the flat. We never measured tread tension, so the table cannot say which coupler should have failed when. It does show why orientation mattered: lying down, the coupler survives 2.8 times the tension at every limit. We reprinted the couplers lying down and they did not break again, though they did bend permanently over many runs (Section~\ref{sec:lessons}), which is the yielding the lying orientation allows instead of fracture.
+Even under a static load, an upright coupler at mid-hub carries only \qty{63}{N} (Table~\ref{tab:coupler}), and the flaw at the corner of the flat and fatigue both cut that by amounts we cannot estimate. We never measured tread tension, so we cannot say which coupler should have failed when. The table does show why orientation mattered: lying down, the coupler carries 2.8 times the tension. We reprinted the couplers lying down and they did not break again, though they did bend permanently over many runs (Section~\ref{sec:lessons}), yielding instead of fracturing.

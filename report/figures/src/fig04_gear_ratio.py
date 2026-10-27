@@ -22,28 +22,26 @@ plt.rcParams.update({'pdf.fonttype':42,'font.family':'serif','font.serif':['Time
 Gs=np.geomspace(4,520,400); ink='#0b0b0b'; mute='#52514e'; grid='#e5e4e0'; off='#a9a8a4'
 fig,(a1,a2)=plt.subplots(2,1,figsize=(6.5,6.4),dpi=300,gridspec_kw={'height_ratios':[1,1.25]})
 W=m*g*math.sin(th); Ft=[mu*m*g*math.cos(th) for mu in (0.8,1.0,1.2)]
-red='#f3a59c'; red2='#fad4cf'; edge='#e0443a'; top=3*Ft[2]
-a1.axhspan(0.5,W,color=red,lw=0); a1.axhspan(W,1.25*W,color=red2,lw=0); a1.axhspan(top,1000,color=red,lw=0)
-for y in (W,1.25*W,top): a1.axhline(y,color=edge,lw=1,ls=(0,(4,3)))
-a1.axhline(Ft[2],color=mute,lw=1,ls=(0,(4,3)))
+red='#f3a59c'; edge='#e0443a'; low=1.25*W; top=3*Ft[2]
+a1.axhspan(0.5,low,color=red,lw=0); a1.axhspan(top,1000,color=red,lw=0)
+for y in (low,top): a1.axhline(y,color=edge,lw=1,ls=(0,(4,3)))
 a1.plot(Gs,Fs(Gs),color=mute,lw=1.2)
 for rpm,G in variants:
     c=rpm in cand
     a1.plot(G,Fs(G),'o',ms=6 if c else 5,color=ink if c else 'white',mec=ink if c else off,mew=1.2,zorder=3)
     a1.annotate(f'{rpm}',(G,Fs(G)),xytext=(5,-11),textcoords='offset points',fontsize=7.5,color=ink if c else mute)
-a1.text(500,2.6,'Cannot accelerate against gravity: below $k_r\\,mg\\,\\sin 33.4°$ ($k_r$ = 1 to 1.25)',ha='right',fontsize=7.5,color=ink,va='center')
-a1.text(500,Ft[2]*1.13,'Max usable force, nominal: $\\mu_s N$',ha='right',fontsize=7.5,color=mute,va='bottom')
-a1.text(500,top*1.13,'Max usable force with FoS of 3: $3\\mu_s N$',ha='right',fontsize=7.5,color=ink,va='bottom')
+a1.text(500,low*1.1,'Lower bound: too weak to climb',ha='right',fontsize=7.5,color=ink,va='bottom')
+a1.text(4.4,top*0.9,'Upper bound: torque the tracks cannot use',ha='left',fontsize=7.5,color=ink,va='top')
 a1.set_yscale('log'); a1.set_ylim(0.8,700); a1.set_ylabel('Stall force (N)')
 a1.set_yticks([1,2,5,10,20,50,100,200,500]); a1.set_yticklabels(['1','2','5','10','20','50','100','200','500'])
-a1.set_title('(a) Stall force of each version against the bounds (filled: candidates; $\\mu_s$ = 1.2)',fontsize=9,loc='left',color=ink)
-cases=[(0.7,1.0,'#2a78d6','η = 0.7, $k_r$ = 1.0'),(0.7,1.25,'#eb6834','η = 0.7, $k_r$ = 1.25'),(0.6,1.25,'#1baf7a','η = 0.6, $k_r$ = 1.25')]
+a1.set_title('(a) Stall force of each version against the bounds (filled: candidates)',fontsize=9,loc='left',color=ink)
+cases=[(0.7,1.0,'#2a78d6','70% gearbox efficiency, no extra resistance'),(0.7,1.25,'#eb6834','70% gearbox efficiency, 25% extra resistance'),(0.6,1.25,'#1baf7a','60% gearbox efficiency, 25% extra resistance')]
 for eta,kr,c,lab in cases:
     a2.plot(Gs,[T(G,eta=eta,kr=kr) or np.nan for G in Gs],color=c,lw=1.6,label=lab)
     for rpm,G in variants:
         t=T(G,eta=eta,kr=kr)
         if t and t<60: a2.plot(G,t,'o',ms=5,color=c,mec='white',mew=1.0,zorder=3)
-a2.plot(21.3,3.3,'s',ms=6.5,color=ink,zorder=4,label='Measured, 280 rpm')
+a2.plot(21.3,3.3,'D',ms=6,mfc='white',mec=ink,mew=1.4,zorder=4,label='Measured climb, 280 rpm')
 for rpm,G in variants:
     t=T(G); y=(t*1.2 if t else 1.6)
     if rpm==620: y=2.3; G=G*0.93

@@ -154,7 +154,7 @@ The drive force can never exceed what the tracks can transmit (Eq.~\eqref{eq:tra
   m \frac{dv}{dt} = \min\!\left[F(v),\ \mu_s m g \cos\ang{33.4}\right] - k_r\, m g \sin\ang{33.4}
   \label{eq:climb}
 \end{equation}
-Subtracting the internal losses after the drive force is capped overstates them while the tracks slip, so the model errs slow. $T(G)$ is the time Eq.~\eqref{eq:climb}, integrated from rest, takes to carry the robot \qty{1.524}{m}. It assumes full motor duty from the start.
+$\eta$ and $k_r$ are separate inputs because they model different kinds of loss: $\eta$ takes a fixed fraction of whatever force the motors make, as friction between gear teeth does, while $k_r$ adds a drag of fixed size whatever the motors make, as the side guards rubbing on the treads do. A single climb time cannot tell the two apart. Subtracting the internal losses after the drive force is capped overstates them while the tracks slip, so the model errs slow. $T(G)$ is the time Eq.~\eqref{eq:climb}, integrated from rest, takes to carry the robot \qty{1.524}{m}. It assumes full motor duty from the start.
 
 \paragraph{Applying the bounds}
 Every version shares the same base motor, so all of them meet Section~\ref{sec:current-bound}. The torque bounds of Sections~\ref{sec:traction-bound} and~\ref{sec:holding-bound} leave three candidates: the 170, 280 and \qty{620}{\rpm} versions (Fig.~\ref{fig:gear}a).
@@ -162,17 +162,10 @@ Every version shares the same base motor, so all of them meet Section~\ref{sec:c
 \paragraph{Result}
 The \qty{280}{\rpm} version (1:21.3) gives the shortest estimated climb (Fig.~\ref{fig:gear}b). It stays fastest for every combination of $\eta$ from 0.5 to 0.8 and $k_r$ from 1.0 to 1.25 except the most optimistic ($\eta = 0.8$, $k_r = 1.0$), and nothing is sold between 280 and \qty{620}{\rpm}.
 
-% there are four dashed lines for three inequalities, this is preposterous
-% also just cut the nominal max usable altogether
-% I want to see *exactly* two red zones, two dashed lines, and tweo labels - one for each dashed line
-% also the figure does not need to carry full mathematical expressions, like *at all*
-% get those the heck out
-% also the big black square marker is ugly, choose something else that still stands out but that isn't as egregious
-% also listing both efficiency and drivetrain resistance factor makes it seem like they're separate inputs but are they? Wouldn't efficiency be a function where one input is that factor?
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=0.92\textwidth]{fig04_gear_ratio.pdf}
-  \caption{Choosing the gear ratio. (a) Stall force of each version on the \qty{7.4}{V} pack (Eq.~\eqref{eq:fstall}, $\eta = 0.7$) against the bounds, as shaded zones. Below $k_r m g \sin\ang{33.4}$ ($k_r$ from 1.0 to 1.25) a motor cannot accelerate against gravity. $\mu_s N$, with $\mu_s = 1.2$, is the most force the tracks can transmit (Table~\ref{tab:traction}), and above $3\mu_s N$, that limit with the factor of safety of 3, a motor is geared for torque it cannot use. Filled points are the candidates left in the unshaded strip. (b) Estimated climb time $T(G)$ from Eq.~\eqref{eq:climb} under three assumptions about losses, with our measured climb.}
+  \caption{Choosing the gear ratio. (a) Stall force of each version on the \qty{7.4}{V} pack (Eq.~\eqref{eq:fstall}, $\eta = 0.7$). Below the lower bound, $k_r m g \sin\ang{33.4}$ with $k_r = 1.25$ (Eq.~\eqref{eq:holding}), a motor cannot climb. Above the upper bound, three times the most force the tracks can transmit with $\mu_s = 1.2$ (Section~\ref{sec:traction-bound}), a motor is geared for torque the tracks cannot use. Filled points are the candidates left between the bounds. (b) Estimated climb time $T(G)$ from Eq.~\eqref{eq:climb} for three combinations of gearbox efficiency $\eta$ and resistance factor $k_r$ (``25\% extra resistance'' is $k_r = 1.25$), with our measured climb.}
   \label{fig:gear}
 \end{figure}
 

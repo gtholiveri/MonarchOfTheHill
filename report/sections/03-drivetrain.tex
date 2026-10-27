@@ -1,7 +1,7 @@
 \section{Drivetrain}
 \label{sec:drivetrain}
 
-The drivetrain has to carry a \qty{1}{kg} robot up the \ang{33.4} slope as fast as possible. We wanted to get up the slope faster than the kit motors would allow. We chose optimal motors by bounding the search space of possible motors with the basic physical requirements of the competition, then optimizing for predicted climb time among the constrained options.
+The drivetrain has to carry a \qty{1}{kg} robot up the \ang{33.4} slope as fast as possible. We wanted to get up the slope faster than the kit motors would allow, so opted to purchase cheap gearmotors from Amazon. We chose optimal motors by bounding the search space with the basic physical requirements of the competition, then optimizing for predicted climb time among the constrained options.
 
 \begin{figure}[htbp]
   \centering
@@ -15,16 +15,20 @@ The drivetrain has to carry a \qty{1}{kg} robot up the \ang{33.4} slope as fast 
 
 Torque the tracks cannot transmit is wasted, because past that point the tracks slip instead of pushing. The maximum force with which the tracks can push along the ramp before slipping is equal to the static friction force, $F_f$. Therefore, the total drive force $F$ is capped:
 \begin{equation}
-  F \le \mu_s N, \qquad N = m g \cos\theta \text{ on the ramp and } m g \text{ on the mesa}
+% I think equations like this are better isolated and not like multiple equations rammed into one
+% I'd prefer to see these split into two separate equations, this is a general principle
+  F \le \mu_s N,\text{ where } N = m g \cos\theta \text{ on the ramp and } m g \text{ on the mesa}
   \label{eq:traction}
 \end{equation}
-Each motor drives one track through a sprocket of \qty{50}{mm} diameter ($r = \qty{25}{mm}$), supplying half of the total drive force $F$. Therefore, the torque per motor at which the tracks start to slip is $\mu_s N r / 2$ at the sprocket. We assumed $\mu_s = 1.2$ to be the most any tread material on the ramp could reasonably give. Therefore, no motor can usefully deliver more than \qty{0.15}{N.m} at the sprocket (Table~\ref{tab:traction}).
+Each motor drives one track through a sprocket of \qty{50}{mm} diameter ($r = \qty{25}{mm}$), supplying half of the total drive force $F$. Therefore, the torque per motor at which the tracks start to slip is $\mu_s N r / 2$ at the sprocket. We estimated $\mu_s = 1.2$ to be the most any tread material on the ramp could reasonably give. Therefore, no motor can usefully deliver more than \qty{0.15}{N.m} at the sprocket (Table~\ref{tab:traction}).
 
-A real drivetrain also loses torque to resistance in the tracks, axles and couplers before it reaches the ramp (Section~\ref{sec:holding-bound}), and we had no way to calculate how much. We therefore allowed stall force up to three times the traction ceiling. The factor of safety of 3 is a judgment call, not a calculation: it is our guess at the most extra torque a worst-case drivetrain could need. Torque beyond that would not be usable.
+A real drivetrain also loses torque to resistance in the tracks, axles and couplers before it reaches the ramp (Section~\ref{sec:holding-bound}), and we had no way to calculate how much without a built drivetrain. We therefore allowed stall force up to three times the traction ceiling. The factor of safety of 3 is a judgment call, not a calculation: it is our guess at the most extra torque a worst-case drivetrain could need. Torque beyond that would not be usable.
+
+%% Is FoS of 3 here actually plausible? Doesn't this mean the drivetrain resistance would be eating 2/3 of the torque? Obv be generous with these, but if that's really not plausible, not *that* generous. And then also you should actually pick a factor of safety based on what that FoS physically *means* about the worst-case system that you're estimating is the worst possible
 
 \begin{table}[htbp]
   \centering
-  \caption{The traction ceiling for a \qty{1.000}{kg} robot on \qty{50}{mm} sprockets: the maximum static friction force the tracks can transmit, and the maximum usable torque per motor at the sprocket, for three assumed values of the maximum $\mu_s$.}
+  \caption{The traction ceiling for a \qty{1.0}{kg} robot on \qty{50}{mm} sprockets: the maximum static friction force the tracks can transmit, and the maximum usable torque per motor at the sprocket, for three assumed values of the maximum $\mu_s$.}
   \label{tab:traction}
   \begin{tabular}{@{}c cc cc@{}}
     \toprule
@@ -48,6 +52,10 @@ Gravity exerts a force down the ramp: $m g \sin\theta = \qty{5.40}{N}$. In order
   F_\mathrm{stall} > k_r\, m g \sin\theta
   \label{eq:holding}
 \end{equation}
+
+%% it is exigent that this paragraph expound on what *exactly* k_r means *quantitatively*
+% saying that "oh it represents this overall resistance" - how? As in, what would a given value of k_r actually quantiatively *mean* about the magnitude of that resistance? It's not clear here what a meaningfull k_r could be - it could be a that a million is an alright k_r to someone just skimming this. Also, that *phsyical meaning* is the ONLY way to substantiate any estimates later about what a realistic k_r is
+
 Here $k_r \ge 1$ is a factor for resistance we cannot calculate from first principles: friction in the tracks and axles, tread tension, shaft deflection, and the side guards rubbing on the treads (Section~\ref{sec:layout}). A motor that only just clears Eq.~\eqref{eq:holding} climbs, but it has so little force to spare for acceleration that it never reaches its full speed on a \qty{1.524}{m} ramp.
 
 \subsection{Upper bound on motor size: current}
@@ -75,6 +83,10 @@ The terminal voltage of a battery with an electromotive force $\mathcal{E}$ and 
 \end{equation}
 Therefore, with both motors at stall, the pack sags by $\Delta V_\mathrm{sag} = 2 I_\mathrm{stall} R_\mathrm{int}$.
 
+%  later we should not do it from datasheet, this is a test we should do super quick tmrw
+% it'll be super easy to set up and is a fantastic little testing section because you can't measure it directly, have to do a little voltage drop test - delicious and we're lowk a little light on test data
+% also like is 7.4V really a worst case because it's "near end of discharge"? That's nominal 2s voltage straight up. Still valid because the actual energy we're using from these things is fairly negligible compared to 2500 / 3000 mAh capacity (6 30s runs will drop it by like less than half a volt I'd guess), but bad reason to say "near end of discharge", the standard lower end cutoff people use for 2s is 6
+% stick with 7.4 because it's a reasonable estimate but fix the reasoning while keeping it *brief*
 Taking $R_\mathrm{int} \approx \qty{0.15}{\ohm}$ \tbd{confirm from the cell datasheet} and a worst-case $\mathcal{E} = \qty{7.4}{V}$, where the pack is near the end of its discharge, we find $I_\mathrm{stall,max} = \qty{1.3}{A}$. The best case, a full pack at $\mathcal{E} = \qty{8.4}{V}$, allows \qty{4.7}{A} per motor.
 
 \begin{table}[htbp]
@@ -92,19 +104,24 @@ Taking $R_\mathrm{int} \approx \qty{0.15}{\ohm}$ \tbd{confirm from the cell data
     \bottomrule
   \end{tabularx}
 \end{table}
+% explain why nominal voltage should be close, plus why it doesn't rlly matter if it's not perfect
 
-With these limits set, we chose the motor itself. We wanted one rated close to our \qty{7.4}{V} pack, which among the common ratings means \qty{6}{V}, and whose stall current falls between the most restrictive worst case (\qty{1.2}{A}) and the most restrictive best case (\qty{3.2}{A}) in Table~\ref{tab:current}, leaning toward the worst case.
+% word this better for me
+Given a constant quantity of copper in the windings of a motor, the total mechanical power out per electrical power in doesn't change. 
 
-Stall currents of common gearmotors show where that window sits. A \qty{37}{mm} gearmotor stalls at \qty{5.5}{A} even at \qty{12}{V}~\cite{pololu37d}, well past both limits. A \qty{25}{mm} gearmotor at \qty{6}{V} stalls at \qty{2.0}{A} with a low-power winding and up to \qty{6.0}{A} with a high-power one~\cite{pololu25d}, so the lower-power \qty{25}{mm} motors land in the window. We estimated that the \qty{25}{mm} \qty{6}{V} gearmotor sold in the gear ratios we needed~\cite{meccanixity} stalls at about \qty{1.5}{A} on our pack, just above the worst case, and chose it.
+% verify this is correct, tweak it to correct if not
+Changing how the motor is internally coiled can shift the voltage at which a motor is most efficient, and therefore vary the total amperage it draws.
+
+Therefore, the right family of motor size is the motor that runs fairly efficiently at 2S voltage and won't sag the battery below the regulator minimum.
+
+We found from the stall currents of common gearmotor sizes that a \qty{25}{mm} form factor was optimal. At \qty{6}{V}, these will stall at about \qty{2.0}{A}. At 7.4V, we estimated that some available motors on Amazon would stall at about \qty{1.5}{A}, just breaking  the worst case bound. Therefore, a 25mm gearmotor targeted to 6V is the best possible form factor for the kit battery pack.
 
 \subsection{Choosing the gear ratio inside the bounds}
 \label{sec:gear-ratio}
 
-We found available \qty{25}{mm} \qty{6}{V} gearmotors with gear ratios from 1:4.4 to 1:500~\cite{meccanixity}.
+We found affordable \qty{25}{mm} \qty{6}{V} gearmotors on Amazon with ratios from 1:4.4 to 1:500~\cite{meccanixity}.
 
-Varying gear ratios on the same base motor only changes how power is allocated between speed and torque.
-
-Choosing a gear ratio is an important tradeoff, with an optimum somewhere in the middle (Table~\ref{tab:tradeoff}).
+Varying gear ratio on the same base motor only changes how power is allocated between speed and torque - but it's strictly zero-sum with respect to total power. Therefore, choosing a gear ratio is an important tradeoff, with an optimum somewhere in the middle (Table~\ref{tab:tradeoff}).
 
 \begin{table}[htbp]
   \centering
@@ -125,12 +142,15 @@ Choosing a gear ratio is an important tradeoff, with an optimum somewhere in the
 To find where that optimum lies, we wrote the estimated climb time as a function of gear ratio, $T(G)$, and evaluated it for every version on sale.
 
 \paragraph{Motor model}
-We had to choose before we had a motor to test, so the model rests on the listing and one estimate. The base motor's no-load speed is about \qty{6000}{\rpm} (\qty{625}{rad/s}) at its rated \qty{6}{V}, which sets its torque constant $k$. We estimated its stall current on our \qty{7.4}{V} pack at about \qty{1.5}{A}, which sets its winding resistance $R$:
+
+% *must* include how you estimated that stall current (actually, include that method for the earlier place you also had an estimated stall current)
+We had to choose before we had a motor to test, so we took parameters from the listing and estimated their values at 2S voltage. The base motor's no-load speed is about \qty{6000}{\rpm} (\qty{625}{rad/s}) at \qty{6}{V}, which gives its torque constant $k$. We estimated its stall current on our \qty{7.4}{V} pack at about \qty{1.5}{A}, which sets its winding resistance $R$:
 \begin{equation}
   k = \frac{\qty{6}{V}}{\qty{625}{rad/s}} = \qty{0.0096}{N.m/A}, \qquad
   R = \frac{\qty{7.4}{V}}{\qty{1.5}{A}} = \qty{4.9}{\ohm}
   \label{eq:kR}
 \end{equation}
+% this paragraph is nonsensical
 Run from the \qty{7.4}{V} pack through gear ratio $G$ with gearbox efficiency $\eta$, each motor's torque falls in a straight line from stall to no-load speed. As drive force from both tracks:
 \begin{equation}
   F(v) = F_\mathrm{stall}\left(1 - \frac{v}{v_0}\right), \qquad
@@ -140,6 +160,9 @@ Run from the \qty{7.4}{V} pack through gear ratio $G$ with gearbox efficiency $\
 \end{equation}
 
 \paragraph{Climb time}
+% "traction ceiling" is a retarded and unnecessary additional term to force in to someone's working memory. General principle: Just say capped by the traction
+% also you're being very unclear here, because "opposed by gravity and drivetrain resistance" you need to be super careful: the drive force is tautological to the friction force so yes, it is at most the maximum static frictional force. But just be clear that drivetrain resistance opposed a mix of just the *torque* and the actual frictinoal force - the actual friction within the treads, side couplers colliding with treads, and energy spent deforming the couplers as they rotate vs the friction / micro-collisions with the side wall
+% also I need explanation of this differential equation and why we can say that F(v) = F_stall * (1 - (v / v_0)), just personally / in chat, not necessarily addtl in the actual report. I personally just don't get it
 The drive force is capped by the traction ceiling (Eq.~\eqref{eq:traction}) and opposed by gravity and drivetrain resistance (Eq.~\eqref{eq:holding}), so along the ramp
 \begin{equation}
   m \frac{dv}{dt} = \min\!\left[F(v),\ \mu_s m g \cos\theta\right] - k_r\, m g \sin\theta
@@ -153,6 +176,13 @@ Every version shares the same base motor, so all of them meet Section~\ref{sec:c
 \paragraph{Result}
 The \qty{280}{\rpm} version (1:21.3) gives the shortest estimated climb (Fig.~\ref{fig:gear}b). It stays fastest for every combination of $\eta$ from 0.5 to 0.8 and $k_r$ from 1.0 to 1.25 except the most optimistic ($\eta = 0.8$, $k_r = 1.0$), and nothing is sold between 280 and \qty{620}{\rpm}.
 
+% this figure is good in some wawys but needs improvement
+% in a, it's visually disastrous the way this is communicated because you never see anything in the *middle*, so you're stuck staring at it and not understanding. I want to see dashed lines bounding colored zones, basiclaly simple plotted inequalities.
+% "holding floor" stupid, just rename that "cannot accelerate against gravity", keep it red
+% "traction ceiling" ditch that bad name, just say "max usable force, nominal" or something similar / more concise if you can think of smth (the caption can carry some of that, probably)
+% "traction ceiling" with the FoS rename "max usable force, realistic (drivetrain resistance)" or smth, like before, free to find something more concise or use symbols or whatever, then color above it red
+% so we see this strip of white with the constrained possible ones
+
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=0.92\textwidth]{fig04_gear_ratio.pdf}
@@ -163,6 +193,10 @@ The \qty{280}{\rpm} version (1:21.3) gives the shortest estimated climb (Fig.~\r
 \subsection{Result}
 \label{sec:drivetrain-result}
 
+% don't say that we bough the 620 ones, anywhere
 We bought both the 280 and \qty{620}{\rpm} versions and ran the 280s. Once they arrived, we measured their stall current at \qty{1.4}{A} \tbd{confirm the pack voltage during the stall test}, close to the \qty{1.5}{A} we had estimated.
 
-They climb the ramp in about \qty{3.3}{s} by stopwatch. With no extra resistance the model estimates \qty{2.6}{s}. Matching \qty{3.3}{s} takes $k_r = 1.25$ with $\eta = 0.6$, so the real drivetrain sees roughly \qty{25}{\percent} more resistance than gravity alone. Part of that is the side guards, which deflected into the treads in every run.
+% you should also note that our model appears to match reality pretty well, which is pretty freaking sweet
+In our time trial testing, we found that the robot climbs the ramp in about \qty{3.3}{s}. With no extra resistance the model estimates \qty{2.6}{s}. Matching \qty{3.3}{s} takes $k_r = 1.25$ with $\eta = 0.6$, so the real drivetrain nust overcome \qty{25}{\percent} more resistance than the force of gravity alone.
+
+% add a brief paragraph listing reasons why the drivetrain is so inefficient / faces so much addtl resistance - many problems

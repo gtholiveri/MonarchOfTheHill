@@ -4,7 +4,11 @@
 \subsection{Why an accelerometer alone is not enough}
 \label{sec:accel-only}
 
-The robot has to know when it has crossed from the \ang{33.4} ramp onto the flat mesa, and it has to know this while speeding up and slowing down. An accelerometer measures gravity plus the robot's own acceleration. Along the ramp it reads $g \sin\theta + a$ and across it $g \cos\theta$, so the pitch it implies is
+% add vector angle equation and use z hat notation for z vector
+The robot has to know when it has crossed from the \ang{33.4} ramp onto the flat mesa, and it has to know this while speeding up and slowing down. An accelerometer reads acceleration along three basis vectors. At standstill, resultant acceleration vector retrieved is the gravity vector, from which it's trivial to calculate the robot's tilt: simply take the angle between the z vector and gravity vector.
+However, when the robot accelerates along the ramp, the resultant vector ceases to be the gravity vector.
+
+Along the ramp it reads $g \sin\theta + a$ and across it $g \cos\theta$, so the pitch it implies is
 \begin{equation}
   \theta_\mathrm{apparent} = \arctan\!\left(\frac{g \sin\theta + a}{g \cos\theta}\right)
   \label{eq:apparent}
@@ -24,6 +28,9 @@ Table~\ref{tab:apparent} shows the size of the error. Decelerating at \qty{3}{m/
   \end{tabular}
 \end{table}
 
+% hold on wait a minute
+% lowk why didn't we just solve this numerically for theta given that the acceleration in the x direction is known to be always 33deg up
+% uhhhhhhhhh
 A gyroscope measures rotation rate directly and is not fooled by linear acceleration, but turning its rate into an angle means integrating, and integration accumulates error. Ours read up to \qty{4.7}{\degree/s} with the robot at rest; over a \qty{5}{s} climb that offset alone would add \ang{23} of error.
 
 \subsection{Complementary filter}

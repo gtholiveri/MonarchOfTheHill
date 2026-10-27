@@ -3,10 +3,6 @@
 
 We won the contest with a 5--1 record (Table~\ref{tab:rounds}).
 
-% team 11 we won even though they got there first bc forks, and actually the little bend to keep flush while cresting might have even been the deciding factor, their plow (theirs was specifically a plow, not a wedge) was actually more flush than most - so we got under and they just went straight over
-% shorten "design decision that explains it" - anything tautological to "they went over us" can just say "Ground game"
-% we need to run an audit on what exactly the nature of the timed advance is, I want to ensure that's actually correct
-% also you're completely merging "what happened" and "design decision that explains it". Literally as you've written, there is no functional distinctino between those two columns, which is dumb. "what happened" should instead be "outcome", and "design decision that explains it" should be very simple just something along the lines of why/how
 \begin{table}[htbp]
   \centering
   \caption{Contest rounds.}
@@ -14,14 +10,14 @@ We won the contest with a 5--1 record (Table~\ref{tab:rounds}).
   {\small
   \begin{tabularx}{\textwidth}{@{}c l L L@{}}
     \toprule
-    Round & Opponent & What happened & Design decision that explains it \\
+    Round & Opponent & Outcome & Why \\
     \midrule
-    1 & Team 11 & Won. \tbd{How} & \tbd{\ } \\
-    2 & Team 08 & Won. Team 08 reached the top of the hill first but they went over our car and fell to the end of the ramp and were unable to come back. & The forks and the wedge plate allowed the car to go over us instead of it being able to push us off. \\
-    3 & Team 09 & Won. We made it to the top first and we were able to stay closer to the top, it was closer than other matches because we were both close to the center. & The gearmotors we had allowed us to get to the top first that gave us the upper hand in this match. \\
+    1 & Team 11 & Won. Team 11 reached the top first, but our forks got under its plow and it drove straight over us. & Ground game. Their plow sat closer to the ramp than most, so the forks staying flush while cresting may have decided it. \\
+    2 & Team 08 & Won. Team 08 reached the top first, drove over us, fell to the bottom of the ramp and could not come back. & Ground game \\
+    3 & Team 09 & Won. We reached the top first; both robots ended close to the center, but ours was closer. & Climb speed \\
     4 & Team 14 & Won. \tbd{How} & \tbd{\ } \\
-    5 & Team 10 & Won. We reached the top later than team 10 but because their robot's strategy was to keep going and not stop at all, our forks were able to get it our our car and team 10 drove past us and went off the ramp. & The forks and the wedge plate allowed the car to go over us instead of it being able to push us off. \\
-    6 & Team 05 & Lost. We reached the mesa first and sat under the opponent, but the timed advance past the crest fell short, and the opponent's farthest point was closer to the center. & Advance past the crest set by time, not distance (Section~\ref{sec:run}) \\
+    5 & Team 10 & Won. Team 10 reached the top first but never stopped, so it drove over our forks and off the far side. & Ground game \\
+    6 & Team 05 & Lost. We reached the mesa first and got under the opponent, but stopped short, and its farthest point was closer to the center. & Climb paced by time, not position (Section~\ref{sec:run}) \\
     \bottomrule
   \end{tabularx}
   }
@@ -34,4 +30,4 @@ We won the contest with a 5--1 record (Table~\ref{tab:rounds}).
   \label{fig:contest}
 \end{figure}
 
-Our one loss, in the final round, came from the timed advance after the crest. We reached the mesa first and ended up under the opponent, as designed, but the robot stopped short of where it usually did. The advance runs for a set time rather than a measured distance, so where it ends varies from run to run with track slip, vibration, and other random factors. That run it fell short, and because the opponent's footprint was much smaller than ours, its farthest point was closer to the mesa center, and we lost on that rule.
+Our one loss, in the final round, came from pacing the climb by time. We reached the mesa first and ended up under the opponent, as designed, but the robot stopped short of where it usually did. The motors run at full power for a fixed \qty{3.15}{s} and then ramp down, and once on the mesa Hold drives forward only while the nose is still up, so where the robot stops varies from run to run with track slip, vibration and other random factors. That run it fell short, and because the opponent's footprint was much smaller than ours, its farthest point was closer to the mesa center, and we lost on that rule.

@@ -4,7 +4,7 @@
 \subsection{Layout and construction}
 \label{sec:layout}
 
-The chassis is fully custom and 3D printed in PLA (Figs.~\ref{fig:chassis} to~\ref{fig:dimensions}). The wedge plate and forks form the front of the chassis. The battery holder sits in the front half, with the breadboard carrying the controller, motor driver and sensors beside it. The two gearmotors sit at the rear, each driving a stock sprocket, and the start switch is on the side where the judge can reach it.
+The chassis is fully custom and 3D printed in PLA (Figs.~\ref{fig:chassis} to~\ref{fig:dimensions}). The wedge and forks form the front of the chassis. The battery holder sits in the front half, with the breadboard carrying the controller, motor driver and sensors beside it. The two gearmotors sit at the rear, each driving a stock sprocket, and the start switch is on the side where the judge can reach it.
 
 \begin{figure}[htbp]
   \centering
@@ -30,10 +30,23 @@ The chassis is fully custom and 3D printed in PLA (Figs.~\ref{fig:chassis} to~\r
 
 We used a master model workflow, in which key reference and control geometry flows down to every part in the assembly. The final design has four parts: a main body enclosing the electronics, a top plate, the front wedge and the forks. Test prints checked the mounting patterns for the battery box and the boards, but in the final build we hot glued those parts in place, which let us change the layout without reprinting the whole box.
 
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.8\textwidth]{fig_chassis_assembly.pdf}
+  \caption{Left: exploded assembly drawing of the chassis (scale 1:3). Right: section view of the electronics box, cut away to show the internal mounting features (scale 1:2).}
+  \label{fig:assembly}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.8\textwidth]{fig_chassis_dimensions.pdf}
+  \caption{Dimensioned drawing of the chassis, in inches. These are the nominal CAD dimensions. Sizes quoted in the text are measured on the built robot and differ from these by print tolerance; the forks and wedge are slightly undersize so they have clearance in their fittings.}
+  \label{fig:dimensions}
+\end{figure}
+
 The tracks had to be tight enough that the robot would not bottom out on the crest, and putting the treads on and then tensioning them needs an adjustable wheel pitch. The undriven wheel axle bolts therefore mount in slots rather than clearance holes. Slicer volume modifiers raise the infill to \qty{100}{\percent} where each bolt clamps the plastic, so we could tighten the axles fully rigid under high tension without the hollow print yielding.
 
-% this is turbo wrong. It's not fastened "like" a shaft collar, it is fastend BY a shaft collar. I meant what I fucking said. It's an 8mm shaft collar that sends the set screw through a hole on the coupler to the steel d shaft, immobilizing all three relative to each other
-Each motor drives its sprocket through a printed shaft coupler, which adapts the motor's \qty{4}{mm} D-shaft to the sprocket's \qty{8}{mm} D-shaped bore. The coupler is fastened to the motor shaft like a shaft collar \tbd{Section~\ref{sec:couplers} says a set screw clamps it; confirm}, and a self-tapping screw through the sprocket holds the sprocket on.
+Each motor drives its sprocket through a printed shaft coupler, which adapts the motor's \qty{4}{mm} D-shaft to the sprocket's \qty{8}{mm} D-shaped bore. An \qty{8}{mm} shaft collar fastens it: the collar's set screw passes through a hole in the coupler onto the steel D-shaft, locking collar, coupler and shaft together. A self-tapping screw through the sprocket holds the sprocket on.
 
 The couplers took the most iteration, because their fit to each mating part decides how well they work. Too loose a fit (locational clearance) lets the shaft sit at an angle under tread tension, so it wobbles and goes through especially damaging strain cycles as it spins. Too tight a fit (interference) will not assemble. The coupler needs a running fit. We printed a sweep of clearances from 0.05 to \qty{0.15}{mm} in \qty{0.05}{mm} steps and found \qty{0.1}{mm} to be right.
 
@@ -54,21 +67,6 @@ The wedge also had a significant flaw. Its geometry, meant to fully wrap the fro
 
 At about \qty{4}{in} tall on an \qty{11.75}{in} by \qty{11.4}{in} footprint, the robot cannot tip backward on the \ang{33.4} ramp, and it never came close in testing.
 
-% this figure needs to come before. How is the thing showing the overall geometry coming *after* a slicer screenshot?
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=0.8\textwidth]{fig_chassis_assembly.pdf}
-  \caption{Left: exploded assembly drawing of the chassis (scale 1:3). Right: section view of the electronics box, cut away to show the internal mounting features (scale 1:2).}
-  \label{fig:assembly}
-\end{figure}
-
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=0.8\textwidth]{fig_chassis_dimensions.pdf}
-  \caption{Dimensioned drawing of the chassis, in inches. These are the nominal CAD dimensions. Sizes quoted in the text are measured on the built robot and differ from these by print tolerance; the forks and wedge are slightly undersize so they have clearance in their fittings.}
-  \label{fig:dimensions}
-\end{figure}
-
 \subsection{Wedge and fork geometry}
 \label{sec:wedge}
 
@@ -84,7 +82,7 @@ We set the wedge and fork angles from the ramp angle. \tbd{Explain the \mbox{\an
 \subsection{Failure analysis: shaft couplers}
 \label{sec:couplers}
 
-Printed couplers join each motor's \qty{4}{mm} D-shaft to the stock sprocket (Fig.~\ref{fig:coupler}). Each is \qty{25.3}{mm} long and \qty{7.8}{mm} in diameter, round with one flat, and it works as a shaft collar and an adapter at once. The motor shaft fills a \qty{9.3}{mm} deep D-shaped bore at one end and is clamped by a set screw. The outside of the coupler, with its flat, extends the motor's small D-shaft into the larger D-shaped bore of the sprocket, which fits over the first \qty{8}{mm} at the other end, and a self-tapping screw driven into the \qty{1.6}{mm} pilot hole along the axis fastens the sprocket on.
+Printed couplers join each motor's \qty{4}{mm} D-shaft to the stock sprocket (Fig.~\ref{fig:coupler}). Each is \qty{25.3}{mm} long and \qty{7.8}{mm} in diameter, round with one flat. The motor shaft fills a \qty{9.3}{mm} deep D-shaped bore at one end, where the shaft collar's set screw locks it (Section~\ref{sec:layout}). The outside of the coupler, with its flat, extends the motor's small D-shaft into the larger D-shaped bore of the sprocket, which fits over the first \qty{8}{mm} at the other end, and a self-tapping screw driven into the \qty{1.6}{mm} pilot hole along the axis fastens the sprocket on.
 
 The tracks have to be tight so they do not dip and scrape at the mesa edge. The first couplers, printed standing up, snapped under that tread tension, most of them during assembly rather than in operation. Assembly loads them hardest: forcing the tread over the undriven wheel stretches it well past where it sits once it is on, even with the slot. After the contest we treated the coupler as a cantilever and found the largest tread tension it can carry in each print orientation, to see whether orientation explains why those couplers broke and the reprints held.
 
@@ -111,32 +109,34 @@ and the largest pull it can carry before failing is
 \end{equation}
 The section at the bottom of the bore is the full D profile with the \qty{1.6}{mm} pilot hole. The coupler turns with the shaft, so the load passes through every direction once per revolution. The worst direction puts the peak stress at a corner of the flat, where $I/c = \qty{36.7}{mm^3}$. The tread runs somewhere on the sprocket's \qty{8}{mm} hub, so $\ell$ lies between 8 and \qty{16}{mm} \tbd{confirm where the tread runs on the hub}.
 
-% I mean the failure mode is lowk  unlikely to be tensile stress I feel lik
-% Use claude in chrome with my library credentials or an actual research agent if you have to
-% I also see nothing herea bout the fact that yield stress is different from fracture stress
-% Fractures propagate from the *weakest point*, the point of a dog bone is that it makes thet profile so small that the probability of a much weaker point is minimized, allowing you to get at the *yield* stress
-% but ductile wielding is NOT the behavior we saw. We saw very clear FRACTURE. Fracture happens at a MUCH LOWER STRESS, and micro cracking / yielding that precedes fracture (fatigue) can push that even lower
-% given that the coupler gets deflected by tension then *spun* (ie, deflected back and fortrh and back and forth continuously through operation), fatigue is a huge thing here. As far as I can see all this is like completely missing from this analysis
-For the allowable stress we use previous tensile tests of printed PLA dog-bone specimens done for AME 101~\cite{ronney}. Specimens printed flat, loaded along their layers, yielded at 58.2 to \qty{74.3}{MPa} over three tests, and specimens printed upright, loaded across their layers, at 20.5 and \qty{21.0}{MPa}. We take the lowest value in each orientation: \qty{20.5}{MPa} for the upright coupler and \qty{58.2}{MPa} for the lying one. Transverse shear is at most \qty{15}{\percent} of the bending stress over this range of $\ell$, and the motor's stall torque of about \qty{0.2}{N.m} adds only about \qty{3}{MPa} of shear, so bending governs.
+The upright couplers did not bend before they broke: they fractured cleanly across their layers. The limit that matters is therefore the stress at which a layer bond cracks, not a yield stress, and two things put that well below what test specimens show.
+
+First, a crack starts at the worst flaw in the most stressed region. A dog-bone specimen is printed with care and loaded evenly along its gauge length. In the coupler the peak stress sits at the corner of the flat, beside the pilot hole, and any weak layer bond there starts the crack. Strengths from test specimens are therefore an upper bound for our part.
+
+Second, the coupler is loaded in fatigue. It turns with the motor while the tread pulls in one fixed direction, so every revolution bends it fully one way and then fully the other. This is rotating bending, the loading of a standard fatigue test. One climb of the \qty{1.524}{m} ramp turns the \qty{50}{mm} sprocket about 10 times, so testing and practice put hundreds to thousands of these cycles on each coupler \tbd{estimate how many climbs and how much driving each coupler saw}. Printed PLA fails at far lower stress this way than in a tensile test: horizontally printed rotating-bending specimens at \qty{60}{\percent} infill failed after a median of about 5{,}000 cycles at \qty{10}{MPa} and 3{,}400 cycles at \qty{12.5}{MPa}~\cite{azadi}.
+
+For design, Ezeh and Susmel propose a fatigue curve for printed PLA scaled to its static strength~\cite{ezeh}. The stress amplitude a part survives for $n$ cycles is
+\begin{equation}
+  \sigma_a(n) = 0.10\,\sigma_u \left(\frac{2 \times 10^6}{n}\right)^{1/5.5}
+  \label{eq:fatigue}
+\end{equation}
+where $\sigma_u$ is the static strength. They found that print direction makes little difference once the curve is scaled by each orientation's own static strength, so we scale it by the lowest course value for each orientation: \qty{20.5}{MPa} upright and \qty{58.2}{MPa} lying~\cite{ronney}. Transverse shear is at most \qty{15}{\percent} of the bending stress over this range of $\ell$, and the motor's stall torque of about \qty{0.2}{N.m} adds only about \qty{3}{MPa} of shear, so bending governs.
 
 \begin{table}[htbp]
   \centering
-  \caption{Force on the sprocket at which each print orientation reaches the lowest strength measured in the course tests, $T_\mathrm{max}$ from Eq.~\eqref{eq:tmax} with $I/c = \qty{36.7}{mm^3}$.}
+  \caption{Allowable stress and the tread tension it allows at mid-hub ($\ell = \qty{12}{mm}$, Eq.~\eqref{eq:tmax}, $I/c = \qty{36.7}{mm^3}$). With the tread at the inner edge of the hub ($\ell = \qty{8}{mm}$) every tension is 1.5 times higher; at the outer face ($\ell = \qty{16}{mm}$) it is 0.75 times.}
   \label{tab:coupler}
-  \begin{tabular}{@{}l c c@{}}
+  \begin{tabular}{@{}l cc cc@{}}
     \toprule
-    & Upright: stress & Lying: stress \\
-    & across the layers & along the layers \\
+    & \multicolumn{2}{c}{Upright: across the layers} & \multicolumn{2}{c}{Lying: along the layers} \\
+    \cmidrule(lr){2-3}\cmidrule(l){4-5}
+    Limit & $\sigma_\mathrm{allow}$ (\unit{MPa}) & $T_\mathrm{max}$ & $\sigma_\mathrm{allow}$ (\unit{MPa}) & $T_\mathrm{max}$ \\
     \midrule
-    $\sigma_\mathrm{allow}$~\cite{ronney} (\unit{MPa}) & 20.5 & 58.2 \\
-    \midrule
-    Tread line at the inner edge of the hub, $\ell = \qty{8}{mm}$ & \qty{94}{N} (\qty{21}{\lbf}) & \qty{267}{N} (\qty{60}{\lbf}) \\
-    Tread line at mid-hub, $\ell = \qty{12}{mm}$ & \qty{63}{N} (\qty{14}{\lbf}) & \qty{178}{N} (\qty{40}{\lbf}) \\
-    Tread line at the outer face, $\ell = \qty{16}{mm}$ & \qty{47}{N} (\qty{11}{\lbf}) & \qty{134}{N} (\qty{30}{\lbf}) \\
+    Static, course tests~\cite{ronney} & 20.5 & \qty{63}{N} (\qty{14}{\lbf}) & 58.2 & \qty{178}{N} (\qty{40}{\lbf}) \\
+    Fatigue, 1{,}000 cycles (Eq.~\eqref{eq:fatigue}) & 8.2 & \qty{25}{N} (\qty{5.6}{\lbf}) & 23.2 & \qty{71}{N} (\qty{16}{\lbf}) \\
+    Fatigue, 10{,}000 cycles (Eq.~\eqref{eq:fatigue}) & 5.4 & \qty{16}{N} (\qty{3.7}{\lbf}) & 15.3 & \qty{47}{N} (\qty{11}{\lbf}) \\
     \bottomrule
   \end{tabular}
 \end{table}
 
-Lying down, the coupler carries 2.8 times the load of the upright print before it fails. We reprinted the couplers lying down and they did not break again.
-
-We never measured the forces during assembly, so Table~\ref{tab:coupler} compares the two orientations rather than predicting when either breaks. Our couplers may also have been printed with different settings from the test specimens \tbd{confirm our infill and print settings}, and in operation the coupler is bent back and forth once per revolution, so it could fail by fatigue below these values.
+Fatigue cuts the tension an upright coupler can survive to roughly 16 to \qty{25}{N} (Table~\ref{tab:coupler}), only a few pounds-force, before counting the flaw at the corner of the flat. We never measured tread tension, so the table cannot say which coupler should have failed when. It does show why orientation mattered: lying down, the coupler survives 2.8 times the tension at every limit. We reprinted the couplers lying down and they did not break again, though they did bend permanently over many runs (Section~\ref{sec:lessons}), which is the yielding the lying orientation allows instead of fracture.

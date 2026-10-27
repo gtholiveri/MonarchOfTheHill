@@ -2,8 +2,7 @@
 \label{sec:lessons}
 
 \paragraph{Triage, and build the minimum viable robot first}
-% the construction of these sentences gets so convoluted that it becomes impossible to tell between things that were actually done or considered but dropped
-This is the lesson that mattered most. We dropped ideas that were too complex for the time we had (the servo wall brace and the side lifter), and chose not to fix some things we knew were imperfect: side guards that wrapped fully around the treads (we had CAD for them, but they were too ambitious to make work in time), a ground-up sprocket redesign for a controlled diameter, proper electronics mounts in place of hot glue, metal couplers that would not deflect, a soldered protoboard, and modular wedges. That kept enough time to test the robot and its software, and without that testing the autonomous run would not have worked.
+This is the lesson that mattered most. Two ideas never got past the concept stage because they were too complex for the time we had: the servo linkage bracing against both walls and the side lifter. Several other things we knew were imperfect, and chose to live with rather than fix. We kept cut-down side guards instead of ones that fully wrapped the treads (we had the CAD, but making them work would have taken too long), the stock sprockets instead of a redesign with a controlled diameter, hot glue instead of proper electronics mounts, printed couplers instead of metal ones that would not deflect, a breadboard instead of a soldered protoboard, and one fixed wedge instead of modular ones. That left enough time to test the robot and its software, and without that testing the autonomous run would not have worked.
 
 \paragraph{Isolate faults one connection at a time}
 Our two longest debugging sessions were a breadboard jumper whose trimmed leg never seated and a cold solder joint on the IMU's power header. Both passed every check we made until we measured the voltage at each connection in turn, from the supply to the part.
@@ -14,14 +13,10 @@ The side guards we cut down to fit never broke, but they flexed into the treads 
 \paragraph{Take print anisotropy seriously}
 We printed both coupler orientations and chose the upright one because the fit felt marginally nicer, and we guessed by feel that it would be strong enough, even in the anisotropically weaker configuration. For load-bearing functional parts, a guess isn't good enough: upright-printed couplers almost all broke.
 
-% I just remembered - a very plausible hypothesis for why our little pushing past the mesa edge could've become less is because the *treads themselves lose tension over successive runs, and we could actually feel this happening*
-% Oddly not at the slots, *at the couplers* (which were literally bent by like maybe 2-5 degrees, just super guessing visually from memory)
 \paragraph{Autonomy without positioning suffers}
-The advance past the crest was set by time, so anything that changed the robot's speed, such as vibration, track slip, or an opponent, changed where it stopped. Wheel or motor encoders would not fix this, because they cannot tell when the tracks slip. An absolute position reference would: a time-of-flight sensor ranging to a beacon, or a camera such as an ESP32-CAM locating AprilTags on the side walls. We had hoped to build one but ran out of time.
+The climb was paced by time, so anything that changed the robot's speed, such as vibration, track slip, or an opponent, changed where it stopped. Wheel or motor encoders would not fix this, because they cannot tell when the tracks slip. An absolute position reference would: a time-of-flight sensor ranging to a beacon, or a camera such as an ESP32-CAM locating AprilTags on the side walls. We had hoped to build one but ran out of time.
 
-% this was a 1-off 3-minute debug for a scenario (high lateral g) that never would even happen in comp, why is this in the all-time lessons list
-\paragraph{Fully constrain electronics}
-The battery cells sat in a plastic holder with spring contacts. A sharp jolt let a cell compress its spring past the contact's interference and lose contact for an instant, which restarted the controller. Fastening the holder so it could not take shock loads stopped the restarts.
+Timing also hides slow changes in the robot. A plausible reason the robot stopped short in the final round is that the treads lost tension over successive runs, which we could feel happening. The slack came not from the axle slots but from the couplers, which had bent visibly, by roughly 2 to \ang{5} judging from memory. A slacker tread carries the robot less far in the same fixed time, and nothing in a timed run can notice.
 
 \paragraph{Spend analysis where the eye cannot see}
 Many questions answered themselves by inspection: whether the tracks slipped, whether the robot tipped, whether it stopped on the mesa. We judged or tuned those by eye, which was good enough, and saved more rigorous analysis for tradeoffs that cannot be eyeballed, such as the gear ratio (Section~\ref{sec:gear-ratio}) and battery voltage sag (Section~\ref{sec:current-bound}) \tbd{finish this list}.

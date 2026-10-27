@@ -4,35 +4,65 @@
 \subsection{The run: climb, decelerate, hold}
 \label{sec:run}
 
-An autonomous run has three stages (Fig.~\ref{fig:states}). In Climb, both motors run at full power. Climb ends when the pitch stays below the crest threshold for \qty{40}{ms} (ignored for the first \qty{0.3}{s}), or at a set time as a backstop. In Decelerate, the drive power ramps linearly from full to zero over a set time. The robot does not brake in this stage; momentum carries it from the ridge onto the mesa. It then enters Hold.
+An autonomous run has three stages (Fig.~\ref{fig:states}). In Climb, both motors run at full power. The robot has no way to measure distance, so Climb ends at a set time after the start. Pitch is the backstop on that time: if the pitch stays below \ang{18} for \qty{40}{ms} before the set time, Climb ends then instead. The robot ignores this test for the first \qty{0.3}{s} of the run. In Decelerate, the drive power ramps linearly from full to zero over a set time, and momentum carries the robot from the ridge onto the mesa. It then enters Hold.
 
-% "does not just" provides zero useful information.
-% no such hold strength test exists, and none needed. Cut.
+In Hold, the robot sets its motor power to zero while it is level, and the driver code applies zero power as short brake. Short brake connects each motor's two terminals together. A motor turned by an outside force then acts as a generator driving current through its own windings, and that current makes a torque opposing the motion, $\tau_\mathrm{brake} = k_\mathrm{t}^2 \omega / R_\mathrm{w}$ for a motor turned at speed $\omega$.
 
-In Hold, the robot does not just set its motor power to zero. It commands the driver into its short-brake mode, which connects each motor's two terminals together. A motor turned by an outside force then acts as a generator driving current through its own windings, and that current makes a torque opposing the motion, $\tau_\mathrm{brake} = k^2 \omega / R$ for a motor with torque constant $k$ turned at speed $\omega$. Compared with leaving the terminals open, this resists being pushed \tbd{confirm with the hold-strength test}. On top of that, the robot drives forward at \tbd{full} power if its nose rises more than \ang{6} (an opponent lifting it or pushing it back down the ramp) and backs up at power \tbd{110} of 255 if its nose drops more than \ang{6} (about to go over the far side). It stops correcting once the pitch is back within \ang{3}, so it doesn't start driving in response to sensor noise.
-% also need to mention that we tuned those speed values for correction (initially 255 and 255) bc it can oscillate back and forth - chuck itself forward, go too far, chuck itself backward, go too far, loops
+Hold also corrects the robot's position from its pitch. If the nose rises more than \ang{6}, because the robot stopped short of the top or is being shoved back down our ramp, it drives forward at full power, 255 of 255. If the nose drops more than \ang{6}, because the robot is about to go over the far side, it backs up at 110 of 255. It keeps correcting until the pitch is back within \ang{3}, so that it does not switch rapidly between correcting and braking at the edge of the \ang{6} band.
 
-
-
-% also this figure is fundamentally wrong because it misses that there's a fixed timed advance BEFORE we get to the checking for pitch
-% or, the control panel was desceptive and claude lied to me about what the code was actually doing - also possible but I'd really rather that fucking not be the sitch
-% cut "no braking" line from the little "decelerate" bit
-% also cut all caps it's ugly
-% also add legend for the fill color meanings, discreet
-% also maked dashed line box just an actual part of the graph
-% use loopy arrows for loops
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=0.85\textwidth]{fig12_state_machine.png}
-  \caption{The autonomous run. Only one sensor test ends the climb: pitch below \ang{18} for \qty{40}{ms}, or the time backstop. In Hold the robot reacts to pitch alone.}
+  \begin{tikzpicture}[
+      font=\small,
+      >={Stealth[length=2.4mm]},
+      every edge/.style={draw,->,thick},
+      state/.style={draw,thick,rounded corners=3pt,align=center,
+                    text width=3.3cm,minimum height=1.35cm,inner sep=3pt},
+      wait/.style={state,fill=black!6},
+      run/.style={state,fill=blue!12},
+      lbl/.style={align=center,font=\footnotesize,inner sep=2pt},
+    ]
+    \node[wait] (armed) at (0,0)       {\textbf{Armed}\\motors short-braked, holding the robot on the ramp};
+    \node[run]  (climb) at (5.6,0)     {\textbf{Climb}\\both motors at full power (255)};
+    \node[run]  (dec)   at (5.6,-3.5)  {\textbf{Decelerate}\\power ramps linearly to zero over \qty{150}{ms}};
+    \node[run]  (hold)  at (5.6,-6.9)  {\textbf{Hold}\\motors short-braked};
+    \node[run]  (back)  at (0,-6.9)    {\textbf{Back up}\\power 110};
+    \node[run]  (fwd)   at (11.2,-6.9) {\textbf{Drive forward}\\power 255};
+
+    \draw[->,thick] (armed) -- node[lbl,above] {start switch\\on} (climb);
+
+    \draw[->,thick] (climb.north east) ++(-0.5,0)
+      .. controls +(0.6,1.3) and +(-0.6,1.3) .. ([xshift=0.5cm]climb.north west)
+      node[lbl,pos=0.5,above] {under \qty{3.15}{s}, backstop not met};
+
+    \draw[->,thick] ([xshift=-0.6cm]climb.south) -- node[lbl,left] {\qty{3.15}{s} after\\the start} ([xshift=-0.6cm]dec.north);
+    \draw[->,thick] ([xshift=0.6cm]climb.south) -- node[lbl,right,align=left]
+      {backstop, earlier:\\pitch below \ang{18} for \qty{40}{ms},\\tested after the first \qty{0.3}{s}} ([xshift=0.6cm]dec.north);
+
+    \draw[->,thick] (dec) -- node[lbl,right,pos=0.35] {power at zero} (hold);
+
+    \draw[->,thick] (hold.15) to[bend left=28] node[lbl,above] {nose up more\\than \ang{6}} (fwd.165);
+    \draw[->,thick] (fwd.195) to[bend left=28] node[lbl,below] {back within\\\ang{3}} (hold.345);
+
+    \draw[->,thick] (hold.165) to[bend right=28] node[lbl,above] {nose down more\\than \ang{6}} (back.15);
+    \draw[->,thick] (back.345) to[bend right=28] node[lbl,below] {back within\\\ang{3}} (hold.195);
+
+    \begin{scope}[shift={(9.6,0.55)},font=\footnotesize]
+      \node[draw,fill=black!6,minimum size=2.6mm,inner sep=0pt] (k1) at (0,0) {};
+      \node[anchor=west] at (0.2,0) {waiting for the start};
+      \node[draw,fill=blue!12,minimum size=2.6mm,inner sep=0pt] (k2) at (0,-0.5) {};
+      \node[anchor=west] at (0.2,-0.5) {autonomous run};
+    \end{scope}
+  \end{tikzpicture}
+  \caption{The autonomous run. Time paces the climb, and pitch is the backstop. In Hold the robot reacts to pitch alone.}
   \label{fig:states}
 \end{figure}
 
 \subsection{Tuning}
 \label{sec:tuning}
 
-% we were tweaking the values enough honestly (bc exactly where we ended up was disuniform enough) that there's no single value
-% just say 3150 pure climb and 150 break to match the overal 3.3 time and don't mention the rest here
-We timed the climb by stopwatch at about \qty{3.3}{s} and set the Climb time backstop to \qty{3000}{ms} and the Decelerate ramp to \qty{150}{ms} \tbd{final values used in the contest}. We also built a trim tool for straight-line driving: each press shifts power \qty{16}{\percent} toward the lagging side, and the step halves every time the drift reverses. The larger problem turned out not to be the robot pulling sideways but the side guards rubbing on the treads (Section~\ref{sec:layout}). \tbd{What oscillation we saw on the mesa, and what we changed in the hold settings.}
+We timed the climb by stopwatch at about \qty{3.3}{s} and set \qty{3150}{ms} of full-power climb and a \qty{150}{ms} Decelerate ramp to match. We also built a trim tool for straight-line driving: each press shifts power \qty{16}{\percent} toward the lagging side, and the step halves every time the drift reverses. The larger problem turned out not to be the robot pulling sideways but the side guards rubbing on the treads (Section~\ref{sec:layout}).
+
+Both Hold correction powers started at full power, 255 forward and 255 back. With those, the robot oscillated on the mesa: it threw itself forward, overshot, threw itself back, overshot, and so on. We lowered the correction power to stop this, and the code's values are 255 forward and 110 back \tbd{confirm only the back-up power was lowered, to 110}.
 
 From our average climb speed of \qty{0.46}{m/s}, stopping takes $v^2/(2a)$: \qty{11}{cm} at \qty{1}{m/s^2} and \qty{4}{cm} at \qty{3}{m/s^2}, both inside the \qty{30}{cm} mesa. We never ran the robot without the Decelerate stage, so we cannot say whether overshooting the mesa was a real risk.

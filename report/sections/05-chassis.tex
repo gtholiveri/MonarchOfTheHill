@@ -4,7 +4,7 @@
 \subsection{Layout and construction}
 \label{sec:layout}
 
-The chassis is fully custom and 3D printed in PLA (Fig.~\ref{fig:chassis}). The wedge plate and forks form the front of the chassis. The battery holder sits in the front half, with the breadboard carrying the controller, motor driver and sensors beside it. The two gearmotors sit at the rear, each driving a stock sprocket, and the start switch is on the side where the judge can reach it.
+The chassis is fully custom and 3D printed in PLA (Figs.~\ref{fig:chassis} to~\ref{fig:dimensions}). The wedge plate and forks form the front of the chassis. The battery holder sits in the front half, with the breadboard carrying the controller, motor driver and sensors beside it. The two gearmotors sit at the rear, each driving a stock sprocket, and the start switch is on the side where the judge can reach it.
 
 \begin{figure}[htbp]
   \centering
@@ -14,6 +14,20 @@ The chassis is fully custom and 3D printed in PLA (Fig.~\ref{fig:chassis}). The 
 \end{figure}
 
 We started from a master model holding reference geometry for the motors, controller board, tracks and battery box. Test prints checked the battery box and board mounting patterns: the battery box worked after one round of iteration, and the board mount needed further adjustment. In the final build we hot glued these parts in place. A full prototype chassis followed, then the shaft couplers and motor mounts. One motor mount did not fit because horizontal printed holes sag at the top and come out undersized vertically. We set clearances for slip and press fits from test prints (\tbd{values}) and added alignment ridges and countersinks on the top plate for assembly. Side guards along each side keep the robot aligned with the guide rail and stop it riding over the edge. They were a late addition: as printed they interfered with other parts, so we cut them to fit with a Dremel, a hacksaw and a band saw, and the cut-down guards flexed into the treads and rubbed on them in every run (Section~\ref{sec:drivetrain-result}). At about \qty{4}{in} tall on an \qty{11.75}{in} by \qty{11.4}{in} footprint, the robot cannot tip backward on the \ang{33.4} ramp, and it never came close in testing.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.8\textwidth]{fig_chassis_assembly.pdf}
+  \caption{Exploded assembly drawing of the chassis (scale 1:3), with the base alone at right (scale 1:2).}
+  \label{fig:assembly}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.8\textwidth]{fig_chassis_dimensions.pdf}
+  \caption{Dimensioned drawing of the chassis, in inches.}
+  \label{fig:dimensions}
+\end{figure}
 
 \subsection{Wedge and fork geometry}
 \label{sec:wedge}

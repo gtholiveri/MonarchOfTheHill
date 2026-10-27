@@ -25,6 +25,8 @@ where the normal force $N$ is
 \end{align}
 Each motor drives one track through a sprocket of \qty{50}{mm} diameter ($r = \qty{25}{mm}$), supplying half of the total drive force $F$. Therefore, the torque per motor at which the tracks start to slip is $\mu_s N r / 2$ at the sprocket. We estimated $\mu_s = 1.2$ to be the most any tread material on the ramp could reasonably give. Therefore, no motor can usefully deliver more than \qty{0.15}{N.m} at the sprocket (Table~\ref{tab:traction}).
 
+% this makes no sense. You maybe have a point but it's utterly  unintelligible as presented
+% the reason I was thinking was merely that your FoS just has to account for whatever amount of torque is getting eaten before ever even making it to the sprocket / ramp interface
 A real drivetrain also loses torque to resistance in the tracks, axles and couplers before it reaches the ramp (Section~\ref{sec:holding-bound}), and we had no way to calculate how much without a built drivetrain. A motor develops its full stall force only at zero speed, though, and its force falls as it speeds up (Eq.~\eqref{eq:motor}). Stall force beyond what the tracks can transmit is therefore not wasted outright: it keeps the tracks slipping for longer. A motor whose stall force is $n$ times what the tracks can transmit slips until it reaches a fraction $1 - 1/n$ of its no-load speed. We allowed stall force up to three times the most the tracks can transmit, the point at which the tracks slip until the motor reaches two thirds of its no-load speed. The factor of safety of 3 is a judgment call, not a calculation, and it is generous on purpose, because drivetrain resistance raises the force the motors must supply before the tracks slip. Past it, most of the motor's speed range goes to torque the tracks cannot use.
 
 \begin{table}[htbp]
@@ -105,6 +107,8 @@ We wanted a motor wound for close to our pack voltage. The match does not have t
 Therefore, the right family of motor size is the motor that runs fairly efficiently at 2S voltage and won't sag the battery below the regulator minimum.
 
 We found from the stall currents of common gearmotor sizes~\cite{pololu37d,pololu25d} that a \qty{25}{mm} form factor was optimal. At \qty{6}{V}, these will stall at about \qty{2.0}{A}~\cite{pololu25d}. At \qty{7.4}{V}, we estimated that some available motors on Amazon would stall at about \qty{1.5}{A}, just breaking the worst case bound. The listing rates them at \qty{2.7}{W}~\cite{meccanixity}; taking that as the peak power on our pack, Eq.~\eqref{eq:pmax} gives $I_\mathrm{stall} = 4 P_\mathrm{max} / V = \qty{1.46}{A}$ \tbd{confirm this is how we estimated \mbox{\qty{1.5}{A}}}. Therefore, a \qty{25}{mm} gearmotor targeted to \qty{6}{V} is the best possible form factor for the kit battery pack.
+% claude buddy YOU did the freaking estimate in the first place
+% do session digging or if it's completely unsubstantiated vibes, use what you just go instead
 
 \subsection{Choosing the gear ratio inside the bounds}
 \label{sec:gear-ratio}
@@ -113,6 +117,7 @@ We found affordable \qty{25}{mm} \qty{6}{V} gearmotors on Amazon with ratios fro
 
 Varying gear ratio on the same base motor only changes how power is allocated between speed and torque, but it is strictly zero-sum with respect to total power. Therefore, choosing a gear ratio is an important tradeoff, with an optimum somewhere in the middle (Table~\ref{tab:tradeoff}).
 
+% the way the tex actually renders, table 3 comes in *aftere* "motor model" starts (page break), which looks terrible and I kinda hate it - let's fix that and make table 3 come before
 \begin{table}[htbp]
   \centering
   \caption{How the outcome changes as the gear ratio moves away from the optimum.}
@@ -137,6 +142,8 @@ We had to choose before we had a motor to test, so we took parameters from the l
   k &= \frac{\qty{6}{V}}{\qty{625}{rad/s}} = \qty{0.0096}{N.m/A} \label{eq:k} \\
   R &= \frac{\qty{7.4}{V}}{\qty{1.5}{A}} = \qty{4.9}{\ohm} \label{eq:R}
 \end{align}
+% "on a straight line" on what graph? This is an unintelligible line, turbo retarded, just completely and think of something else
+% also I feel  like I'd like to see eta have a subscript to make clear it's the *gearbox* efficiency, because as just the bare symbol if you miss that one tiny line you're confused for the whole report wondering whether the given eta is overall efficiency or some more specific efficiency
 A brushed DC motor's torque falls in a straight line from its stall torque at zero speed to zero at its no-load speed. Geared down by $G$ with gearbox efficiency $\eta$, the two motors together push the robot along the ramp with a force
 \begin{equation}
   F(v) = F_\mathrm{stall}\left(1 - \frac{v}{v_0}\right)

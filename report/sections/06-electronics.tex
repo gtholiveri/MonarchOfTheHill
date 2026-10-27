@@ -8,31 +8,8 @@ Figure~\ref{fig:electronics} shows the wiring. A Particle Photon~2~\cite{photon2
 
 \begin{figure}[htbp]
   \centering
-  \definecolor{packred}{HTML}{E8402F}\definecolor{fiveorange}{HTML}{E08A00}\definecolor{logicblue}{HTML}{1F6FB4}
-  \begin{tikzpicture}[font=\small,
-      box/.style={draw=black,line width=0.8pt,rounded corners=2pt,fill=black!4,align=center,minimum height=1.3cm,text width=2.5cm},
-      pack/.style={line width=1.6pt,draw=packred,-{Latex[length=2.2mm]}},
-      five/.style={line width=1.6pt,draw=fiveorange,-{Latex[length=2.2mm]}},
-      logic/.style={line width=1.2pt,draw=logicblue,-{Latex[length=2.2mm]}},
-      sig/.style={line width=1.0pt,draw=black,-{Latex[length=2.2mm]}}]
-    \node[box,fill=black!2,text width=2.3cm] (pack) at (0,0) {\textbf{2S pack}\\two 18650 cells};
-    \node[box] (reg) at (3.4,1.6) {\textbf{7805}\\regulator};
-    \node[box] (sw) at (3.4,-0.6) {\textbf{Start switch}};
-    \node[box,minimum height=4.2cm,text width=2.4cm,fill=black!2] (mcu) at (8.4,0.2) {\textbf{Photon 2}\\controller\\(\qty{3.3}{V} logic)};
-    \node[box] (imu) at (13.2,1.6) {\textbf{MPU6050}\\gyro and\\accelerometer};
-    \node[box,text width=2.9cm] (drv) at (13.2,-1.6) {\textbf{TB6612FNG}\\dual motor driver};
-    \node[box,text width=1.4cm,minimum height=1cm] (ml) at (12.3,-3.8) {\textbf{Left}\\motor};
-    \node[box,text width=1.4cm,minimum height=1cm] (mr) at (14.1,-3.8) {\textbf{Right}\\motor};
-    \draw[pack] (pack.north) |- node[pos=0.75,above,text=packred] {pack} (reg.west);
-    \draw[five] (reg.east) -- node[above,text=fiveorange] {\qty{5}{V} (VUSB)} (reg.east -| mcu.west);
-    \draw[sig] (sw.east) -- node[above] {digital in} (sw.east -| mcu.west);
-    \draw[logic,{Latex[length=2.2mm]}-{Latex[length=2.2mm]}] (imu.west -| mcu.east) -- node[above,text=logicblue] {I$^2$C} (imu.west);
-    \draw[logic] ([yshift=0.3cm]drv.west -| mcu.east) -- node[above,text=logicblue] {control} ([yshift=0.3cm]drv.west);
-    \draw[pack] (pack.south) |- node[pos=0.75,below,text=packred] {VM: pack voltage (motor supply)} (11.0,-2.7) |- ([yshift=-0.35cm]drv.west);
-    \draw[sig] (ml.north |- drv.south) -- (ml.north);
-    \draw[sig] (mr.north |- drv.south) -- (mr.north);
-  \end{tikzpicture}
-  \caption{Electronics block diagram. The 2S pack feeds the motor driver directly and the Photon~2 through the 7805 regulator. The Photon reads the MPU6050 over I$^2$C and drives the TB6612FNG.}
+  \includegraphics[width=\textwidth]{fig_wiring.pdf}
+  \caption{Wiring diagram, drawn in Fritzing. The 2S pack plugs into the barrel jack and feeds the TB6612FNG motor supply directly and the Photon~2 through the 7805 regulator. The Photon reads the MPU6050 over I$^2$C and drives the TB6612FNG, which runs the two gearmotors. \tbd{The start switch is not drawn: add it to the diagram or say so here.}}
   \label{fig:electronics}
 \end{figure}
 

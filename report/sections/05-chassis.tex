@@ -4,6 +4,7 @@
 \subsection{Layout and construction}
 \label{sec:layout}
 
+% most of this is you blindly pasting in the output from your vision model tokenizer when all of this is redundant or instantly clear by inspection to a human within milliseconds of glancing at the figure
 The chassis is fully custom and 3D printed in PLA (Figs.~\ref{fig:chassis} to~\ref{fig:dimensions}). The wedge and forks form the front of the chassis. The battery holder sits in the front half, with the breadboard carrying the controller, motor driver and sensors beside it. The two gearmotors sit at the rear, each driving a stock sprocket, and the start switch is on the side where the judge can reach it.
 
 \begin{figure}[htbp]
@@ -52,7 +53,7 @@ The couplers took the most iteration, because their fit to each mating part deci
 
 Other iterations also centered on clearance. Motor mounts and horizontal screw holes with too little clearance gave prototypes that did not work, and after three test iterations we settled on \qty{0.14}{mm} for both. Test prints of the drivetrain alone set the width of the undriven axle slot: for the axle assembly to go in easily it had to nearly double, from 8 to \qty{15}{mm}. A full prototype chassis followed. To make assembly easier, the top plate has countersunk screw clearance holes and alignment ridges that guide it into place.
 
-The front wedge is a single part that wraps the front of the robot and carries the wedge, the side guards and the fork mounts. Besides aligning the robot, the side guards keep the treads from catching a seam at the corner of the ramp; a tread that catches one can lift the robot fully over the edge. Deciding where to split the robot took iteration, because the whole chassis would not fit in the build volume of the Prusa Core One+ we printed on. We first planned to print full-length side guards separately, but dropped the idea once we saw that the treads did not need covering along the whole length of the robot. To avoid extra fasteners or glue and keep the wedge removable, it mates to the rest of the chassis with dovetail joints and semi-permanent snap-fit nubs.
+The front wedge is a single part that wraps the front of the robot and comprises the wedge, the side guards and the fork mounts. Besides aligning the robot, the side guards keep the treads from catching a seam at the corner of the ramp; a tread that catches one can lift the robot fully over the edge. Deciding where to split the robot took iteration, because the whole chassis would not fit in the build volume of the Prusa Core One+ we printed on. We first planned to print full-length side guards separately, but dropped the idea once we saw that the treads did not need covering along the whole length of the robot. To avoid extra fasteners or glue and keep the wedge removable, it mates to the rest of the chassis with dovetail joints and semi-permanent snap-fit nubs.
 
 The wedge only fits the build volume at an angle. For a long, roughly straight part, the most room is along the diagonal, so we added a small \ang{45} planar cut at each side and printed it at an angle, with tree supports that both hold up the overhangs and act as outriggers to keep it from tipping over (Fig.~\ref{fig:slicer}).
 

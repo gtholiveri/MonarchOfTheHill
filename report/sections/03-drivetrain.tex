@@ -194,6 +194,7 @@ The drive force also cannot exceed what the tracks can transmit, $\mu_s m g \cos
 \end{equation}
 $\eta_\mathrm{g}$ and $k_r$ are separate inputs: gear losses grow with the load the gears carry, so $\eta_\mathrm{g}$ scales the motor force, while $k_r$ is a constant drag. Subtracting the internal losses after the drive force is capped overstates them while the tracks slip, so the model errs slow. The model also assumes full motor duty from the start.
 
+% this phrasing is broken
 \paragraph{Solving for the climb time}
 $T(G)$ is the time Eq.~\eqref{eq:climb}, started from rest, takes to carry the robot \qty{1.524}{m}. The $\min$ splits the climb into two phases.
 
@@ -202,6 +203,7 @@ In the first phase the tracks slip. At low speed the motors can make more force 
   a_1 = \frac{\mu_s m g \cos\ang{33.4} - W}{m}
   \label{eq:a1}
 \end{equation}
+% to keep phrasing consistent use "maximum usable traction" everywhere. It's just more understandable.
 This phase ends at the speed $v_1$ where $F(v)$ falls to the traction limit. It lasts for a time $t_1$ and covers a distance $x_1$:
 \begin{align}
   v_1 &= v_0\left(1 - \frac{\mu_s m g \cos\ang{33.4}}{F_\mathrm{stall}}\right) \label{eq:v1} \\
@@ -216,6 +218,7 @@ In the second phase the motors limit the force. Substituting Eq.~\eqref{eq:motor
   \label{eq:phase2}
 \end{equation}
 Its solution, with $t$ measured from the start of this phase and $v = v_1$ at $t = 0$, approaches exponentially the speed $v_t$ at which the drive force exactly balances the resistance:
+% function test / reasoning (look at notes - important way of how prof Ronney thinks): why does this make perfect sense? (don't cite, not needed - just use phrase "function test"). As the force approaches the minimum force to accelerate at all, our time to the top approaches infinity. Makes sense.
 \begin{align}
   v(t) &= v_t - (v_t - v_1)\, e^{-t/t_0} \label{eq:v-t} \\
   v_t &= v_0\left(1 - \frac{W}{F_\mathrm{stall}}\right) \label{eq:vt} \\
@@ -226,8 +229,11 @@ Integrating Eq.~\eqref{eq:v-t} once more gives the position along the ramp:
   x(t) = x_1 + v_t t - t_0 (v_t - v_1)\left(1 - e^{-t/t_0}\right)
   \label{eq:x-t}
 \end{equation}
-Eq.~\eqref{eq:x-t} cannot be solved for $t$ in closed form, so we found the $t$ at which $x = \qty{1.524}{m}$ numerically, by bisection. Adding $t_1$ gives $T(G)$.
+% what is bisection and why is it mentioned? If we just use a numpy function just say with a numpy function. Is "bisection" actually relevant? Also, that's not a direct approach for solving ODE's, that's like just for solving systems I think and it's a component of some ODE solvers?
+Eq.~\eqref{eq:x-t} cannot be solved for $t$ in closed form, so we found the $t$ at which $x = \qty{1.524}{m}$ numerically by bisection. Adding $t_1$ gives $T(G)$.
 
+
+% this is a scattered, broken, and difficult to understand paragraph
 \paragraph{Why there is an optimum}
 For the \qty{280}{\rpm} version ($\eta_\mathrm{g} = 0.7$, $k_r = 1$), the first phase lasts \qty{0.17}{s} and covers \qty{4}{cm}, and $t_0$ is \qty{0.05}{s}. The robot spends nearly the whole climb close to $v_t$ (\qty{0.62}{m/s}), so the fastest climb comes from the largest $v_t$. Substituting Eqs.~\eqref{eq:fstall} and~\eqref{eq:v0} into Eq.~\eqref{eq:vt} and setting its derivative with respect to $G$ to zero, $v_t$ is largest when
 \begin{equation}
@@ -236,6 +242,8 @@ For the \qty{280}{\rpm} version ($\eta_\mathrm{g} = 0.7$, $k_r = 1$), the first 
 \end{equation}
 At that gear ratio the motors climb at half their no-load speed, which is where a DC motor delivers its peak power. More reduction makes the motors strong but slow. Less reduction leaves so little force to spare over $W$ that the motors must run close to stall to keep climbing. For all three combinations of $\eta_\mathrm{g}$ and $k_r$ in Fig.~\ref{fig:gear}b, Eq.~\eqref{eq:optimum} puts the optimum between the \qty{620}{\rpm} (1:9.6) and \qty{280}{\rpm} (1:21.3) versions.
 
+% this makes absolutely zero sense coming after numerical optimization
+% bounds first, obviously
 \paragraph{Applying the bounds}
 Every version shares the same base motor, so all of them meet Section~\ref{sec:current-bound}. The torque bounds of Sections~\ref{sec:traction-bound} and~\ref{sec:holding-bound} leave three candidates: the 170, 280 and \qty{620}{\rpm} versions (Fig.~\ref{fig:gear}a).
 
@@ -255,5 +263,10 @@ The \qty{280}{\rpm} version (1:21.3) gives the shortest estimated climb (Fig.~\r
 We bought and ran the \qty{280}{\rpm} version. Once the motors arrived, we measured their stall current at \qty{1.4}{A} \tbd{confirm the pack voltage during the stall test}, close to the \qty{1.5}{A} we had estimated.
 
 In our time trial testing, we found that the robot climbs the ramp in about \qty{3.3}{s}. With no extra resistance the model estimates \qty{2.6}{s}. We evaluated $T(G)$ for the \qty{280}{\rpm} version numerically, as above, over a grid of losses: $\eta_\mathrm{g}$ from 0.5 to 0.8 and $k_r$ from 1.0 to 1.25. Across that grid it gives 2.5 to \qty{3.9}{s}, and the measured \qty{3.3}{s} falls inside, so the model matches reality well. One climb time cannot separate the two losses, so several pairs reproduce \qty{3.3}{s}, for example $\eta_\mathrm{g} = 0.6$ with $k_r = 1.25$ (\qty{3.29}{s}). Every pair that fits has $\eta_\mathrm{g}$ of 0.6 or less and $k_r$ between about 1.07 and 1.25, so the real drivetrain loses more than the gearbox alone accounts for.
+
+% "so the real drivetrain loses more than the gearbox alone accounts for"
+% "accounts for" is an utterly useless phrase here
+% also, like... of fucking course? Frictino exists (WOW) and doesn't only apply to gears (SHOCKING) - this is just a trivial and useless padded phrase. Every single word and phrase needs to be evaluated against "does this actually fucking *mean* anything?" because you are INCREDIBLY good at writing bullshit that is coherent strictly and solely on a word-to-word basis, technically perhaps factually accurate, and otherwise meaningless and incomprehensible
+
 
 Several problems in our build add to that resistance. The side guards flexed into the treads and rubbed on them in every run (Section~\ref{sec:layout}). The tracks are tensioned tightly so they do not dip and scrape at the mesa edge (Section~\ref{sec:couplers}), which loads the sprockets and axles. The printed couplers flex as they turn, the treads have friction within themselves, and the robot rubs and knocks against the side wall it uses as a guide rail.

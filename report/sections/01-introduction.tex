@@ -18,47 +18,47 @@ Each robot starts on the slope at the bottom of its ramp, and a judge starts it 
   \label{fig:hill}
 \end{figure}
 
-\subsection{Strategic Philosophy and High-Level Design Concepts}
+\subsection{Strategic philosophy}
 \label{sec:strategy}
 
-Our objective was to reach the mesa first and keep the opponent from displacing us for the rest of the \qty{30}{s}. 
+Our objective was to reach the mesa first and keep the opponent from displacing us for the rest of the \qty{30}{s}.
 
-When considering what strategy would inform the mechanical design of our robot, several factors made it clear to us that reaching the top first would be an ututerly crucial capability.
+When considering what strategy would inform the mechanical design of our robot, several factors made it clear to us that reaching the top first would be an utterly crucial capability.
+\begin{itemize}
+  \item \textbf{An attacker on the slope has far less force to push with.} Some of its traction goes to holding the robot up the slope against gravity, $m g \sin\theta$, rather than pushing forward. And the traction itself is capped by the normal force, which on the slope is only $m g \cos\theta$. The most an attacker can push with, against the most a defender on the mesa can resist with, is
+  \begin{equation}
+    F_\mathrm{att} = \mu_s m g \cos\theta - m g \sin\theta, \qquad F_\mathrm{def} = \mu_s m g
+    \label{eq:attack}
+  \end{equation}
+  For two robots of equal mass and any $\mu_s$ between 0.8 and 1.0, the defender can resist 3.5 to 7 times the force the attacker can apply.
+  \item \textbf{An attacker arrives with its wedge in the air.} Its wedge cannot sit flush on the mesa until the robot has fully cleared the ramp, so its edge will most likely still be in the air at the moment it meets the defender's own wedge.
+  \item \textbf{The autonomous requirement amplifies the importance of arriving first.} Until the robots meet, the robot's path is very predictable: it moves with roughly known velocity and acceleration through static, known geometry. After contact, a robot without an absolute positioning or vision system can only understand very little, with low confidence, about its position. Beyond a few simple heuristics, making strategic moves to worm out of a losing position is largely infeasible in Monarch of the Hill. Meanwhile, a robot already on top needs very little information and very little intelligence to hold its place.
+\end{itemize}
 
-% hey claude your job will be to clean this up because I don't know the syntax for a nice bulleted list. Just make it pretty and uniform with everything else.
-% and also then use the proper symbols, introduce the proper equations, etc
-
-- The driving force available to an attacker still on the slope is severely decremented relative to a robot on the mesa, for two reasons:
-- Some fraction of motor torque is redirected to accelerating the robot upward against gravity, not forwards.
-- The total available motor torque is only equal to the reduced normal force on the slope.
-
-- Moreover, an attacker's wedge cannot sit flush on the mesa until the robot has fully cleared the ramp, so its edge will most likely still be in the air at the moment it meets the defender's own wedge.
-
-- The autonomous requirement amplifies the importance of arriving first. Until the robots meet, the robot's path is very predicitable: it moves with roughly known velocity and acceleration through static, known geometry. After contact, a robot without an absolute positioning or vision system can only understand very little, with low confidence, about the nature of its position. Beyond a few simple heuristics, making strategic moves to worm out of a losing position is largely infeasible in Monarch of the Hill. Meanwhile, a robot already on top needs very little information and very little intelligence to hold its place.
-
-% condense and move this paragraph to the part where I mention less total driving force available because friction
-% The physics favors the defender too. On the flat mesa a robot can resist with its whole friction force, $\mu_s m g$. An attacker still on the ramp spends most of its traction holding itself on the slope and has only $\mu_s m g \cos\theta - m g \sin\theta$ left to push with. For two robots of equal mass and any $\mu_s$ between 0.8 and 1.0, the defender can resist 3.5 to 7 times the force the attacker can apply.
-
-% need some kind of "mechanical design" heading somewhere idk
 \paragraph{Defense without a pushing match}
-Another crucial strategic choice we made was to plan to never have to out-push an opponent.
-In Monarch of the Hill, we reasoned that it's vastly more advantageous to get under an opponent than to push them, for two reasons:
-% need short short bit about depriving them of normal force and therefore pushing force
-- The way winners are decided means that vertical distance from the mesa centerpoint is just as important to control as horizontal distance. Therefore, getting under an opponent is just as much of a winning strategy as shoving an opponent forward off the mesa - the greater Z-distance applies to their furthest point just as much as x or y.
+Another crucial strategic choice we made was to plan to never have to out-push an opponent. In Monarch of the Hill, we reasoned that it is vastly more advantageous to get under an opponent than to push them, for two reasons:
+\begin{itemize}
+  \item \textbf{A lifted opponent cannot push.} Getting under an opponent takes its weight off its tracks. With less normal force on its tracks it has less traction, and so less force to push with (Eq.~\eqref{eq:attack}).
+  \item \textbf{Height counts as much as distance.} The winner is decided by the three-dimensional distance from the mesa center to each robot's farthest point, so vertical distance is just as important to control as horizontal distance. Getting under an opponent is therefore just as much of a winning strategy as shoving it forward off the mesa: the greater vertical distance applies to its farthest point just as much as a horizontal one.
+\end{itemize}
+The combination of these two factors makes ``ground game'' the most crucial component of winning Monarch of the Hill.
 
-The combination of these two factors make "ground game"  the most crucial component of winning Monarch of the Hill.
+\subsection{High-level mechanical design}
+\label{sec:concept}
 
+\paragraph{Wedge and forks}
 We borrowed design principles from combat robotics to create a low wedge with forks at the front of the robot.
 
-The forks are a crucial component: It's impossible to design a wedge to be perfectly flush with the ground due to manufacturing tolerances and strains during operation. Attempting to do so would result in the wedge dragging on the high-friction ramp surface. In a flat arena, forks are guaranteed to sit flush almost all the time thanks to gravity. However, their mass and contact area are so low that the unwanted friction they incur is basically negligible.
+The forks are a crucial component. It is impossible to design a wedge to be perfectly flush with the ground because of manufacturing tolerances and strains during operation, and attempting to do so would leave the wedge dragging on the high-friction ramp surface. In a flat arena, forks are guaranteed to sit flush almost all the time thanks to gravity, and their mass and contact area are so low that the friction they add is negligible.
 
-For the three-dimensional arena of Monarch of the Hill, however, we added one additional feature: We knew it wasn't guaranteed that our robot would reach the mesa first every time. So, we designed front forks that would remain flush with the mesa even while the robot is in the process of breaking into the mesa.
+For the three-dimensional arena of Monarch of the Hill, we added one more feature. We knew it was not guaranteed that our robot would reach the mesa first every time, so we designed front forks that remain flush with the mesa even while the robot is still cresting onto it (Section~\ref{sec:wedge}).
 
 \paragraph{The side wall as a guide rail}
-We wanted our robot to be as stable and difficult to displace as possible in every direction. We knew from the start that we wanted our robot's frame to fit the full width of the ramp, using the walls like guide rails. This ensured that it wouldn't get misaligned, shoved laterally, or pitched entirely over the side.
+We wanted our robot to be as stable and difficult to displace as possible in every direction. We knew from the start that we wanted our robot's frame to fit the full width of the ramp, using the walls like guide rails. This ensured that it would not get misaligned, shoved laterally, or pitched entirely over the side.
 
-
-These strategic goals set four requirements that quantitatively defined the rest of our design, and organize the rest of the report: 
-- climb as fast as traction and available power allow
-- recognize the crest and stop at the front of the mesa
-- hold position there, confident that the passive geometry of the wedge and forks will preempt most pushing matches
+These strategic goals set three requirements that quantitatively defined the rest of our design, and that organize the rest of the report:
+\begin{itemize}
+  \item climb as fast as traction and available power allow;
+  \item recognize the crest and stop at the front of the mesa;
+  \item hold position there, confident that the passive geometry of the wedge and forks will preempt most pushing matches.
+\end{itemize}

@@ -41,12 +41,12 @@ We designed and built an autonomous tracked robot for the AME 101 Monarch of the
 \section*{Nomenclature}
 \addcontentsline{toc}{section}{Nomenclature}
 
-{\small\renewcommand{\arraystretch}{0.92}
+{\small\renewcommand{\arraystretch}{0.84}
 \begin{tabularx}{\textwidth}{@{}l L l@{}}
   \toprule
   \textbf{Symbol} & \textbf{Meaning} & \textbf{Units} \\
   \midrule
-  $a$ & acceleration along the ramp & \unit{m/s^2} \\
+  $a$, $a_1$ & acceleration along the ramp; while the tracks slip & \unit{m/s^2} \\
   $\bm{a}_\mathrm{m}$ & acceleration vector as measured by accelerometer & \unit{m/s^2} \\
   $c$ & distance from the neutral axis to the outermost fiber & \unit{mm} \\
   $F$ & traction force from both tracks & \unit{N} \\
@@ -56,7 +56,7 @@ We designed and built an autonomous tracked robot for the AME 101 Monarch of the
   $G$ & gear ratio & -- \\
   $g$ & gravitational acceleration, 9.81 & \unit{m/s^2} \\
   $I$ & second moment of area of a section; current drawn from the pack (Eq.~\eqref{eq:vterm}) & \unit{mm^4}; \unit{A} \\
-  $I_\mathrm{stall}$, $I_\mathrm{stall,max}$ & motor stall current; largest stall current the pack allows & \unit{A} \\
+  $I_\mathrm{m}$, $I_\mathrm{stall}$, $I_\mathrm{stall,max}$ & motor current; at stall; largest stall current the pack allows & \unit{A} \\
   $k_\mathrm{t}$ & motor torque constant & \unit{N.m/A} \\
   $k_r$ & resistance factor: total resistance to climbing as a multiple of $m g \sin\ang{33.4}$ & -- \\
   $M$ & bending moment & \unit{N.m} \\
@@ -70,13 +70,16 @@ We designed and built an autonomous tracked robot for the AME 101 Monarch of the
   $T$, $T_\mathrm{max}$ & total tension force of the tread on the sprocket; total tension at which the coupler will fail & \unit{N} \\
   $T(G)$ & climb time with gear ratio $G$ & \unit{s} \\
   $T_c$ & filter time constant & \unit{s} \\
+  $t$, $t_0$, $t_1$ & time; time constant of the approach to $v_t$; duration of the slipping phase & \unit{s} \\
   $\Delta t$ & filter update interval & \unit{s} \\
   $\hat{\bm{u}}$ & estimated direction of gravity in the sensor frame & -- \\
   $\hat{\bm{z}}$ & the robot's up direction in the sensor frame & -- \\
   $V$ & pack voltage & \unit{V} \\
   $V_\mathrm{term}$ & pack terminal voltage under load & \unit{V} \\
   $\Delta V_\mathrm{sag}$ & drop in pack voltage with both motors at stall & \unit{V} \\
-  $v$, $v_0$ & speed along the ramp; no-load speed & \unit{m/s} \\
+  $v$, $v_0$, $v_1$, $v_t$ & speed along the ramp; no-load; when the tracks stop slipping; steady climbing & \unit{m/s} \\
+  $W$ & total resistance to climbing, $k_r m g \sin\ang{33.4}$ & \unit{N} \\
+  $x$, $x_1$ & distance along the ramp; covered while slipping & \unit{m} \\
   $\mathcal{E}$ & pack open-circuit voltage & \unit{V} \\
   $\ell$ & lever arm from the bottom of the motor bore to the tread line (couplers); guard length (side guards) & \unit{mm} \\
   \midrule
@@ -86,7 +89,9 @@ We designed and built an autonomous tracked robot for the AME 101 Monarch of the
   $\mu_s$ & static friction coefficient, tracks on the ramp surface & -- \\
   $\sigma$, $\sigma_\mathrm{allow}$ & bending stress; failure stress of the print & \unit{MPa} \\
   $\sigma_a$, $\sigma_u$ & stress amplitude survived for $n$ cycles; static strength & \unit{MPa} \\
+  $\tau_\mathrm{m}$, $\tau_\mathrm{s}$ & torque of one motor; at one sprocket & \unit{N.m} \\
   $\bm{\omega}$ & gyro angular rate & \unit{rad/s} \\
+  $\omega_\mathrm{m}$, $\omega_\mathrm{s}$ & motor shaft speed; sprocket speed & \unit{rad/s} \\
   \bottomrule
 \end{tabularx}
 }

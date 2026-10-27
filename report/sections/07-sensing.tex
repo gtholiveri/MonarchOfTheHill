@@ -31,7 +31,7 @@ Table~\ref{tab:apparent} shows the size of the error. Decelerating at \qty{3}{m/
   \end{tabular}
 \end{table}
 
-Acceleration along the ramp does not touch the reading across it, so in principle pitch could come from that component alone, $\theta = \arccos(\bm{a}_\mathrm{m} \cdot \hat{\bm{z}} / g)$. In our runs that component was corrupted too: the accelerometer-only pitch at times read past \ang{90} (Fig.~\ref{fig:pitch}), which means the measured component along $\hat{\bm{z}}$ swung negative, a change of more than $g \cos\ang{33.4} = \qty{8.2}{m/s^2}$.
+Acceleration along the ramp does not touch the reading across it, so in principle pitch could come from that component alone, $\theta = \arccos(\bm{a}_\mathrm{m} \cdot \hat{\bm{z}} / g)$. That component is not immune to vibration, though: three times in our climbs the accelerometer-only pitch read past \ang{90} (Fig.~\ref{fig:pitch}), which means the measured component along $\hat{\bm{z}}$ briefly swung negative, a jolt of more than $g \cos\ang{33.4} = \qty{8.2}{m/s^2}$.
 
 A gyroscope measures rotation rate directly and is not fooled by linear acceleration, but turning its rate into an angle means integrating, and integration accumulates error. Ours read up to \qty{4.7}{\degree/s} with the robot at rest; over a \qty{5}{s} climb that offset alone would add \ang{23} of error.
 

@@ -4,13 +4,11 @@
 \subsection{The run: climb, decelerate, hold}
 \label{sec:run}
 
-An autonomous run has three stages (Fig.~\ref{fig:states}). In Climb, both motors run at full power. The robot has no way to measure distance, so Climb ends at a set time after the start. Pitch is the backstop on that time: if the pitch stays below \ang{18} for \qty{40}{ms} before the set time, Climb ends then instead. The robot ignores this test for the first \qty{0.3}{s} of the run. In Decelerate, the drive power ramps linearly from full to zero over a set time, and momentum carries the robot from the ridge onto the mesa. It then enters Hold.
+An autonomous run has three stages (Fig.~\ref{fig:states}). In Climb, both motors run at full power. The robot has no way to measure distance, so Climb ends as soon as either of two conditions is met: \qty{3.15}{s} have passed since the start, or the pitch has stayed below \ang{18} for \qty{40}{ms}. The robot ignores the pitch condition for the first \qty{0.3}{s} of the run. In Decelerate, the drive power ramps linearly from full to zero over a set time, and momentum carries the robot from the ridge onto the mesa. It then enters Hold.
 
 In Hold, the robot sets its motor power to zero while it is level, and the driver code applies zero power as short brake. Short brake connects each motor's two terminals together. A motor turned by an outside force then acts as a generator driving current through its own windings, and that current makes a torque opposing the motion, $\tau_\mathrm{brake} = k_\mathrm{t}^2 \omega / R_\mathrm{w}$ for a motor turned at speed $\omega$.
 
 Hold also corrects the robot's position from its pitch. If the nose rises more than \ang{6}, because the robot stopped short of the top or is being shoved back down our ramp, it drives forward at full power, 255 of 255. If the nose drops more than \ang{6}, because the robot is about to go over the far side, it backs up at 110 of 255. It keeps correcting until the pitch is back within \ang{3}, so that it does not switch rapidly between correcting and braking at the edge of the \ang{6} band.
-
-% "backstop" isn't an intuitive phrase here. That state transition is literlaly just a singnle OR statement, write it as a single OR statement
 
 \begin{figure}[htbp]
   \centering
@@ -35,11 +33,10 @@ Hold also corrects the robot's position from its pitch. If the nose rises more t
 
     \draw[->,thick] (climb.north east) ++(-0.5,0)
       .. controls +(0.6,1.3) and +(-0.6,1.3) .. ([xshift=0.5cm]climb.north west)
-      node[lbl,pos=0.5,above] {under \qty{3.15}{s}, backstop not met};
+      node[lbl,pos=0.5,above] {neither condition met};
 
-    \draw[->,thick] ([xshift=-0.6cm]climb.south) -- node[lbl,left] {\qty{3.15}{s} after\\the start} ([xshift=-0.6cm]dec.north);
-    \draw[->,thick] ([xshift=0.6cm]climb.south) -- node[lbl,right,align=left]
-      {backstop, earlier:\\pitch below \ang{18} for \qty{40}{ms},\\tested after the first \qty{0.3}{s}} ([xshift=0.6cm]dec.north);
+    \draw[->,thick] (climb) -- node[lbl,right,align=left]
+      {\qty{3.15}{s} after the start\\\textbf{or} pitch below \ang{18} for \qty{40}{ms}\\(pitch tested after the first \qty{0.3}{s})} (dec);
 
     \draw[->,thick] (dec) -- node[lbl,right,pos=0.35] {power at zero} (hold);
 
@@ -56,22 +53,15 @@ Hold also corrects the robot's position from its pitch. If the nose rises more t
       \node[anchor=west] at (0.2,-0.5) {autonomous run};
     \end{scope}
   \end{tikzpicture}
-  \caption{The autonomous run. Time paces the climb, and pitch is the backstop. In Hold the robot reacts to pitch alone.}
+  \caption{The autonomous run. Climb ends on time or on pitch, whichever comes first. In Hold the robot reacts to pitch alone.}
   \label{fig:states}
 \end{figure}
 
 \subsection{Tuning}
 \label{sec:tuning}
 
-% use the term binary search for talking about trim because I like it and it's accurate
-We empirically found that a climb takes about \qty{3.3}{s}, so we set \qty{3150}{ms} of full-power climb and a \qty{150}{ms} deceleration ramp. We also built a trim tool for straight-line driving: each press shifts power \qty{16}{\percent} toward the lagging side, and the step halves every time the drift reverses. The larger problem turned out not to be the robot pulling sideways but the side guards rubbing on the treads (Section~\ref{sec:layout}).
-% the larger problem? The trim thing is the biggest possible alleviation to it
-% we're restricted to a straight line no matter what, but any power we spend just ramming ourselves into the wall only slows us down
-% complete misunderstanding on your part
+We empirically found that a climb takes about \qty{3.3}{s}, so we set \qty{3150}{ms} of full-power climb and a \qty{150}{ms} deceleration ramp. We also built a trim tool for straight-line driving that works as a binary search: each press shifts power \qty{16}{\percent} toward the lagging side, and the step halves every time the drift reverses. The side wall keeps the robot on a straight line either way, but a robot that pulls toward the wall spends power pushing itself into it, which only slows the climb. Trimming the motors to drive straight puts that power back into climbing.
 
-% this paragraph's beginning is nonsensical
-
-Both Hold correction powers started at full power, 255 forward and 255 back. With those, the robot oscillated on the mesa: it threw itself forward, overshot, threw itself back, overshot, and so on. We lowered the correction power to stop this, and the code's values are 255 forward and 110 back \tbd{confirm only the back-up power was lowered, to 110}.
-% confirmed
+At first, Hold corrected at full power, 255, in both directions. The robot then oscillated on the mesa: it threw itself forward, overshot, threw itself back, overshot, and so on. We lowered the back-up power to 110 to stop this, and kept forward correction at full power.
 
 From our average climb speed of \qty{0.46}{m/s}, stopping takes $v^2/(2a)$: \qty{11}{cm} at \qty{1}{m/s^2} and \qty{4}{cm} at \qty{3}{m/s^2}, both inside the \qty{30}{cm} mesa. We never ran the robot without the Decelerate stage, so we cannot say whether overshooting the mesa was a real risk.

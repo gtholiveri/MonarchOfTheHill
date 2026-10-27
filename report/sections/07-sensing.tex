@@ -25,10 +25,9 @@ A gyroscope measures rotation rate directly, so it is more resilient to vibratio
 \subsection{Complementary filter}
 \label{sec:filter}
 
-% clean up my flow but this is more what I want. It's close
-We wrote a simple filter to enable the robot to accurately estimate its tilt. The algorithm is essentially that when we know the accelerometer is being shaken or accelerated, we do not trust it. The rest of the time, it's used as a constant correction source for the gyro's drift.
+We wrote a simple filter so the robot could estimate its tilt accurately. Whenever we know the accelerometer is being shaken or accelerated, the filter ignores it. The rest of the time, the accelerometer continuously corrects the gyro's drift.
 
-We chose this approach because it was straightforward and required little additional tuning or analysis. We didn't have to write or tune smoothing functions, or find frequencies to filter out. Our testing in Section~\ref{sec:pitch-test} shows that the approach, though simple, was very effective.
+We chose this approach because it was straightforward and needed little tuning or analysis: we did not have to write or tune smoothing functions, or find frequencies to filter out. Our testing in Section~\ref{sec:pitch-test} shows that the approach, though simple, was very effective.
 
 The robot keeps its estimate of which way is up as a unit vector $\hat{\bm{u}}$ in the sensor's frame, and updates it every \qty{20}{ms} in two steps. First, it rotates $\hat{\bm{u}}$ by how far the gyro says the robot turned since the last update. Second, if the accelerometer is trusted, it moves $\hat{\bm{u}}$ a small step toward the direction the accelerometer reads.
 
@@ -56,7 +55,6 @@ The gyro offset is averaged over 50 readings with the robot at rest and subtract
 The autopilot treats the robot as crested when the pitch stays below \ang{18} for \qty{40}{ms}, and on the mesa it counts anything within \ang{\pm 6} as level. The estimate therefore must not read more than \ang{15} low while climbing the \ang{33.4} ramp, and must be within \ang{\pm 6} at rest.
 To test this we used the hill itself as ground truth: anywhere on the ramp the true pitch is \ang{33.4}, and on the mesa it is \ang{0}. We logged both the accelerometer-only and the fused pitch through three full autonomous runs (Fig.~\ref{fig:pitch}, Table~\ref{tab:pitch}). Climbing, the accelerometer alone was off by up to \ang{122}, while the fused estimate never read more than \ang{4.5} from the true angle, well inside the \ang{15} the crest test allows. At rest, both were within \ang{4} on the mesa, inside the \ang{\pm 6} level band.
 
-% position the "climbing" note better or put it in the legend
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=0.92\textwidth]{fig11_pitch.pdf}

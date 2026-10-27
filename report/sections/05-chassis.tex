@@ -30,18 +30,17 @@ The chassis is fully custom and 3D printed in PLA (Figs.~\ref{fig:chassis} to~\r
 
 We used a master model workflow, in which key reference and control geometry flows down to every part in the assembly. The final design has four parts: a main body enclosing the electronics, a top plate, the front wedge and the forks. Test prints checked the mounting patterns for the battery box and the boards, but in the final build we hot glued those parts in place, which let us change the layout without reprinting the whole box.
 
-\begin{figure}[htbp]
+\begin{figure}[tb]
   \centering
   \includegraphics[width=0.8\textwidth]{fig_chassis_assembly.pdf}
   \caption{Left: exploded assembly drawing of the chassis (scale 1:3). Right: section view of the electronics box, cut away to show the internal mounting features (scale 1:2).}
   \label{fig:assembly}
 \end{figure}
 
-% this somehow ends up on its own page directly splitting a paragraph which is turbo chopped
-\begin{figure}[htbp]
+\begin{figure}[tb]
   \centering
   \includegraphics[width=0.8\textwidth]{fig_chassis_dimensions.pdf}
-  \caption{Dimensioned drawing of the chassis, in inches. These are the nominal CAD dimensions. Sizes quoted in the text are measured on the built robot and are generally less due to print tolerance, mating clearances.}
+  \caption{Dimensioned drawing of the chassis, in inches. These are the nominal CAD dimensions. Sizes quoted in the text are measured on the built robot and are generally less due to print tolerance and mating clearances.}
   \label{fig:dimensions}
 \end{figure}
 
@@ -121,9 +120,10 @@ For design, Ezeh and Susmel propose a fatigue curve for printed PLA scaled to it
   \sigma_a(n) = 0.10\,\sigma_u \left(\frac{2 \times 10^6}{n}\right)^{1/5.5}
   \label{eq:fatigue}
 \end{equation}
-% what does this mean? that for fatigue they're *not* anisotropic? What?! This is awfully, horrifically mangling the wording if that's not what you meant
-where $\sigma_u$ is the static strength. They found that print direction makes little difference once the curve is scaled by each orientation's own static strength, so we scale it by the lowest course value for each orientation: \qty{20.5}{MPa} upright and \qty{58.2}{MPa} lying~\cite{ronney}. Transverse shear is at most \qty{15}{\percent} of the bending stress over this range of $\ell$, and the motor's stall torque of about \qty{0.2}{N.m} adds only about \qty{3}{MPa} of shear, so bending governs.
-% be clearer on "transverse shear" - shear relative to what reference plane? And we know that the actual torque was nothing, there's no need to even mention that
+where $\sigma_u$ is the static strength. Ezeh and Susmel reviewed published fatigue tests on printed PLA and found that print direction had little effect on fatigue behavior in that data, so they treat the material as isotropic. That cannot hold for loads that pull layers apart: the course tests put upright prints at about a third of the static strength of lying ones, and our upright couplers broke at a layer bond. We therefore apply the curve to each orientation separately, with that orientation's lowest course strength as $\sigma_u$: \qty{20.5}{MPa} upright and \qty{58.2}{MPa} lying~\cite{ronney}.
+
+The tread's pull also shears the coupler across its cross-section, the plane perpendicular to the shaft. Over this range of $\ell$ that shear stress is at most \qty{15}{\percent} of the bending stress, so bending governs.
+
 \begin{table}[htbp]
   \centering
   \caption{Allowable stress and the tread tension it allows at mid-hub ($\ell = \qty{12}{mm}$, Eq.~\eqref{eq:tmax}, $I/c = \qty{36.7}{mm^3}$). With the tread at the inner edge of the hub ($\ell = \qty{8}{mm}$) every tension is 1.5 times higher; at the outer face ($\ell = \qty{16}{mm}$) it is 0.75 times.}

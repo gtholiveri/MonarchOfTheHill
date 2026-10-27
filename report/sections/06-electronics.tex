@@ -6,14 +6,13 @@
 
 Figure~\ref{fig:electronics} shows the wiring. A Particle Photon~2~\cite{photon2} runs the robot. It replaced the kit's ESP32 board, which failed during bench wiring for reasons we could not determine. The kit's motor shield drives its motors through a co-processor commanded over a serial link; we replaced it with a SparkFun TB6612FNG dual motor driver~\cite{sparkfun} we had on hand, controlled directly from the Photon's pins and with its motor supply wired straight to the battery. An MPU6050~\cite{mpu6050} gyro and accelerometer on the I$^2$C bus does all the sensing, read by firmware written mostly with Claude Code~\cite{claude}. Power comes from the supplied 2S pack of 18650 cells \tbd{confirm capacity: 2,500 or 3,000 mAh}. A judge starts the run with a single switch, which the Photon reads directly.
 
-% only label motor once
-% make sure this style of callout is uniform across figures, I remember at some point the other ones having red stroke
 \begin{figure}[htbp]
   \centering
+  \definecolor{dotred}{HTML}{E8402F}
   \begin{tikzpicture}[
-      callout/.style={font=\footnotesize,inner sep=1pt,text height=1.6ex,text depth=0.3ex},
-      leader/.style={draw=black,line width=0.4pt},
-      tip/.style={circle,fill=black,draw=white,line width=0.5pt,inner sep=0pt,minimum size=3pt}]
+      callout/.style={font=\small,inner sep=1pt,text height=1.6ex,text depth=0.3ex},
+      leader/.style={draw=black,line width=0.6pt},
+      tip/.style={circle,fill=dotred,draw=white,line width=0.6pt,inner sep=2.2pt}]
     \node[anchor=south west,inner sep=0pt] (img)
       {\includegraphics[width=\textwidth,trim=0 26 0 0,clip]{fig_wiring.pdf}};
     \begin{scope}[x={(img.south east)},y={(img.north west)}]
@@ -29,8 +28,7 @@ Figure~\ref{fig:electronics} shows the wiring. A Particle Photon~2~\cite{photon2
       \foreach \px/\py/\lx/\txt in {
           0.055/0.482/0.070/Gearmotor,
           0.275/0.503/0.225/Battery pack jack,
-          0.429/0.500/0.440/Controller (Photon~2),
-          0.943/0.482/0.930/Gearmotor} {
+          0.429/0.500/0.440/Controller (Photon~2)} {
         \node[callout,anchor=north] (L) at ([yshift=-7pt]\lx,0) {\txt};
         \draw[leader] (\px,\py) -- (L.north);
         \node[tip] at (\px,\py) {};

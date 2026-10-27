@@ -21,8 +21,10 @@ for ax,(run,lab) in zip(axs,[('3','Run A'),('5','Run B'),('2','Run C')]):
     for s in ('top','right'): ax.spines[s].set_visible(False)
     for s in ('left','bottom'): ax.spines[s].set_color('#b5b4b0')
     ax.tick_params(colors=mute)
-axs[0].text(1.4,104,'climbing',fontsize=7.5,color=mute,ha='center',va='top')
-axs[0].legend(frameon=False,fontsize=7.5,loc='upper right',bbox_to_anchor=(1.0,1.18),ncol=2)
+from matplotlib.patches import Patch
+h,l=axs[0].get_legend_handles_labels()
+h.append(Patch(facecolor='#f1f0ec',edgecolor='none')); l.append('Climbing')
+axs[0].legend(h,l,frameon=False,fontsize=7.5,loc='upper right',bbox_to_anchor=(1.0,1.18),ncol=3)
 axs[1].set_ylabel('Pitch (°)')
 axs[2].set_xlabel('Time from start of climb (s)')
 axs[2].set_xlim(-1,5)

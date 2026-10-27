@@ -6,6 +6,7 @@
 
 The chassis is fully custom and 3D printed in PLA (Figs.~\ref{fig:chassis} to~\ref{fig:dimensions}). The wedge plate and forks form the front of the chassis. The battery holder sits in the front half, with the breadboard carrying the controller, motor driver and sensors beside it. The two gearmotors sit at the rear, each driving a stock sprocket, and the start switch is on the side where the judge can reach it.
 
+% I  wanat to redo this to also point at the slot that allows you to fit a ratcheting socket wrench in to adjust the undriven wheels, and only label a singlne gearmotor. Also we already labeled the wedge elsewhere so I don't want to be redundant.
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=\textwidth]{fig07_chassis.jpg}
@@ -13,8 +14,32 @@ The chassis is fully custom and 3D printed in PLA (Figs.~\ref{fig:chassis} to~\r
   \label{fig:chassis}
 \end{figure}
 
-We started from a master model holding reference geometry for the motors, controller board, tracks and battery box. Test prints checked the battery box and board mounting patterns: the battery box worked after one round of iteration, and the board mount needed further adjustment. In the final build we hot glued these parts in place. A full prototype chassis followed, then the shaft couplers and motor mounts. One motor mount did not fit because horizontal printed holes sag at the top and come out undersized vertically. We set clearances for slip and press fits from test prints (\tbd{values}) and added alignment ridges and countersinks on the top plate for assembly. Side guards along each side keep the robot aligned with the guide rail and stop it riding over the edge. They were a late addition: as printed they interfered with other parts, so we cut them to fit with a Dremel, a hacksaw and a band saw, and the cut-down guards flexed into the treads and rubbed on them in every run (Section~\ref{sec:drivetrain-result}). At about \qty{4}{in} tall on an \qty{11.75}{in} by \qty{11.4}{in} footprint, the robot cannot tip backward on the \ang{33.4} ramp, and it never came close in testing.
+We used a master model workflow where key reference and control geometry flows down through all parts in the assembly. Our final design assembled from four parts: a main body enclosing the electronics, top plate, front wedge, and forks. We ran multiple test prints to check the battery box and board mounting patterns. However, in the final build we hot glued these parts for greater flexibility, which allowed us to change the configuration without reprinting the entire box.
 
+We iterated a few drivetrain mounting prototypes. We realized that sufficient tread tension to prevent the robot from bottoming out on the ridge was crucial. However, to actually assemble then tense the treads would require the wheel pitch to be adjustable. So, we designed slots rather than clearance holes to mount the undriven wheel axle bolts. We also used slicer volume modifiers to raise the infill to 100\% where the bolt applies clamping stress to the plastic, ensuring we could tighten the axles to perfectly rigid with significant tension without the hollow plastic yielding.
+
+Another crucial subassembly was the shaft coupler that adapted the 4mm male D-shaft of the motor to the 6mm female D-shaft of the sprocket. The coupler fits over the motor shaft and inserts into the sprocket shaft recess, fastened to the motor by a shaft collar and to the sprocket by a self-tapping screw that runs through the sprocket.
+
+% if we can use this to guesstimate the positional tolerance of the printer that would be lit and a huge flex, boon to the testing side of thigns.
+These required significant measurement, iteration, and testing to function correctly. The fit class between the coupler and each part it connects plays a significant role in how well it functions: too loose a fit (locational clearance) results in a shaft that sits at an angle when tensed with the tread.  It will gyrate and experience particularly particularly unfavorable strain cycles when spun. Too close a fit (interference) means it doesn't assemble. This part requires a running fit. Printing a sweep of different clearance values from 0.05mm to 0.15mm with a resolution of 0.05mm, we found the right clearance for the couplers to be 0.1mm.
+
+Other iteration cycles also centered on clearances and tolerances. Insufficiently clearanced motor mounts and horizontal screw holes resulted in nonfunctional prototypes. After three test iterations, we settled on a mating interface clearance of 0.14mm for the motor mounts and horizontal screw holes.
+
+We followed that up with a few isolated-drivetrain test prints to determine the necessary width for the undriven axle assembly slot such that it assembled easily, which needed to be almost doubled to 15mm from 8mm.
+
+A full prototype chassis followed, then the shaft couplers and motor mounts. To further aid assembly, the top plate included drafted countersunk screw clearance holes and alignment ridges to guide the part into place.
+
+The front wedge we designed as a unified part that wrapped the front of the robot, providing the wedge, side guards, and fork mounts. One difficult thing to design and optimize was the multi-part nature of the robot: manufacturing the entire thing at once wouldn't have been feasible in the build volume of my Prusa Core One+, so it took iteration to find the best places to split and reassemble. Originally, we had planned to print full-length side guards separately, but ditched the idea after realizing that the treads didn't need to be covered along the whole length of the robot. To preempt the need for additional fasteners or gluing, and leave modularity on the table, we designed the front wedge to mate to the rest of the chassis using dovetail joints with semi-permanent snsap fit nubs.
+% I have good slicer screenshot for this that I want to include
+
+The front wedge required careful design for printability in order to fit inside the available build volume. For a long, roughly linear part, available volume is maximized by approximately maximizing linear space (the diagonal). Therefore, we included a small 45 degree planar cutoff at the sides to print it at an angle, using tree supports both as supporting outriggers to prevent it from tipping over and to support overhangs.
+
+A significant issue with our design was that the geometry that aimed to fully wrap and enclose the front surface of the treads assumed their nominal pitch of 120mm. However, our assembly procedure was designed to shove the treads as far forward as possible, and we failed to account for this in the design. This resulted in a 5mm interference on all sides between the front surface of the treads and the wedge. Without time to reprint, we used the bandsaw to chop out expanded clearances. This was one contributor to our low drivetrain efficiency, because the side guards were deprived of rigidity and frequently flexed into the treads. (Section~\ref{sec:drivetrain-result}).
+
+At about \qty{4}{in} tall on an \qty{11.75}{in} by \qty{11.4}{in} footprint, the robot cannot tip backward on the \ang{33.4} ramp, and it never came close in testing.
+
+% make this likea "Left: " and "Right: " syntax caption
+% also your label for the right is wrong, the right is as a *section view* of the electronics box that cuts away so you can see the internal mounting components better
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=0.8\textwidth]{fig_chassis_assembly.pdf}
@@ -41,7 +66,7 @@ We set the wedge and fork angles from the ramp angle. \tbd{Explain the \mbox{\an
   \label{fig:wedge}
 \end{figure}
 
-\subsection{Shaft couplers}
+\subsection{Failure Analysis: Shaft couplers}
 \label{sec:couplers}
 
 Printed couplers join each motor's \qty{4}{mm} D-shaft to the stock sprocket (Fig.~\ref{fig:coupler}). Each is \qty{25.3}{mm} long and \qty{7.8}{mm} in diameter, round with one flat, and it works as a shaft collar and an adapter at once. The motor shaft fills a \qty{9.3}{mm} deep D-shaped bore at one end and is clamped by a set screw. The outside of the coupler, with its flat, extends the motor's small D-shaft into the larger D-shaped bore of the sprocket, which fits over the first \qty{8}{mm} at the other end, and a self-tapping screw driven into the \qty{1.6}{mm} pilot hole along the axis fastens the sprocket on.
@@ -71,8 +96,10 @@ and the largest pull it can carry before failing is
 \end{equation}
 The section at the bottom of the bore is the full D profile with the \qty{1.6}{mm} pilot hole. The coupler turns with the shaft, so the load passes through every direction once per revolution. The worst direction puts the peak stress at a corner of the flat, where $I/c = \qty{36.7}{mm^3}$. The tread runs somewhere on the sprocket's \qty{8}{mm} hub, so $\ell$ lies between 8 and \qty{16}{mm} \tbd{confirm where the tread runs on the hub}.
 
+% no, this is still tread tension - to get the tread *over* and onto the undriven wheel requires significantly more displacement than it just sitting there, you have to force it on even with the slot
 Assembly can also bend the coupler with no tread tension at all. A sideways push on the sprocket rim, parallel to the shaft, bends the free span with a lever arm equal to the \qty{25}{mm} sprocket radius, so Eq.~\eqref{eq:tmax} applies with $\ell = \qty{25}{mm}$.
 
+% we didn't use ultimaker PLA and lab tests usually come up with much less optimistic values. Find and use better data.
 The two orientations fail in different ways. Printed upright, PLA fractures across its layers without yielding first, so for the upright print $\sigma_\mathrm{allow}$ is its tensile strength at break. Printed flat, it yields first and fractures only after several percent more strain, so the lying print does not snap at its limit: it bends permanently, at its yield strength. Both values come from the Ultimaker PLA data sheet~\cite{ultimaker} \tbd{confirm our filament brand}. Transverse shear is at most \qty{15}{\percent} of the bending stress over this range of $\ell$, and the motor's stall torque of about \qty{0.2}{N.m} adds only about \qty{3}{MPa} of shear, so bending governs.
 
 \begin{table}[htbp]

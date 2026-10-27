@@ -1,6 +1,6 @@
 # MOTH group report (LaTeX)
 
-Source for the AME 101 Monarch of the Hill group report, "Taking the Low Road to the High Ground" (Team 2). This replaces the Google Doc "MOTH Group Report" as the source of truth from Oct 26, 2026.
+Source for the AME 101 Monarch of the Hill group report, "Wedges and Forks: Ground Game in Monarch of the Hill" (Team 2). This replaces the Google Doc "MOTH Group Report" as the source of truth from Oct 26, 2026.
 
 ## Open in Overleaf
 

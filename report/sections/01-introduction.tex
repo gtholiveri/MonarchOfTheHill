@@ -9,8 +9,12 @@ The Monarch of the Hill contest is a one-on-one match between autonomous robots 
   \sin\theta = \frac{\qty{33}{in}}{\qty{60}{in}} = 0.550, \qquad \theta = \ang{33.4}
   \label{eq:theta}
 \end{equation}
+
+% not sure whether we actually need to include the rules. Do we need to? Verify against the benny lecture and notes
 Each robot starts on the slope at the bottom of its ramp, and a judge starts it with a single switch on the robot. After \qty{30}{s}, the robot whose farthest point is closest, in three dimensions, to the center of the mesa wins; a robot still on the hill beats one that has fallen off. The rules cap the robot at \qty{1}{kg}, require it to fit inside a \qty{1}{ft} cube at the start, forbid any remote control, and limit stored energy to the supplied two-cell (2S) 18650 lithium-ion pack plus small springs. Groups play 5 to 6 rounds in a Swiss-system tournament~\cite{ronney}.
 
+
+% these figures feel kinda redundant, either we should merge or ditch one
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=0.85\textwidth]{fig01_hill.png}
@@ -25,7 +29,9 @@ Our objective was to reach the mesa first and keep the opponent from displacing 
 
 When considering what strategy would inform the mechanical design of our robot, several factors made it clear to us that reaching the top first would be an utterly crucial capability.
 \begin{itemize}
+% make more clear this is basically an estimate, there's fuzziness and in-between when the attacker is like bridging across the gap and who knows / cares what happens there. But this is a solid estimate anyway.
   \item \textbf{An attacker on the slope has far less force to push with.} Some of its traction goes to holding the robot up the slope against gravity, $m g \sin\theta$, rather than pushing forward. And the traction itself is capped by the normal force, which on the slope is only $m g \cos\theta$. The most an attacker can push with, against the most a defender on the mesa can resist with, is
+  % broadly speaking, if literally everywhere in the report theta means the exact same thing (33deg) couldn't we just be more clear and put 33deg? That idea appeals to me greatly, it just feels more specific
   \begin{equation}
     F_\mathrm{att} = \mu_s m g \cos\theta - m g \sin\theta, \qquad F_\mathrm{def} = \mu_s m g
     \label{eq:attack}
@@ -36,12 +42,12 @@ When considering what strategy would inform the mechanical design of our robot, 
 \end{itemize}
 
 \paragraph{Defense without a pushing match}
-Another crucial strategic choice we made was to plan to never have to out-push an opponent. In Monarch of the Hill, we reasoned that it is vastly more advantageous to get under an opponent than to push them, for two reasons:
+Another crucial strategic choice we made was to plan to never have to out-push an opponent. From the mechanics of the contest, we reasoned that it is vastly more advantageous to get under an opponent than to push them, for two reasons:
 \begin{itemize}
   \item \textbf{A lifted opponent cannot push.} Getting under an opponent takes its weight off its tracks. With less normal force on its tracks it has less traction, and so less force to push with (Eq.~\eqref{eq:attack}).
   \item \textbf{Height counts as much as distance.} The winner is decided by the three-dimensional distance from the mesa center to each robot's farthest point, so vertical distance is just as important to control as horizontal distance. Getting under an opponent is therefore just as much of a winning strategy as shoving it forward off the mesa: the greater vertical distance applies to its farthest point just as much as a horizontal one.
 \end{itemize}
-The combination of these two factors makes ``ground game'' the most crucial component of winning Monarch of the Hill.
+The think that the combination of these two factors makes ``ground game'' the most crucial component of winning Monarch of the Hill.
 
 \subsection{High-level mechanical design}
 \label{sec:concept}
@@ -49,8 +55,9 @@ The combination of these two factors makes ``ground game'' the most crucial comp
 \paragraph{Wedge and forks}
 We borrowed design principles from combat robotics to create a low wedge with forks at the front of the robot.
 
-The forks are a crucial component. It is impossible to design a wedge to be perfectly flush with the ground because of manufacturing tolerances and strains during operation, and attempting to do so would leave the wedge dragging on the high-friction ramp surface. In a flat arena, forks are guaranteed to sit flush almost all the time thanks to gravity, and their mass and contact area are so low that the friction they add is negligible.
+The forks are a crucial component. It is impossible to design a wedge to be perfectly flush with the ground because of manufacturing tolerances and strains during operation—attempting to do so would leave the wedge dragging on the high-friction ramp surface. In a flat arena, forks are guaranteed to sit flush almost all the time thanks to gravity, and their mass and contact area are so low that the friction they add is negligible.
 
+% morph this paragraph into the two general adaptations we made that were specific to monarch of the hill, one of them being the flush-when-cresting forks and the other being the wedge that matches the angle of the ramp
 For the three-dimensional arena of Monarch of the Hill, we added one more feature. We knew it was not guaranteed that our robot would reach the mesa first every time, so we designed front forks that remain flush with the mesa even while the robot is still cresting onto it (Section~\ref{sec:wedge}).
 
 \paragraph{The side wall as a guide rail}

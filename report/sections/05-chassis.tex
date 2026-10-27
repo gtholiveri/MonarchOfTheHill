@@ -32,6 +32,7 @@ We used a master model workflow, in which key reference and control geometry flo
 
 The tracks had to be tight enough that the robot would not bottom out on the crest, and putting the treads on and then tensioning them needs an adjustable wheel pitch. The undriven wheel axle bolts therefore mount in slots rather than clearance holes. Slicer volume modifiers raise the infill to \qty{100}{\percent} where each bolt clamps the plastic, so we could tighten the axles fully rigid under high tension without the hollow print yielding.
 
+% this is turbo wrong. It's not fastened "like" a shaft collar, it is fastend BY a shaft collar. I meant what I fucking said. It's an 8mm shaft collar that sends the set screw through a hole on the coupler to the steel d shaft, immobilizing all three relative to each other
 Each motor drives its sprocket through a printed shaft coupler, which adapts the motor's \qty{4}{mm} D-shaft to the sprocket's \qty{8}{mm} D-shaped bore. The coupler is fastened to the motor shaft like a shaft collar \tbd{Section~\ref{sec:couplers} says a set screw clamps it; confirm}, and a self-tapping screw through the sprocket holds the sprocket on.
 
 The couplers took the most iteration, because their fit to each mating part decides how well they work. Too loose a fit (locational clearance) lets the shaft sit at an angle under tread tension, so it wobbles and goes through especially damaging strain cycles as it spins. Too tight a fit (interference) will not assemble. The coupler needs a running fit. We printed a sweep of clearances from 0.05 to \qty{0.15}{mm} in \qty{0.05}{mm} steps and found \qty{0.1}{mm} to be right.
@@ -44,7 +45,7 @@ The wedge only fits the build volume at an angle. For a long, roughly straight p
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=0.6\textwidth]{fig_wedge_slicer.png}
-  \caption{The front wedge in the slicer, tilted up from the build plate along the diagonal of the build volume, with tree supports holding up the overhangs and bracing the part.}
+  \caption{The front wedge in PrusaSlicer, printed  roughly along the volume's diagonal. Supports in green, part in orange.}
   \label{fig:slicer}
 \end{figure}
 
@@ -52,6 +53,7 @@ The wedge also had a significant flaw. Its geometry, meant to fully wrap the fro
 
 At about \qty{4}{in} tall on an \qty{11.75}{in} by \qty{11.4}{in} footprint, the robot cannot tip backward on the \ang{33.4} ramp, and it never came close in testing.
 
+% this figure needs to come before. How is the thing showing the overall geometry coming *after* a slicer screenshot?
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=0.8\textwidth]{fig_chassis_assembly.pdf}

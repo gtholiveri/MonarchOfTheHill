@@ -120,7 +120,7 @@ For design, Ezeh and Susmel propose a fatigue curve for printed PLA scaled to it
   \sigma_a(n) = 0.10\,\sigma_u \left(\frac{2 \times 10^6}{n}\right)^{1/5.5}
   \label{eq:fatigue}
 \end{equation}
-where $\sigma_u$ is the static strength. Ezeh and Susmel reviewed published fatigue tests on printed PLA and found that print direction had little effect on fatigue behavior in that data, so they treat the material as isotropic. That cannot hold for loads that pull layers apart: the course tests put upright prints at about a third of the static strength of lying ones, and our upright couplers broke at a layer bond. We therefore apply the curve to each orientation separately, with that orientation's lowest course strength as $\sigma_u$: \qty{20.5}{MPa} upright and \qty{58.2}{MPa} lying~\cite{ronney}.
+where $\sigma_u$ is the static strength. Every specimen in their data was printed flat, and only the direction of the filaments within each layer varied. Static strength barely changed with that direction, and fatigue strength followed it. None of the specimens were loaded across their layers, as our upright couplers were. We assume the same fraction of static strength holds there, and scale the curve by each orientation's lowest course strength: \qty{20.5}{MPa} upright and \qty{58.2}{MPa} lying~\cite{ronney}.
 
 The tread's pull also shears the coupler across its cross-section, the plane perpendicular to the shaft. Over this range of $\ell$ that shear stress is at most \qty{15}{\percent} of the bending stress, so bending governs.
 

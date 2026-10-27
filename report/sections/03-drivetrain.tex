@@ -13,7 +13,7 @@ The drivetrain has to carry a \qty{1}{kg} robot up the \ang{33.4} slope as fast 
 \subsection{Upper bound on torque: traction}
 \label{sec:traction-bound}
 
-The maximum force with which the tracks can push along the ramp before slipping is equal to the static friction force, $F_f$. Therefore, the total drive force $F$ is capped:
+The maximum force with which the tracks can push along the ramp before slipping, the maximum usable traction, is equal to the static friction force, $F_f$. Therefore, the total drive force $F$ is capped:
 \begin{equation}
   F \le \mu_s N
   \label{eq:traction}
@@ -25,7 +25,7 @@ where the normal force $N$ is
 \end{align}
 Each motor drives one track through a sprocket of \qty{50}{mm} diameter ($r = \qty{25}{mm}$), supplying half of the total drive force $F$. Therefore, the torque per motor at which the tracks start to slip is $\mu_s N r / 2$ at the sprocket. We estimated $\mu_s = 1.2$ to be the most any tread material on the ramp could reasonably give. Therefore, no motor can usefully deliver more than \qty{0.15}{N.m} at the sprocket (Table~\ref{tab:traction}).
 
-A real drivetrain also loses torque before it ever reaches the sprocket and the ramp, to resistance in the tracks, axles and couplers (Section~\ref{sec:holding-bound}), and we had no way to calculate how much without a built drivetrain. The motors have to supply that loss on top of the force the tracks transmit, so a motor sized exactly to the traction limit would fall short of it. We therefore allowed stall force up to three times the most the tracks can transmit. The factor of safety of 3 is a judgment call, not a calculation, and it is generous on purpose because the losses were unknown. Stall force beyond the traction limit is not wasted outright either: a motor's force falls as it speeds up (Eq.~\eqref{eq:motor}), so the extra only makes the tracks slip for the first part of the climb.
+A real drivetrain also loses torque before it ever reaches the sprocket and the ramp, to resistance in the tracks, axles and couplers (Section~\ref{sec:holding-bound}), and we had no way to calculate how much without a built drivetrain. The motors have to supply that loss on top of the force the tracks transmit, so a motor sized exactly to the maximum usable traction would fall short of it. We therefore allowed stall force up to three times the maximum usable traction. The factor of safety of 3 is a judgment call, not a calculation, and it is generous on purpose because the losses were unknown. Stall force beyond the maximum usable traction is not wasted outright either: a motor's force falls as it speeds up (Eq.~\eqref{eq:motor}), so the extra only makes the tracks slip for the first part of the climb.
 
 \begin{table}[htbp]
   \centering
@@ -109,7 +109,7 @@ We found from the stall currents of common gearmotor sizes~\cite{pololu37d,polol
 \subsection{Choosing the gear ratio inside the bounds}
 \label{sec:gear-ratio}
 
-We found affordable \qty{25}{mm} \qty{6}{V} gearmotors on Amazon with ratios from 1:4.4 to 1:500~\cite{meccanixity}.
+We found affordable \qty{25}{mm} \qty{6}{V} gearmotors on Amazon with ratios from 1:4.4 to 1:500~\cite{meccanixity}. Every version shares the same base motor, so all of them meet Section~\ref{sec:current-bound}. The torque bounds of Sections~\ref{sec:traction-bound} and~\ref{sec:holding-bound} leave three candidates: the 170, 280 and \qty{620}{\rpm} versions (Fig.~\ref{fig:gear}a).
 
 Varying gear ratio on the same base motor only changes how power is allocated between speed and torque, but it is strictly zero-sum with respect to total power. Therefore, choosing a gear ratio is an important tradeoff, with an optimum somewhere in the middle (Table~\ref{tab:tradeoff}).
 
@@ -129,7 +129,7 @@ Varying gear ratio on the same base motor only changes how power is allocated be
   \end{tabularx}
 \end{table}
 
-To find where that optimum lies, we wrote the estimated climb time as a function of gear ratio, $T(G)$, and evaluated it for every version on sale.
+To find where that optimum lies among the candidates, we wrote the estimated climb time as a function of gear ratio, $T(G)$, and evaluated it for every version on sale.
 
 \paragraph{Motor model}
 We derive the drive force from the motor's two governing equations and the drivetrain geometry, write Newton's second law along the ramp, and solve it for the climb time.
@@ -187,30 +187,30 @@ Two kinds of resistance oppose the drive force. Internal losses eat motor torque
   W = k_r\, m g \sin\ang{33.4}
   \label{eq:W}
 \end{equation}
-The drive force also cannot exceed what the tracks can transmit, $\mu_s m g \cos\ang{33.4}$ (Eqs.~\eqref{eq:traction} and~\eqref{eq:normal-ramp}). For $T(G)$ we took $\mu_s = 1.0$, the middle row of Table~\ref{tab:traction}. Newton's second law along the ramp is then
+The drive force also cannot exceed the maximum usable traction, $\mu_s m g \cos\ang{33.4}$ (Eqs.~\eqref{eq:traction} and~\eqref{eq:normal-ramp}). For $T(G)$ we took $\mu_s = 1.0$, the middle row of Table~\ref{tab:traction}. Newton's second law along the ramp is then
 \begin{equation}
   m \frac{dv}{dt} = \min\!\left[F(v),\ \mu_s m g \cos\ang{33.4}\right] - W
   \label{eq:climb}
 \end{equation}
-$\eta_\mathrm{g}$ and $k_r$ are separate inputs: gear losses grow with the load the gears carry, so $\eta_\mathrm{g}$ scales the motor force, while $k_r$ is a constant drag. Subtracting the internal losses after the drive force is capped overstates them while the tracks slip, so the model errs slow. The model also assumes full motor duty from the start.
+The model treats the two losses differently. Gear losses grow with the load on the gears, so $\eta_\mathrm{g}$ scales the motor force. Every other resistance is a constant drag, set by $k_r$.
 
-% this phrasing is broken
+While the tracks slip, the motors make more force than the tracks can use, and in the real robot that surplus covers the internal losses. The model instead subtracts all of $W$ from the maximum usable traction, so it predicts a slower start than the real robot's. The model also assumes the motors run at full power from the instant the run starts.
+
 \paragraph{Solving for the climb time}
 $T(G)$ is the time Eq.~\eqref{eq:climb}, started from rest, takes to carry the robot \qty{1.524}{m}. The $\min$ splits the climb into two phases.
 
-In the first phase the tracks slip. At low speed the motors can make more force than the tracks transmit, so the drive force is the constant traction limit and the robot accelerates uniformly:
+In the first phase the tracks slip. At low speed the motors can make more force than the maximum usable traction, so the drive force is held at that constant value and the robot accelerates uniformly:
 \begin{equation}
   a_1 = \frac{\mu_s m g \cos\ang{33.4} - W}{m}
   \label{eq:a1}
 \end{equation}
-% to keep phrasing consistent use "maximum usable traction" everywhere. It's just more understandable.
-This phase ends at the speed $v_1$ where $F(v)$ falls to the traction limit. It lasts for a time $t_1$ and covers a distance $x_1$:
+This phase ends at the speed $v_1$ where $F(v)$ falls to the maximum usable traction. It lasts for a time $t_1$ and covers a distance $x_1$:
 \begin{align}
   v_1 &= v_0\left(1 - \frac{\mu_s m g \cos\ang{33.4}}{F_\mathrm{stall}}\right) \label{eq:v1} \\
   t_1 &= \frac{v_1}{a_1} \label{eq:t1} \\
   x_1 &= \frac{v_1^2}{2 a_1} \label{eq:x1}
 \end{align}
-A version whose $F_\mathrm{stall}$ is below the traction limit never slips, and skips this phase ($v_1 = t_1 = x_1 = 0$).
+A version whose $F_\mathrm{stall}$ is below the maximum usable traction never slips, and skips this phase ($v_1 = t_1 = x_1 = 0$).
 
 In the second phase the motors limit the force. Substituting Eq.~\eqref{eq:motor} into Eq.~\eqref{eq:climb} gives a first-order linear differential equation:
 \begin{equation}
@@ -218,34 +218,28 @@ In the second phase the motors limit the force. Substituting Eq.~\eqref{eq:motor
   \label{eq:phase2}
 \end{equation}
 Its solution, with $t$ measured from the start of this phase and $v = v_1$ at $t = 0$, approaches exponentially the speed $v_t$ at which the drive force exactly balances the resistance:
-% function test / reasoning (look at notes - important way of how prof Ronney thinks): why does this make perfect sense? (don't cite, not needed - just use phrase "function test"). As the force approaches the minimum force to accelerate at all, our time to the top approaches infinity. Makes sense.
 \begin{align}
   v(t) &= v_t - (v_t - v_1)\, e^{-t/t_0} \label{eq:v-t} \\
   v_t &= v_0\left(1 - \frac{W}{F_\mathrm{stall}}\right) \label{eq:vt} \\
   t_0 &= \frac{m v_0}{F_\mathrm{stall}} \label{eq:t0}
 \end{align}
+As a function test, let $F_\mathrm{stall}$ fall toward $W$, the least force that can move the robot up the ramp at all. Then $v_t$ falls to zero and the climb time grows without bound, which is what should happen to a motor that can barely hold the robot in place.
 Integrating Eq.~\eqref{eq:v-t} once more gives the position along the ramp:
 \begin{equation}
   x(t) = x_1 + v_t t - t_0 (v_t - v_1)\left(1 - e^{-t/t_0}\right)
   \label{eq:x-t}
 \end{equation}
-% what is bisection and why is it mentioned? If we just use a numpy function just say with a numpy function. Is "bisection" actually relevant? Also, that's not a direct approach for solving ODE's, that's like just for solving systems I think and it's a component of some ODE solvers?
-Eq.~\eqref{eq:x-t} cannot be solved for $t$ in closed form, so we found the $t$ at which $x = \qty{1.524}{m}$ numerically by bisection. Adding $t_1$ gives $T(G)$.
+Eq.~\eqref{eq:x-t} is the exact solution of Eq.~\eqref{eq:phase2}, so no differential equation solver is needed. It cannot be rearranged for $t$, so a short Python script finds the $t$ at which $x = \qty{1.524}{m}$ with a numerical root finder. Adding $t_1$ gives $T(G)$.
 
-
-% this is a scattered, broken, and difficult to understand paragraph
 \paragraph{Why there is an optimum}
-For the \qty{280}{\rpm} version ($\eta_\mathrm{g} = 0.7$, $k_r = 1$), the first phase lasts \qty{0.17}{s} and covers \qty{4}{cm}, and $t_0$ is \qty{0.05}{s}. The robot spends nearly the whole climb close to $v_t$ (\qty{0.62}{m/s}), so the fastest climb comes from the largest $v_t$. Substituting Eqs.~\eqref{eq:fstall} and~\eqref{eq:v0} into Eq.~\eqref{eq:vt} and setting its derivative with respect to $G$ to zero, $v_t$ is largest when
+For the \qty{280}{\rpm} version ($\eta_\mathrm{g} = 0.7$, $k_r = 1$), the first phase lasts only \qty{0.17}{s} and covers \qty{4}{cm}. After it, the gap between $v$ and $v_t$ shrinks with a time constant $t_0$ of only \qty{0.05}{s}. The robot therefore climbs at close to $v_t$ (\qty{0.62}{m/s}) for nearly the whole ramp, and the gear ratio with the largest $v_t$ gives the fastest climb.
+
+$v_t$ depends on $G$ through $F_\mathrm{stall}$, which is proportional to $G$ (Eq.~\eqref{eq:fstall}), and $v_0$, which is proportional to $1/G$ (Eq.~\eqref{eq:v0}). Substituting both into Eq.~\eqref{eq:vt} and setting its derivative with respect to $G$ to zero, $v_t$ is largest when
 \begin{equation}
   F_\mathrm{stall} = 2W
   \label{eq:optimum}
 \end{equation}
-At that gear ratio the motors climb at half their no-load speed, which is where a DC motor delivers its peak power. More reduction makes the motors strong but slow. Less reduction leaves so little force to spare over $W$ that the motors must run close to stall to keep climbing. For all three combinations of $\eta_\mathrm{g}$ and $k_r$ in Fig.~\ref{fig:gear}b, Eq.~\eqref{eq:optimum} puts the optimum between the \qty{620}{\rpm} (1:9.6) and \qty{280}{\rpm} (1:21.3) versions.
-
-% this makes absolutely zero sense coming after numerical optimization
-% bounds first, obviously
-\paragraph{Applying the bounds}
-Every version shares the same base motor, so all of them meet Section~\ref{sec:current-bound}. The torque bounds of Sections~\ref{sec:traction-bound} and~\ref{sec:holding-bound} leave three candidates: the 170, 280 and \qty{620}{\rpm} versions (Fig.~\ref{fig:gear}a).
+Then $v_t = v_0/2$: the motors climb at half their no-load speed, which is where a DC motor delivers its peak power. For all three combinations of $\eta_\mathrm{g}$ and $k_r$ in Fig.~\ref{fig:gear}b, Eq.~\eqref{eq:optimum} puts the optimum between the \qty{620}{\rpm} (1:9.6) and \qty{280}{\rpm} (1:21.3) versions.
 
 \paragraph{Result}
 The \qty{280}{\rpm} version (1:21.3) gives the shortest estimated climb (Fig.~\ref{fig:gear}b). It stays fastest for every combination of $\eta_\mathrm{g}$ from 0.5 to 0.8 and $k_r$ from 1.0 to 1.25 except the most optimistic ($\eta_\mathrm{g} = 0.8$, $k_r = 1.0$), and nothing is sold between 280 and \qty{620}{\rpm}.
@@ -253,7 +247,7 @@ The \qty{280}{\rpm} version (1:21.3) gives the shortest estimated climb (Fig.~\r
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=0.92\textwidth]{fig04_gear_ratio.pdf}
-  \caption{Choosing the gear ratio. (a) Stall force of each version on the \qty{7.4}{V} pack (Eq.~\eqref{eq:fstall}, $\eta_\mathrm{g} = 0.7$). Below the lower bound, $k_r m g \sin\ang{33.4}$ with $k_r = 1.25$ (Eq.~\eqref{eq:holding}), a motor cannot climb. Above the upper bound, three times the most force the tracks can transmit with $\mu_s = 1.2$ (Section~\ref{sec:traction-bound}), a motor is geared for torque the tracks cannot use. (b) Estimated climb time $T(G)$ from Eq.~\eqref{eq:climb} for three combinations of gearbox efficiency $\eta_\mathrm{g}$ and resistance factor $k_r$ (``extra resistance'' is $k_r$), with our empirical climb time with the 280RPM motors also plotted.}
+  \caption{Choosing the gear ratio. (a) Stall force of each version on the \qty{7.4}{V} pack (Eq.~\eqref{eq:fstall}, $\eta_\mathrm{g} = 0.7$). Below the lower bound, $k_r m g \sin\ang{33.4}$ with $k_r = 1.25$ (Eq.~\eqref{eq:holding}), a motor cannot climb. Above the upper bound, three times the maximum usable traction with $\mu_s = 1.2$ (Section~\ref{sec:traction-bound}), a motor is geared for torque the tracks cannot use. (b) Estimated climb time $T(G)$ from Eq.~\eqref{eq:climb} for three combinations of gearbox efficiency $\eta_\mathrm{g}$ and resistance factor $k_r$ (``extra resistance'' is $k_r$), with our empirical climb time with the 280RPM motors also plotted.}
   \label{fig:gear}
 \end{figure}
 
@@ -262,11 +256,6 @@ The \qty{280}{\rpm} version (1:21.3) gives the shortest estimated climb (Fig.~\r
 
 We bought and ran the \qty{280}{\rpm} version. Once the motors arrived, we measured their stall current at \qty{1.4}{A} \tbd{confirm the pack voltage during the stall test}, close to the \qty{1.5}{A} we had estimated.
 
-In our time trial testing, we found that the robot climbs the ramp in about \qty{3.3}{s}. With no extra resistance the model estimates \qty{2.6}{s}. We evaluated $T(G)$ for the \qty{280}{\rpm} version numerically, as above, over a grid of losses: $\eta_\mathrm{g}$ from 0.5 to 0.8 and $k_r$ from 1.0 to 1.25. Across that grid it gives 2.5 to \qty{3.9}{s}, and the measured \qty{3.3}{s} falls inside, so the model matches reality well. One climb time cannot separate the two losses, so several pairs reproduce \qty{3.3}{s}, for example $\eta_\mathrm{g} = 0.6$ with $k_r = 1.25$ (\qty{3.29}{s}). Every pair that fits has $\eta_\mathrm{g}$ of 0.6 or less and $k_r$ between about 1.07 and 1.25, so the real drivetrain loses more than the gearbox alone accounts for.
+In our time trial testing, we found that the robot climbs the ramp in about \qty{3.3}{s}. With no extra resistance the model estimates \qty{2.6}{s}. We evaluated $T(G)$ for the \qty{280}{\rpm} version numerically, as above, over a grid of losses: $\eta_\mathrm{g}$ from 0.5 to 0.8 and $k_r$ from 1.0 to 1.25. Across that grid it gives 2.5 to \qty{3.9}{s}, and the measured \qty{3.3}{s} falls inside, so the model matches reality well. One climb time cannot separate the two losses, so several pairs reproduce \qty{3.3}{s}, for example $\eta_\mathrm{g} = 0.6$ with $k_r = 1.25$ (\qty{3.29}{s}). Every pair that fits has $\eta_\mathrm{g}$ of 0.6 or less and $k_r$ between about 1.07 and 1.25.
 
-% "so the real drivetrain loses more than the gearbox alone accounts for"
-% "accounts for" is an utterly useless phrase here
-% also, like... of fucking course? Frictino exists (WOW) and doesn't only apply to gears (SHOCKING) - this is just a trivial and useless padded phrase. Every single word and phrase needs to be evaluated against "does this actually fucking *mean* anything?" because you are INCREDIBLY good at writing bullshit that is coherent strictly and solely on a word-to-word basis, technically perhaps factually accurate, and otherwise meaningless and incomprehensible
-
-
-Several problems in our build add to that resistance. The side guards flexed into the treads and rubbed on them in every run (Section~\ref{sec:layout}). The tracks are tensioned tightly so they do not dip and scrape at the mesa edge (Section~\ref{sec:couplers}), which loads the sprockets and axles. The printed couplers flex as they turn, the treads have friction within themselves, and the robot rubs and knocks against the side wall it uses as a guide rail.
+Several problems in our build add to $k_r$. The side guards flexed into the treads and rubbed on them in every run (Section~\ref{sec:layout}). The tracks are tensioned tightly so they do not dip and scrape at the mesa edge (Section~\ref{sec:couplers}), which loads the sprockets and axles. The printed couplers flex as they turn, the treads have friction within themselves, and the robot rubs and knocks against the side wall it uses as a guide rail.

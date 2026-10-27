@@ -13,7 +13,7 @@ The drivetrain has to carry a \qty{1}{kg} robot up the \ang{33.4} slope as fast 
 \subsection{Upper bound on torque: traction}
 \label{sec:traction-bound}
 
-Torque the tracks cannot transmit is wasted, because past that point the tracks slip instead of pushing. The maximum force with which the tracks can push along the ramp before slipping is equal to the static friction force, $F_f$. Therefore, the total drive force $F$ is capped:
+The maximum force with which the tracks can push along the ramp before slipping is equal to the static friction force, $F_f$. Therefore, the total drive force $F$ is capped:
 \begin{equation}
   F \le \mu_s N
   \label{eq:traction}
@@ -71,7 +71,7 @@ The TB6612FNG driver we had on hand is rated for \qty{1.2}{A} continuous and \qt
 \paragraph{Pack}
 The 7805 regulator providing \qty{5}{V} DC to the Photon requires its input voltage to stay above about \qty{7}{V}. Below \qty{7}{V} input, the \qty{5}{V} supply voltage cannot be sustained, and the Photon will behave erratically or cut out completely: instant loss in a match.
 
-Therefore, the voltage sag produced by the motors in a reasonably likely, worst-case scenario must stay below that which would pull the pack below \qty{7}{V}.
+Therefore, the voltage sag from the motors in a reasonably likely worst case must not pull the pack below \qty{7}{V}.
 
 The terminal voltage of a battery with an electromotive force $\mathcal{E}$ and internal resistance $R_\mathrm{int}$ will drop according to:
 \begin{equation}

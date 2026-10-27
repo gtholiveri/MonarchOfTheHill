@@ -13,10 +13,15 @@ The side guards we cut down to fit never broke, but they flexed into the treads 
 \paragraph{Take print anisotropy seriously}
 We printed both coupler orientations and chose the upright one because the fit felt marginally nicer, and we guessed by feel that it would be strong enough, even in the anisotropically weaker configuration. For load-bearing functional parts, a guess isn't good enough: upright-printed couplers almost all broke.
 
+% check this but I think it's not the *climb* but specifically the *continuation beyond the edge* that would be problematic
+% we always reached the mesa, but didn't always advance as far across the mesa as optimal
+% fix this everywhere if it's wrong
 \paragraph{Autonomy without positioning suffers}
 The climb was paced by time, so anything that changed the robot's speed, such as vibration, track slip, or an opponent, changed where it stopped. Wheel or motor encoders would not fix this, because they cannot tell when the tracks slip. An absolute position reference would: a time-of-flight sensor ranging to a beacon, or a camera such as an ESP32-CAM locating AprilTags on the side walls. We had hoped to build one but ran out of time.
 
 Timing also hides slow changes in the robot. A plausible reason the robot stopped short in the final round is that the treads lost tension over successive runs, which we could feel happening. The slack came not from the axle slots but from the couplers, which had bent visibly, by roughly 2 to \ang{5} judging from memory. A slacker tread carries the robot less far in the same fixed time, and nothing in a timed run can notice.
+% the slacker tread thing isn't strictly true, the hypothesis would be that it is less effective *specifically* when going over the edge because the bottom of the bot will actually drop into the edge - the tension no longer is enough to prevent displacement at thath point that results in contact with the edge
+% which would take away normal force and add friction, briefly at that transition point
 
 \paragraph{Spend analysis where the eye cannot see}
 Many questions answered themselves by inspection: whether the tracks slipped, whether the robot tipped, whether it stopped on the mesa. We judged or tuned those by eye, which was good enough, and saved more rigorous analysis for tradeoffs that cannot be eyeballed, such as the gear ratio (Section~\ref{sec:gear-ratio}) and battery voltage sag (Section~\ref{sec:current-bound}) \tbd{finish this list}.

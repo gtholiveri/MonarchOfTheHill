@@ -10,6 +10,8 @@ In Hold, the robot sets its motor power to zero while it is level, and the drive
 
 Hold also corrects the robot's position from its pitch. If the nose rises more than \ang{6}, because the robot stopped short of the top or is being shoved back down our ramp, it drives forward at full power, 255 of 255. If the nose drops more than \ang{6}, because the robot is about to go over the far side, it backs up at 110 of 255. It keeps correcting until the pitch is back within \ang{3}, so that it does not switch rapidly between correcting and braking at the edge of the \ang{6} band.
 
+% "backstop" isn't an intuitive phrase here. That state transition is literlaly just a singnle OR statement, write it as a single OR statement
+
 \begin{figure}[htbp]
   \centering
   \begin{tikzpicture}[
@@ -61,8 +63,15 @@ Hold also corrects the robot's position from its pitch. If the nose rises more t
 \subsection{Tuning}
 \label{sec:tuning}
 
-We timed the climb by stopwatch at about \qty{3.3}{s} and set \qty{3150}{ms} of full-power climb and a \qty{150}{ms} Decelerate ramp to match. We also built a trim tool for straight-line driving: each press shifts power \qty{16}{\percent} toward the lagging side, and the step halves every time the drift reverses. The larger problem turned out not to be the robot pulling sideways but the side guards rubbing on the treads (Section~\ref{sec:layout}).
+% use the term binary search for talking about trim because I like it and it's accurate
+We empirically found that a climb takes about \qty{3.3}{s}, so we set \qty{3150}{ms} of full-power climb and a \qty{150}{ms} deceleration ramp. We also built a trim tool for straight-line driving: each press shifts power \qty{16}{\percent} toward the lagging side, and the step halves every time the drift reverses. The larger problem turned out not to be the robot pulling sideways but the side guards rubbing on the treads (Section~\ref{sec:layout}).
+% the larger problem? The trim thing is the biggest possible alleviation to it
+% we're restricted to a straight line no matter what, but any power we spend just ramming ourselves into the wall only slows us down
+% complete misunderstanding on your part
+
+% this paragraph's beginning is nonsensical
 
 Both Hold correction powers started at full power, 255 forward and 255 back. With those, the robot oscillated on the mesa: it threw itself forward, overshot, threw itself back, overshot, and so on. We lowered the correction power to stop this, and the code's values are 255 forward and 110 back \tbd{confirm only the back-up power was lowered, to 110}.
+% confirmed
 
 From our average climb speed of \qty{0.46}{m/s}, stopping takes $v^2/(2a)$: \qty{11}{cm} at \qty{1}{m/s^2} and \qty{4}{cm} at \qty{3}{m/s^2}, both inside the \qty{30}{cm} mesa. We never ran the robot without the Decelerate stage, so we cannot say whether overshooting the mesa was a real risk.

@@ -6,6 +6,8 @@
 
 Figure~\ref{fig:electronics} shows the wiring. A Particle Photon~2~\cite{photon2} runs the robot. It replaced the kit's ESP32 board, which failed during bench wiring for reasons we could not determine. The kit's motor shield drives its motors through a co-processor commanded over a serial link; we replaced it with a SparkFun TB6612FNG dual motor driver~\cite{sparkfun} we had on hand, controlled directly from the Photon's pins and with its motor supply wired straight to the battery. An MPU6050~\cite{mpu6050} gyro and accelerometer on the I$^2$C bus does all the sensing, read by firmware written mostly with Claude Code~\cite{claude}. Power comes from the supplied 2S pack of 18650 cells \tbd{confirm capacity: 2,500 or 3,000 mAh}. A judge starts the run with a single switch, which the Photon reads directly.
 
+% only label motor once
+% make sure this style of callout is uniform across figures, I remember at some point the other ones having red stroke
 \begin{figure}[htbp]
   \centering
   \begin{tikzpicture}[

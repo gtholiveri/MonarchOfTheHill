@@ -51,16 +51,18 @@ We designed and built an autonomous tracked robot for the AME 101 Monarch of the
   $c$ & distance from the neutral axis to the outermost fiber & \unit{mm} \\
   $F$ & traction force from both tracks & \unit{N} \\
   $F(v)$, $F_\mathrm{stall}$ & drive force from both motors at speed $v$; at stall & \unit{N} \\
+  $F_f$ & static friction force between the tracks and the ramp & \unit{N} \\
   $F_\mathrm{att}$, $F_\mathrm{def}$ & largest force an attacker on the ramp can push with; largest force a defender on the mesa can resist with & \unit{N} \\
   $G$ & gear ratio & -- \\
   $g$ & gravitational acceleration, 9.81 & \unit{m/s^2} \\
   $I$ & second moment of area of a section; current drawn from the pack (Eq.~\eqref{eq:vterm}) & \unit{mm^4}; \unit{A} \\
-  $I_\mathrm{stall}$ & motor stall current & \unit{A} \\
+  $I_\mathrm{stall}$, $I_\mathrm{stall,max}$ & motor stall current; largest stall current the pack allows & \unit{A} \\
   $k$ & motor torque constant & \unit{N.m/A} \\
-  $k_r$ & resistance factor: total resistance to climbing as a multiple of $m g \sin\theta$ & -- \\
+  $k_r$ & resistance factor: total resistance to climbing as a multiple of $m g \sin\ang{33.4}$ & -- \\
   $M$ & bending moment & \unit{N.m} \\
   $m$ & robot mass & \unit{kg} \\
   $N$ & normal force & \unit{N} \\
+  $n$ & stall force as a multiple of the most force the tracks can transmit & -- \\
   $P_\mathrm{max}$ & peak mechanical power per motor & \unit{W} \\
   $R$ & motor winding resistance & \unit{\ohm} \\
   $R_\mathrm{int}$ & pack internal resistance & \unit{\ohm} \\
@@ -72,13 +74,14 @@ We designed and built an autonomous tracked robot for the AME 101 Monarch of the
   $\bm{u}$ & estimated direction of gravity in the sensor frame (unit vector) & -- \\
   $V$ & pack voltage & \unit{V} \\
   $V_\mathrm{term}$ & pack terminal voltage under load & \unit{V} \\
+  $\Delta V_\mathrm{sag}$ & drop in pack voltage with both motors at stall & \unit{V} \\
   $v$, $v_0$ & speed along the ramp; no-load speed & \unit{m/s} \\
   $\mathcal{E}$ & pack open-circuit voltage & \unit{V} \\
   $\ell$ & lever arm from the bottom of the motor bore to the tread line (couplers); guard length (side guards) & \unit{mm} \\
   \midrule
   \multicolumn{3}{@{}l}{\textit{Greek symbols}} \\
-  $\eta$ & drivetrain efficiency & -- \\
-  $\theta$, $\theta_\mathrm{apparent}$ & ramp angle; pitch implied by the accelerometer alone & \unit{\degree} \\
+  $\eta$ & gearbox efficiency & -- \\
+  $\theta_\mathrm{apparent}$ & pitch implied by the accelerometer alone & \unit{\degree} \\
   $\mu_s$ & static friction coefficient, tracks on the ramp surface & -- \\
   $\sigma$, $\sigma_\mathrm{allow}$ & bending stress; failure stress of the print & \unit{MPa} \\
   $\bm{\omega}$ & gyro angular rate & \unit{rad/s} \\

@@ -22,19 +22,21 @@ plt.rcParams.update({'pdf.fonttype':42,'font.family':'serif','font.serif':['Time
 Gs=np.geomspace(4,520,400); ink='#0b0b0b'; mute='#52514e'; grid='#e5e4e0'; off='#a9a8a4'
 fig,(a1,a2)=plt.subplots(2,1,figsize=(6.5,6.4),dpi=300,gridspec_kw={'height_ratios':[1,1.25]})
 W=m*g*math.sin(th); Ft=[mu*m*g*math.cos(th) for mu in (0.8,1.0,1.2)]
-a1.axhspan(0.5,W,color='#f2d0c4',lw=0); a1.axhspan(W,1.25*W,color='#fae8e1',lw=0); a1.axhspan(Ft[0],Ft[2],color='#d6e6f7',lw=0)
+red='#f3a59c'; red2='#fad4cf'; edge='#e0443a'; top=3*Ft[2]
+a1.axhspan(0.5,W,color=red,lw=0); a1.axhspan(W,1.25*W,color=red2,lw=0); a1.axhspan(top,1000,color=red,lw=0)
+for y in (W,1.25*W,top): a1.axhline(y,color=edge,lw=1,ls=(0,(4,3)))
+a1.axhline(Ft[2],color=mute,lw=1,ls=(0,(4,3)))
 a1.plot(Gs,Fs(Gs),color=mute,lw=1.2)
 for rpm,G in variants:
     c=rpm in cand
     a1.plot(G,Fs(G),'o',ms=6 if c else 5,color=ink if c else 'white',mec=ink if c else off,mew=1.2,zorder=3)
     a1.annotate(f'{rpm}',(G,Fs(G)),xytext=(5,-11),textcoords='offset points',fontsize=7.5,color=ink if c else mute)
-a1.text(500,2.4,'Holding floor: cannot climb below this',ha='right',fontsize=7.5,color=mute,va='center')
-a1.text(500,8.7,'Traction ceiling (Table 2)',ha='right',fontsize=7.5,color=mute,va='center')
-a1.axhline(3*Ft[2],color=mute,lw=1,ls=(0,(4,3)))
-a1.text(500,3*Ft[2]*0.8,'Traction ceiling × 3 (estimated FoS)',ha='right',fontsize=7.5,color=mute,va='center')
+a1.text(500,2.6,'Cannot accelerate against gravity: below $k_r\\,mg\\,\\sin 33.4°$ ($k_r$ = 1 to 1.25)',ha='right',fontsize=7.5,color=ink,va='center')
+a1.text(500,Ft[2]*1.13,'Max usable force, nominal: $\\mu_s N$',ha='right',fontsize=7.5,color=mute,va='bottom')
+a1.text(500,top*1.13,'Max usable force with FoS of 3: $3\\mu_s N$',ha='right',fontsize=7.5,color=ink,va='bottom')
 a1.set_yscale('log'); a1.set_ylim(0.8,700); a1.set_ylabel('Stall force (N)')
 a1.set_yticks([1,2,5,10,20,50,100,200,500]); a1.set_yticklabels(['1','2','5','10','20','50','100','200','500'])
-a1.set_title('(a) Stall force of each version against the bounds (filled: candidates)',fontsize=9,loc='left',color=ink)
+a1.set_title('(a) Stall force of each version against the bounds (filled: candidates; $\\mu_s$ = 1.2)',fontsize=9,loc='left',color=ink)
 cases=[(0.7,1.0,'#2a78d6','η = 0.7, $k_r$ = 1.0'),(0.7,1.25,'#eb6834','η = 0.7, $k_r$ = 1.25'),(0.6,1.25,'#1baf7a','η = 0.6, $k_r$ = 1.25')]
 for eta,kr,c,lab in cases:
     a2.plot(Gs,[T(G,eta=eta,kr=kr) or np.nan for G in Gs],color=c,lw=1.6,label=lab)
@@ -55,7 +57,8 @@ tk=[5,10,20,50,100,200,500]
 for ax in (a1,a2):
     ax.set_xscale('log'); ax.set_xlim(4,520); ax.set_xticks(tk); ax.set_xticklabels([f'1:{t}' for t in tk]); ax.minorticks_off()
     ax.set_xlabel('Gear ratio (labels: rated rpm of each version on sale)')
-    ax.grid(True,color=grid,lw=0.6); ax.set_axisbelow(True)
+    ax.set_axisbelow(True)
+    if ax is a2: ax.grid(True,color=grid,lw=0.6)
     for s in ('top','right'): ax.spines[s].set_visible(False)
     for s in ('left','bottom'): ax.spines[s].set_color('#b5b4b0')
     ax.tick_params(colors=mute)

@@ -4,9 +4,9 @@
 \subsection{Why an accelerometer alone is not enough}
 \label{sec:accel-only}
 
-The robot has to know when it has crossed from the \ang{33.4} ramp onto the flat mesa, and it has to know this while speeding up and slowing down. An accelerometer measures gravity plus the robot's own acceleration. Along the ramp it reads $g \sin\theta + a$ and across it $g \cos\theta$, so the pitch it implies is
+The robot has to know when it has crossed from the \ang{33.4} ramp onto the flat mesa, and it has to know this while speeding up and slowing down. An accelerometer measures gravity plus the robot's own acceleration. Along the ramp it reads $g \sin\ang{33.4} + a$ and across it $g \cos\ang{33.4}$, so the pitch it implies is
 \begin{equation}
-  \theta_\mathrm{apparent} = \arctan\!\left(\frac{g \sin\theta + a}{g \cos\theta}\right)
+  \theta_\mathrm{apparent} = \arctan\!\left(\frac{g \sin\ang{33.4} + a}{g \cos\ang{33.4}}\right)
   \label{eq:apparent}
 \end{equation}
 Table~\ref{tab:apparent} shows the size of the error. Decelerating at \qty{3}{m/s^2} makes the ramp look like \ang{16}, below the \ang{18} threshold at which our robot decides it has crested.

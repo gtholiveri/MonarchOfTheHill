@@ -47,7 +47,7 @@ We designed and built an autonomous tracked robot for the AME 101 Monarch of the
   \textbf{Symbol} & \textbf{Meaning} & \textbf{Units} \\
   \midrule
   $a$ & acceleration along the ramp & \unit{m/s^2} \\
-  $\bm{a}_\mathrm{m}$ & accelerometer reading & \unit{m/s^2} \\
+  $\bm{a}_\mathrm{m}$ & acceleration vector as measured by accelerometer & \unit{m/s^2} \\
   $c$ & distance from the neutral axis to the outermost fiber & \unit{mm} \\
   $F$ & traction force from both tracks & \unit{N} \\
   $F(v)$, $F_\mathrm{stall}$ & drive force from both motors at speed $v$; at stall & \unit{N} \\
@@ -67,12 +67,12 @@ We designed and built an autonomous tracked robot for the AME 101 Monarch of the
   $R$ & motor winding resistance & \unit{\ohm} \\
   $R_\mathrm{int}$ & pack internal resistance & \unit{\ohm} \\
   $r$ & sprocket rolling radius & \unit{m} \\
-  $T$, $T_\mathrm{max}$ & total pull of the tread on the sprocket; largest pull a coupler can carry & \unit{N} \\
+  $T$, $T_\mathrm{max}$ & total tension force of the tread on the sprocket; total tension at which the coupler will fail & \unit{N} \\
   $T(G)$ & climb time with gear ratio $G$ & \unit{s} \\
   $T_c$ & filter time constant & \unit{s} \\
   $\Delta t$ & filter update interval & \unit{s} \\
   $\bm{u}$ & estimated direction of gravity in the sensor frame (unit vector) & -- \\
-  $\hat{\bm{z}}$ & the robot's up direction in the sensor frame (unit vector) & -- \\
+  $\hat{\bm{z}}$ & the robot's up direction in the sensor frame & -- \\
   $V$ & pack voltage & \unit{V} \\
   $V_\mathrm{term}$ & pack terminal voltage under load & \unit{V} \\
   $\Delta V_\mathrm{sag}$ & drop in pack voltage with both motors at stall & \unit{V} \\
@@ -89,5 +89,8 @@ We designed and built an autonomous tracked robot for the AME 101 Monarch of the
   \bottomrule
 \end{tabularx}
 }
+% if u is a unit vector shouldn't it have a hat
+% using R no subscript for specifically motor winding resistance is dumb
+% Use kt instead of just k for motor torque constant. It's kt
 
 \clearpage

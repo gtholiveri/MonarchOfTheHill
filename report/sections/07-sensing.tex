@@ -18,6 +18,7 @@ Along the ramp it reads $g \sin\ang{33.4} + a$ and across it $g \cos\ang{33.4}$,
 \end{equation}
 Table~\ref{tab:apparent} shows the size of the error. Decelerating at \qty{3}{m/s^2} makes the ramp look like \ang{16}, below the \ang{18} threshold at which our robot decides it has crested.
 
+% frankly this table seems unnecessary, we have the whole ass graph where we just measure this and it's way cooler and clearer anyway
 \begin{table}[htbp]
   \centering
   \caption{Pitch an accelerometer alone reports on the \ang{33.4} ramp.}
@@ -40,6 +41,8 @@ A gyroscope measures rotation rate directly: more resilient to vibration and doe
 
 % this is pseudo complexity slop, and reading it makes me want to vomit
 % plus you didn't even explain the algorithm. This is cooked
+% we picked this because it's literally like the simplest possible filter algorithm, and it's so we don't have to write or tune any smoothing stuff or try and filter out frequencies or whatever, this is the simplest possible thing and it works great according to the data so boom
+% like explain that basically we're just saying "when we know the thing is vibrating hella, we just don't trust the accelerometer" but that should be at the *start*
 We combine the two sensors with a complementary filter that tracks the direction of gravity as a unit vector $\bm{u}$ in the sensor's frame, in the form of Mahony's explicit complementary filter~\cite{mahony}. Every \qty{20}{ms} the gyro rate $\bm{\omega}$ rotates the estimate, and the result is renormalized:
 \begin{equation}
   \bm{u} \leftarrow \operatorname{normalize}\!\big(\bm{u} - (\bm{\omega} \times \bm{u})\,\Delta t\big)

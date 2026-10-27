@@ -15,7 +15,7 @@ Each robot starts on the slope at the bottom of its ramp, with its front no more
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=0.85\textwidth]{fig01_hill.png}
-  \caption{The contest hill, from the course notes~\cite{ronney}. The red dot marks the center of the mesa, from which the winner is judged. Inset: the \qty{1}{in} guide rail along each side of the ramp.}
+  \caption{The contest hill, from the course notes~\cite{ronney}. The red dot marks the center of the mesa, from which the winner is judged.}
   \label{fig:hill}
 \end{figure}
 
@@ -24,14 +24,14 @@ Each robot starts on the slope at the bottom of its ramp, with its front no more
 
 Our objective was to reach the mesa first and keep the opponent from displacing us for the rest of the \qty{30}{s}.
 
-When considering what strategy would inform the mechanical design of our robot, several factors made it clear to us that reaching the top first would be an utterly crucial capability.
+When considering what strategy would inform the mechanical design of our robot, several factors made it clear to us that reaching the top first would be crucial:
 \begin{itemize}
-  \item \textbf{An attacker on the slope has far less force to push with.} Some of its traction goes to holding the robot up the slope against gravity, $m g \sin\ang{33.4}$, rather than pushing forward. And the traction itself is capped by the normal force, which on the slope is only $m g \cos\ang{33.4}$. The most an attacker can push with, against the most a defender on the mesa can resist with, is
+  \item \textbf{An attacker on the slope has far less force to push with.} Some of its traction goes to holding the robot up the slope against gravity, $m g \sin\ang{33.4}$, rather than pushing forward. The traction is also capped by the normal force, which on the slope is only $m g \cos\ang{33.4}$. The most an attacker can push with, against the most a defender on the mesa can resist with, is
   \begin{align}
     F_\mathrm{att} &= \mu_s m g \cos\ang{33.4} - m g \sin\ang{33.4} \label{eq:attack} \\
     F_\mathrm{def} &= \mu_s m g \label{eq:defend}
   \end{align}
-  For two robots of equal mass and any $\mu_s$ between 0.8 and 1.0, the defender can resist 3.5 to 7 times the force the attacker can apply. This is an estimate for the two clear-cut positions, with the attacker fully on the ramp and the defender fully on the mesa. While the attacker is bridging the crest, the forces lie somewhere in between, but the estimate shows how lopsided the contest is.
+  For two robots of equal mass and any $\mu_s$ between 0.8 and 1.0, the defender can resist 3.5 to 7 times the force the attacker can apply. This is an estimate for the two clear-cut positions, with the attacker fully on the ramp and the defender fully on the mesa. While the attacker is bridging the crest, the forces lie somewhere in between, but the estimate still reveals how significant the advantage is.
   \item \textbf{An attacker arrives with its wedge in the air.} Its wedge cannot sit flush on the mesa until the robot has fully cleared the ramp, so its edge will most likely still be in the air at the moment it meets the defender's own wedge.
   \item \textbf{The autonomous requirement amplifies the importance of arriving first.} Until the robots meet, the robot's path is very predictable: it moves with roughly known velocity and acceleration through static, known geometry. After contact, a robot without an absolute positioning or vision system can only understand very little, with low confidence, about its position. Beyond a few simple heuristics, making strategic moves to worm out of a losing position is largely infeasible in Monarch of the Hill. Meanwhile, a robot already on top needs very little information and very little intelligence to hold its place.
 \end{itemize}
@@ -56,6 +56,7 @@ For the three-dimensional arena of Monarch of the Hill, we made two further adap
 \begin{itemize}
   \item \textbf{Forks that stay flush while cresting.} We knew it was not guaranteed that our robot would reach the mesa first every time, so we designed front forks that remain flush with the mesa even while the robot is still cresting onto it.
   \item \textbf{A wedge at the angle of the ramp.} The wedge matches the slope of the ramp, so an opponent that drives up onto it sees no change in pitch and does not detect that it has reached the crest \tbd{confirm this was the reasoning, from the Sep notes}.
+  % this was in fact the reasoning
 \end{itemize}
 
 \paragraph{The side wall as a guide rail}

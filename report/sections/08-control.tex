@@ -31,6 +31,8 @@ In Hold, the robot does not just set its motor power to zero. It commands the dr
 \subsection{Tuning}
 \label{sec:tuning}
 
+% we were tweaking the values enough honestly (bc exactly where we ended up was disuniform enough) that there's no single value
+% just say 3150 pure climb and 150 break to match the overal 3.3 time and don't mention the rest here
 We timed the climb by stopwatch at about \qty{3.3}{s} and set the Climb time backstop to \qty{3000}{ms} and the Decelerate ramp to \qty{150}{ms} \tbd{final values used in the contest}. We also built a trim tool for straight-line driving: each press shifts power \qty{16}{\percent} toward the lagging side, and the step halves every time the drift reverses. The larger problem turned out not to be the robot pulling sideways but the side guards rubbing on the treads (Section~\ref{sec:layout}). \tbd{What oscillation we saw on the mesa, and what we changed in the hold settings.}
 
 From our average climb speed of \qty{0.46}{m/s}, stopping takes $v^2/(2a)$: \qty{11}{cm} at \qty{1}{m/s^2} and \qty{4}{cm} at \qty{3}{m/s^2}, both inside the \qty{30}{cm} mesa. We never ran the robot without the Decelerate stage, so we cannot say whether overshooting the mesa was a real risk.

@@ -111,7 +111,13 @@ and the largest pull it can carry before failing is
 \end{equation}
 The section at the bottom of the bore is the full D profile with the \qty{1.6}{mm} pilot hole. The coupler turns with the shaft, so the load passes through every direction once per revolution. The worst direction puts the peak stress at a corner of the flat, where $I/c = \qty{36.7}{mm^3}$. The tread runs somewhere on the sprocket's \qty{8}{mm} hub, so $\ell$ lies between 8 and \qty{16}{mm} \tbd{confirm where the tread runs on the hub}.
 
-For the allowable stress we use the course's own tensile tests of printed PLA dog-bone specimens~\cite{ronney}. Specimens printed flat, loaded along their layers, yielded at 58.2 to \qty{74.3}{MPa} over three tests, and specimens printed upright, loaded across their layers, at 20.5 and \qty{21.0}{MPa}. We take the lowest value in each orientation: \qty{20.5}{MPa} for the upright coupler and \qty{58.2}{MPa} for the lying one. Transverse shear is at most \qty{15}{\percent} of the bending stress over this range of $\ell$, and the motor's stall torque of about \qty{0.2}{N.m} adds only about \qty{3}{MPa} of shear, so bending governs.
+% I mean the failure mode is lowk  unlikely to be tensile stress I feel lik
+% Use claude in chrome with my library credentials or an actual research agent if you have to
+% I also see nothing herea bout the fact that yield stress is different from fracture stress
+% Fractures propagate from the *weakest point*, the point of a dog bone is that it makes thet profile so small that the probability of a much weaker point is minimized, allowing you to get at the *yield* stress
+% but ductile wielding is NOT the behavior we saw. We saw very clear FRACTURE. Fracture happens at a MUCH LOWER STRESS, and micro cracking / yielding that precedes fracture (fatigue) can push that even lower
+% given that the coupler gets deflected by tension then *spun* (ie, deflected back and fortrh and back and forth continuously through operation), fatigue is a huge thing here. As far as I can see all this is like completely missing from this analysis
+For the allowable stress we use previous tensile tests of printed PLA dog-bone specimens done for AME 101~\cite{ronney}. Specimens printed flat, loaded along their layers, yielded at 58.2 to \qty{74.3}{MPa} over three tests, and specimens printed upright, loaded across their layers, at 20.5 and \qty{21.0}{MPa}. We take the lowest value in each orientation: \qty{20.5}{MPa} for the upright coupler and \qty{58.2}{MPa} for the lying one. Transverse shear is at most \qty{15}{\percent} of the bending stress over this range of $\ell$, and the motor's stall torque of about \qty{0.2}{N.m} adds only about \qty{3}{MPa} of shear, so bending governs.
 
 \begin{table}[htbp]
   \centering

@@ -154,6 +154,7 @@ The drive force can never exceed what the tracks can transmit (Eq.~\eqref{eq:tra
   m \frac{dv}{dt} = \min\!\left[F(v),\ \mu_s m g \cos\ang{33.4}\right] - k_r\, m g \sin\ang{33.4}
   \label{eq:climb}
 \end{equation}
+% you overexplained the eta k thing, it's not that deep. The single only thing is that because eta internal to the gearbox and how gears work, it's proportional to speed while kr is a constant drag
 $\eta_\mathrm{g}$ and $k_r$ are separate inputs because they model different kinds of loss: $\eta_\mathrm{g}$ takes a fixed fraction of whatever force the motors make, as friction between gear teeth does, while $k_r$ adds a drag of fixed size whatever the motors make, as the side guards rubbing on the treads do. A single climb time cannot tell the two apart. Subtracting the internal losses after the drive force is capped overstates them while the tracks slip, so the model errs slow. $T(G)$ is the time Eq.~\eqref{eq:climb}, integrated from rest, takes to carry the robot \qty{1.524}{m}. It assumes full motor duty from the start.
 
 \paragraph{Applying the bounds}
@@ -174,6 +175,7 @@ The \qty{280}{\rpm} version (1:21.3) gives the shortest estimated climb (Fig.~\r
 
 We bought and ran the \qty{280}{\rpm} version. Once the motors arrived, we measured their stall current at \qty{1.4}{A} \tbd{confirm the pack voltage during the stall test}, close to the \qty{1.5}{A} we had estimated.
 
+% how did you solve for that? numerically? And also "takes" is just a weird, vague, bad way of saying you regressed it or solved for it
 In our time trial testing, we found that the robot climbs the ramp in about \qty{3.3}{s}. With no extra resistance the model estimates \qty{2.6}{s}. Matching \qty{3.3}{s} takes $k_r = 1.25$ with $\eta_\mathrm{g} = 0.6$, so the real drivetrain must overcome \qty{25}{\percent} more resistance than the force of gravity alone. The model matches reality well: across the range of losses we considered ($\eta_\mathrm{g}$ from 0.5 to 0.8, $k_r$ from 1.0 to 1.25), it gives 2.5 to \qty{3.9}{s} for the \qty{280}{\rpm} version, and the measured \qty{3.3}{s} falls inside that range.
 
 Several problems in our build add to that resistance. The side guards flexed into the treads and rubbed on them in every run (Section~\ref{sec:layout}). The tracks are tensioned tightly so they do not dip and scrape at the mesa edge (Section~\ref{sec:couplers}), which loads the sprockets and axles. The printed couplers flex as they turn, the treads have friction within themselves, and the robot rubs and knocks against the side wall it uses as a guide rail.

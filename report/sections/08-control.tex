@@ -59,7 +59,6 @@ Hold also corrects the robot's position from its pitch. If the nose rises more t
 
 \subsection{Tuning}
 \label{sec:tuning}
-
 We empirically found that a climb takes about \qty{3.3}{s}, so we set \qty{3150}{ms} of full-power climb and a \qty{150}{ms} deceleration ramp. We also built a trim tool for straight-line driving that works as a binary search: each press shifts power \qty{16}{\percent} toward the lagging side, and the step halves every time the drift reverses. The side wall keeps the robot on a straight line either way, but a robot that pulls toward the wall spends power pushing itself into it, which only slows the climb. Trimming the motors to drive straight puts that power back into climbing.
 
 At first, Hold corrected at full power, 255, in both directions. The robot then oscillated on the mesa: it threw itself forward, overshot, threw itself back, overshot, and so on. We lowered the back-up power to 110 to stop this, and kept forward correction at full power.

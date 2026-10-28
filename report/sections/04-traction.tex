@@ -10,26 +10,9 @@ Section~\ref{sec:drivetrain} showed that traction caps how much of the motors' t
   \label{fig:tracks}
 \end{figure}
 
-% we haven't done this - if we don't ever end up doing this we need a backup plan
-To measure $\mu_s$ we \tbd{placed the robot on the ramp surface and raised the angle until it slipped, so \mbox{$\mu_s = \tan\theta_\mathrm{slip}$}; or pulled it with a luggage scale until it slid, so \mbox{$\mu_s = F/N$}}. We tested each surface \tbd{three times at each of three normal forces, adding \_\_\_ g of mass between sets} (Table~\ref{tab:friction}).
-
-\begin{table}[htbp]
-  \centering
-  \caption{Measured static friction coefficients.}
-  \label{tab:friction}
-  \begin{tabular}{@{}l c c c c c@{}}
-    \toprule
-    Surface & Normal force (\unit{N}) & Trial 1 & Trial 2 & Trial 3 & Mean $\mu_s$ \\
-    \midrule
-    Stock tracks & \tbd{\ } & \tbd{\ } & \tbd{\ } & \tbd{\ } & \tbd{\ } \\
-    Stock tracks & \tbd{\ } & \tbd{\ } & \tbd{\ } & \tbd{\ } & \tbd{\ } \\
-    Stock tracks & \tbd{\ } & \tbd{\ } & \tbd{\ } & \tbd{\ } & \tbd{\ } \\
-    \midrule
-    Sandpaper    & \tbd{\ } & \tbd{\ } & \tbd{\ } & \tbd{\ } & \tbd{\ } \\
-    Sandpaper    & \tbd{\ } & \tbd{\ } & \tbd{\ } & \tbd{\ } & \tbd{\ } \\
-    Sandpaper    & \tbd{\ } & \tbd{\ } & \tbd{\ } & \tbd{\ } & \tbd{\ } \\
-    \bottomrule
-  \end{tabular}
-\end{table}
-
-\tbd{Result: sandpaper raised \mbox{$\mu_s$} from \_\_\_ to \_\_\_, which by Eq.~\eqref{eq:traction} raises the maximum available traction on the ramp from \_\_\_ to \_\_\_ N.}
+We did not measure $\mu_s$ for the sandpaper, because no decision depended on its exact value. To hold on the ramp, the tracks only need
+\begin{equation}
+  \mu_s \ge \tan\ang{33.4} = 0.66
+  \label{eq:mu-min}
+\end{equation}
+(Eq.~\eqref{eq:traction} with $N = m g \cos\ang{33.4}$ and $F = m g \sin\ang{33.4}$), and the drivetrain bounds of Section~\ref{sec:traction-bound} were already set from a realistic range of $\mu_s$. A function test settled the rest: driven up the ramp at full power, the robot showed no visible slip. We spent our analysis where the answer could not be seen by eye (Section~\ref{sec:lessons}).

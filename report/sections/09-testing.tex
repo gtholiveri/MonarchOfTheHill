@@ -1,27 +1,28 @@
 \section{Testing summary}
 \label{sec:testing}
 
-Table~\ref{tab:tests} lists every test, what it varied and measured, and the decision it drove. Tests marked ``new'' were run after the contest for this report.
+Table~\ref{tab:tests} lists our tests, what each varied and measured, and the decision it drove. We ran the pitch accuracy test after the contest, for this report.
 
 \begin{table}[htbp]
   \centering
-  \caption{All tests, with the cause (what we varied) to the left of the effect.}
+  \caption{Our tests and the decision each drove.}
   \label{tab:tests}
   {\small
-  \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.17\textwidth} L L L L@{}}
+  \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.14\textwidth} L L L L L@{}}
     \toprule
-    Test & What we varied & What we measured & Result & Decision it drove \\
+    Test & What we varied & What we measured & Expected & Result & Decision it drove \\
     \midrule
-    Stall current & none & Current at stall & \qty{1.4}{A} per motor & Acceptable for brief stalls \\
-    Regulator bench test & none & Output voltage & \qty{5.05}{V} & Safe to power the Photon through VUSB \\
-    Resets under impulse & Motors driven vs.\ idle, hand rotation & Whether the Photon restarted & Restarted with motors idle & Fastened the battery box and cells \\
-    Timed climbs & none & Climb time by stopwatch & about \qty{3.3}{s} & Set \qty{3150}{ms} of full-power climb and a \qty{150}{ms} deceleration ramp \\
-    Straight-line trim & Power split between motors & Drift direction & \tbd{trim values: set from the dashboard and stored on the robot; the code holds only the default of no trim} & Trimmed the motors to drive straight \\
-    Friction (new) & Surface, normal force & Friction force at slip & \tbd{\ } & \tbd{\ } \\
-    Pitch accuracy & None: known hill angles in three autonomous runs & Pitch error, accelerometer alone and fused & Fused within \ang{4.5} while climbing; accelerometer alone off by up to \ang{122} & None: confirmed the simple filter is good enough \\
-    Hold strength (new) & Short brake vs.\ open terminals vs.\ hold active & Force to push off the mesa & \tbd{\ } & \tbd{\ } \\
+    Stall current & none & Current at stall & \qty{1.5}{A} per motor (Section~\ref{sec:current-bound}) & \qty{1.4}{A} per motor & Acceptable for brief stalls \\
+    Regulator bench test & none & Output voltage & \qty{5}{V} & \qty{5.05}{V} & Safe to power the Photon through VUSB \\
+    Resets under impulse & Motors driven vs.\ idle, hand rotation & Whether the Photon restarted & -- & Restarted with motors idle & Fastened the battery box and cells \\
+    Timed climbs & none & Climb time by stopwatch, three trials & 2.4 to \qty{3.8}{s} (Section~\ref{sec:gear-ratio}) & about \qty{3.3}{s} & Set \qty{3150}{ms} of full-power climb and a \qty{150}{ms} deceleration ramp \\
+    Straight-line trim & Power split between motors & Drift direction & -- & \tbd{trim values: set from the dashboard and stored on the robot; the code holds only the default of no trim} & Trimmed the motors to drive straight \\
+    Pitch accuracy & none: known hill angles in three autonomous runs & Pitch error, accelerometer alone and fused & Fused within \ang{15} while climbing (Section~\ref{sec:pitch-test}) & Fused within \ang{4.5} while climbing; accelerometer alone off by up to \ang{122} & None: confirmed the simple filter is good enough \\
+    Coupler fit & Bore clearance, 0.05 to \qty{0.15}{mm} & Whether it assembled and sat straight on the shaft & -- & \qty{0.1}{mm} was right & Printed the couplers at \qty{0.1}{mm} \\
+    Mount and screw-hole fit & Clearance, three iterations & Whether the parts fit & -- & \qty{0.14}{mm} worked & Used \qty{0.14}{mm} for motor mounts and horizontal screw holes \\
+    Undriven axle slot & Slot width & Whether the axle assembly went in easily & -- & Had to widen from 8 to \qty{15}{mm} & \qty{15}{mm} slot \\
+    Hold correction power & Back-up power & Whether the robot oscillated on the mesa & -- & Oscillated at 255; settled at 110 & Back up at 110, drive forward at 255 \\
     \bottomrule
   \end{tabularx}
   }
 \end{table}
-

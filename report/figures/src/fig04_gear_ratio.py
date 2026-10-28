@@ -1,6 +1,6 @@
 import math, numpy as np
 import matplotlib; matplotlib.use('Agg'); import matplotlib.pyplot as plt
-g=9.81; th=math.radians(33.4); m=1.0; L=1.524; r=0.025; V=7.4; R=7.4/1.5
+g=9.81; th=math.radians(33.4); m=0.97; L=1.524; r=0.025; V=7.4; R=7.4/1.5
 Ke=6.0/(5970*2*math.pi/60)
 variants=[(12,500),(16,377),(26,226),(35,171),(60,103),(77,78),(130,45),(170,35),(280,21.3),(620,9.6),(1360,4.4)]
 cand={170,280,620}
@@ -35,7 +35,7 @@ a1.text(4.4,top*0.9,'Upper bound: torque the tracks cannot use',ha='left',fontsi
 a1.set_yscale('log'); a1.set_ylim(0.8,700); a1.set_ylabel('Stall force (N)')
 a1.set_yticks([1,2,5,10,20,50,100,200,500]); a1.set_yticklabels(['1','2','5','10','20','50','100','200','500'])
 a1.set_title('(a) Stall force of each version against the bounds (filled: candidates)',fontsize=9,loc='left',color=ink)
-cases=[(0.7,1.0,'#2a78d6','70% gearbox efficiency, no extra resistance'),(0.7,1.25,'#eb6834','70% gearbox efficiency, 25% extra resistance'),(0.6,1.25,'#1baf7a','60% gearbox efficiency, 25% extra resistance')]
+cases=[(0.7,1.0,'#2a78d6','70% gearbox efficiency, no extra resistance'),(0.7,1.25,'#eb6834','70% gearbox efficiency, 25% extra resistance'),(0.55,1.2,'#1baf7a','55% gearbox efficiency, 20% extra resistance')]
 for eta,kr,c,lab in cases:
     a2.plot(Gs,[T(G,eta=eta,kr=kr) or np.nan for G in Gs],color=c,lw=1.6,label=lab)
     for rpm,G in variants:

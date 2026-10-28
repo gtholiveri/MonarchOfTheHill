@@ -15,7 +15,7 @@ for ax,(run,lab) in zip(axs,[('3','Run A'),('5','Run B'),('2','Run C')]):
     hi=a>100
     ax.plot(t[hi],np.full(hi.sum(),100),'^',ms=4,color=acc)
     ax.plot(t,f,color=fus,lw=1.8,label='Fused (complementary filter)')
-    ax.set_ylim(-12,108); ax.set_yticks([0,33.4,60,100]); ax.set_yticklabels(['0','33.4','60','100'])
+    ax.set_ylim(-12,108); ax.set_yticks([0,25,50,75,100]); ax.set_yticklabels(['0','25','50','75','100'])
     ax.text(0.01,0.93,lab,transform=ax.transAxes,fontsize=8.5,color=ink,va='top')
     ax.grid(True,color=grid,lw=0.6,axis='y'); ax.set_axisbelow(True)
     for s in ('top','right'): ax.spines[s].set_visible(False)
@@ -24,7 +24,11 @@ for ax,(run,lab) in zip(axs,[('3','Run A'),('5','Run B'),('2','Run C')]):
 from matplotlib.patches import Patch
 h,l=axs[0].get_legend_handles_labels()
 h.append(Patch(facecolor='#f1f0ec',edgecolor='none')); l.append('Climbing')
-axs[0].legend(h,l,frameon=False,fontsize=7.5,loc='upper right',bbox_to_anchor=(1.0,1.18),ncol=3)
+from matplotlib.lines import Line2D
+h.append(Line2D([],[],ls='none',marker='^',ms=4,color=acc)); l.append('Above 100° (clipped)')
+axs[0].legend(h,l,frameon=False,fontsize=7,loc='upper right',bbox_to_anchor=(1.0,1.18),ncol=4,
+              handlelength=1.6,handletextpad=0.5,columnspacing=1.2)
+axs[0].text(4.95,33.4+2,'ramp, 33.4°',color=mute,fontsize=7,ha='right',va='bottom')
 axs[1].set_ylabel('Pitch (°)')
 axs[2].set_xlabel('Time from start of climb (s)')
 axs[2].set_xlim(-1,5)

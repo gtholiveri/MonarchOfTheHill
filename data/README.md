@@ -5,7 +5,7 @@ Raw data behind the AME 101 Monarch of the Hill group report (Team 2). Only data
 | File | What it holds | Used in the report |
 | --- | --- | --- |
 | `pitch-runs.csv` | Dashboard run log of the three autonomous climbs used for the pitch test | Section 7: the pitch figure (Fig. 11) and the pitch-error table |
-| `robot-measurements.csv` | Measured mass and footprint of the finished robot | Mass of 1 kg in Section 3 and throughout |
+| `robot-measurements.csv` | Measured mass and footprint of the finished robot | Mass in Section 3 and throughout |
 
 ## pitch-runs.csv
 

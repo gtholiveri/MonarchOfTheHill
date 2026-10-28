@@ -24,7 +24,7 @@ The chassis is fully custom and 3D printed in PLA (Figs.~\ref{fig:chassis} to~\r
       \node[lbr] at (1.06,0.472) {Start switch};
     \end{scope}
   \end{tikzpicture}
-  \caption{Inside the chassis with the top plate removed, front of the robot at left. A ratcheting socket wrench sits in the slot used to adjust the undriven wheels.}
+  \caption{Inside the chassis with the top plate removed, front of the robot at left.}
   \label{fig:chassis}
 \end{figure}
 
@@ -39,12 +39,12 @@ We used a master model workflow, in which key reference and control geometry flo
 
 The tracks had to be tight enough that the robot would not bottom out on the crest, and putting the treads on and then tensioning them needs an adjustable wheel pitch. The undriven wheel axle bolts therefore mount in slots rather than clearance holes. Slicer volume modifiers raise the infill to \qty{100}{\percent} where each bolt clamps the plastic, so we could tighten the axles fully rigid under high tension without the hollow print yielding.
 
-The couplers took the most iteration (Section~\ref{sec:couplers}), because their fit to each mating part decides how well they work. Too loose a fit lets the shaft sit at an angle under tread tension, so it wobbles and goes through damaging strain cycles as it spins; too tight a fit will not assemble. A sweep of clearances from 0.05 to \qty{0.15}{mm} showed that \qty{0.1}{mm} gives the running fit the coupler needs. Motor mounts and horizontal screw holes with too little clearance did not work, because horizontal printed holes sag at the top and come out undersized vertically; after three test iterations we settled on \qty{0.14}{mm} for both. Test prints of the drivetrain alone showed that the undriven axle slot had to nearly double in width, from 8 to \qty{15}{mm}, for the axle assembly to go in easily. A full prototype chassis followed, and the top plate has countersunk screw holes and alignment ridges that guide it into place.
+The couplers took the most iteration (Section~\ref{sec:couplers}), because their fit to each mating part decides how well they work. Too loose a fit (a loose running fit) lets the shaft sit at an angle under tread tension, so it wobbles and goes through damaging strain cycles as it spins; too tight a fit (interference) will not assemble. The coupler does not turn on the shaft, so it needs a snug locational clearance fit, and a sweep of clearances from 0.05 to \qty{0.15}{mm} showed that \qty{0.1}{mm} gives it. Motor mounts and horizontal screw holes with too little clearance did not work, because horizontal printed holes sag at the top and come out undersized vertically; after three test iterations we settled on \qty{0.14}{mm} for both. Test prints of the drivetrain alone showed that the undriven axle slot had to nearly double in width, from 8 to \qty{15}{mm}, for the axle assembly to go in easily. The top plate has counterbored screw holes and alignment ridges that guide it into place.
 
 \begin{figure}[tb]
   \centering
   \includegraphics[width=0.8\textwidth]{fig_chassis_dimensions.pdf}
-  \caption{Dimensioned drawing of the chassis, in inches. These are the nominal CAD dimensions. Sizes quoted in the text are measured on the built robot and are generally less due to print tolerance and mating clearances.}
+  \caption{Dimensioned drawing of the chassis at its nominal CAD dimensions, in inches. Sizes quoted in the text were measured on the built robot.}
   \label{fig:dimensions}
 \end{figure}
 
@@ -57,14 +57,12 @@ The front wedge is a single part that wraps the front of the robot and carries t
   \label{fig:slicer}
 \end{figure}
 
-The wedge also had a significant flaw. Its geometry, meant to fully wrap the front surface of the treads, assumed their nominal pitch of \qty{120}{mm}, but our assembly procedure shoves the treads as far forward as possible, and the design did not account for that. The result was \qty{5}{mm} of interference on all sides between the front of the treads and the wedge. With no time to reprint, we cut larger clearances with a bandsaw. That cost the side guards their rigidity, and they often flexed into the treads, one reason our drivetrain efficiency was low (Section~\ref{sec:drivetrain-result}).
-
-At about \qty{4}{in} tall on an \qty{11.75}{in} by \qty{11.4}{in} footprint, the robot cannot tip backward on the \ang{33.4} ramp, and it never came close in testing.
+The wedge also had a significant flaw. Its geometry, meant to fully wrap the front surface of the treads, assumed their nominal pitch of \qty{120}{mm}, but our assembly procedure shoves the treads as far forward as possible, and the design did not account for that. The result was \qty{5}{mm} of interference on all sides between the front of the treads and the wedge. With no time to reprint, we cut larger clearances with a bandsaw. That cost the side guards their rigidity, and they often flexed into the treads, one reason our resistance factor $k_r$ was high (Section~\ref{sec:drivetrain-result}).
 
 \subsection{Wedge and fork geometry}
 \label{sec:wedge}
 
-The wedge matches the \ang{33.4} slope of the ramp, so an opponent that drives up onto it meets the same pitch it just climbed. The forks are shaped to sit flush on the mesa while the tracks are still on the ramp, so the front edge is never raised as the robot arrives (Fig.~\ref{fig:wedge}). \tbd{Explain how the wedge and fork angles follow from the \mbox{\ang{33.4}} ramp angle.} We left the edge slightly blunt so it would not snap.
+The wedge face is at \ang{35.0} (Fig.~\ref{fig:dimensions}), slightly steeper than the \ang{33.4} ramp so that the wedge could fully enclose the front of the treads. That difference is small enough that an opponent driving onto the wedge still sees almost no change in pitch (Section~\ref{sec:concept}). We left the edge slightly blunt so it would not snap. The forks are shaped to sit flush on the mesa while the tracks are still on the ramp, so the front edge is never raised as the robot arrives (Fig.~\ref{fig:wedge}).
 
 \begin{figure}[htbp]
   \centering
@@ -101,20 +99,33 @@ and the largest pull it can carry before failing is
 \end{equation}
 The section at the bottom of the bore is the full D profile with the \qty{1.6}{mm} pilot hole. The coupler turns with the shaft, so the load passes through every direction once per revolution, and the worst direction puts the peak stress at a corner of the flat, where $I/c = \qty{36.7}{mm^3}$. The tread runs somewhere on the sprocket's \qty{8}{mm} hub, so $\ell$ lies between 8 and \qty{16}{mm} \tbd{confirm where the tread runs on the hub}.
 
-The upright couplers did not bend before they broke: they fractured cleanly across their layers. Loaded across its layers, a printed part will probably fracture well before it yields, because the bond between layers cracks first. The limit that matters is therefore the stress at which a layer bond cracks, and two things put that well below what test specimens show. First, a crack starts at the worst flaw in the most stressed region. A dog-bone specimen is printed with care and loaded evenly, but in the coupler the peak stress sits at the corner of the flat, beside the pilot hole, and any weak layer bond there starts the crack. Specimen strengths are therefore an upper bound for our part. Second, the coupler is loaded in fatigue. It turns with the motor while the tread pulls in one fixed direction, so every revolution bends it fully one way and then fully the other, and one climb of the \qty{1.524}{m} ramp turns the \qty{50}{mm} sprocket about 10 times. Repeated loading cracks printed PLA at far lower stress than a single static load does~\cite{azadi}. We found no fatigue data for PLA loaded across its layers, so we do not put a number on this. The tread's pull also shears the coupler, but over this range of $\ell$ that shear stress is at most \qty{15}{\percent} of the bending stress, so bending governs.
+\paragraph{Yield and fracture}
+A loaded part can fail in two ways. It can yield: the material deforms permanently, so the part bends and stays bent but still carries load. Or it can fracture: a crack starts at a flaw and runs through the section, and the part separates. A ductile material yields well before it fractures; a brittle one fractures with little or no yielding first~\cite{callister}.
+
+Printed PLA can do either, depending on how the load meets its layers. Loaded along the extruded lines, it behaves like the bulk polymer, which yields before it breaks. Loaded across the layers, every bit of the load passes through the bonds between layers, which are thinner than the lines and hold voids, so a crack can start and run along a layer interface before the plastic around it yields~\cite{kuznetsov}.
+
+Our couplers showed both. The upright couplers broke cleanly across their layers with no visible bending first: fracture. The lying couplers never broke, but bent permanently over many runs: yielding. The limit that governs the upright couplers is therefore the stress at which a layer bond cracks, not a yield stress.
+
+\paragraph{Why test specimens overstate fracture strength}
+Fracture starts at the worst flaw in the most stressed material, so a part's fracture strength depends on its flaws and stress concentrations, not only on its material~\cite{callister}. A dog-bone specimen is printed with care and loads a short gauge section evenly, away from the grips. In the coupler, the peak stress sits at the corner of the flat, beside the pilot hole, and both concentrate stress, so any weak layer bond there starts the crack. Interlayer strength also depends strongly on print settings: in three-point bending, upright PLA bars printed with different nozzles and layer heights failed at 17 to \qty{71}{MPa}~\cite{kuznetsov}. Strengths from test specimens are therefore an upper bound for our part.
+
+\paragraph{Fatigue}
+The coupler is also loaded in fatigue. It turns with the motor while the tread pulls in one fixed direction, so every revolution bends it fully one way and then fully the other, and one climb of the \qty{1.524}{m} ramp turns the \qty{50}{mm} sprocket about 10 times. Repeated loading grows small cracks, so printed PLA fails at far lower stress than under a single static load~\cite{azadi}. We found no fatigue data for PLA loaded across its layers, so we do not put a number on this.
+
+The tread's pull also shears the coupler, but over this range of $\ell$ that shear stress is at most \qty{15}{\percent} of the bending stress, so bending governs.
 
 \begin{table}[htbp]
   \centering
-  \caption{Static strength and the tread tension it allows (Eq.~\eqref{eq:tmax}, $I/c = \qty{36.7}{mm^3}$), from the lowest course test value for each orientation~\cite{ronney}. The tension scales as $1/\ell$.}
+  \caption{Static strength and the tread tension it allows (Eq.~\eqref{eq:tmax}, $I/c = \qty{36.7}{mm^3}$), from the lowest course tensile test value for each orientation~\cite{ronney}, the only strengths measured on prints made in our course. The lever arm $\ell$ runs from \qty{8}{mm} with the tread at the inner edge of the hub to \qty{16}{mm} at its outer face, and the tension scales as $1/\ell$.}
   \label{tab:coupler}
-  \begin{tabularx}{\textwidth}{@{}L c C C C@{}}
+  \begin{tabularx}{\textwidth}{@{}L c C C C L@{}}
     \toprule
-    Orientation & $\sigma_\mathrm{allow}$ (\unit{MPa}) & $T_\mathrm{max}$, $\ell = \qty{8}{mm}$ (inner edge of hub) & $T_\mathrm{max}$, $\ell = \qty{12}{mm}$ (mid-hub) & $T_\mathrm{max}$, $\ell = \qty{16}{mm}$ (outer face) \\
+    Orientation & $\sigma_\mathrm{allow}$ (\unit{MPa}) & $T_\mathrm{max}$, $\ell = \qty{8}{mm}$ & $T_\mathrm{max}$, $\ell = \qty{12}{mm}$ & $T_\mathrm{max}$, $\ell = \qty{16}{mm}$ & In our robot \\
     \midrule
-    Upright: across the layers & 20.5 & \qty{94}{N} (\qty{21}{\lbf}) & \qty{63}{N} (\qty{14}{\lbf}) & \qty{47}{N} (\qty{11}{\lbf}) \\
-    Lying: along the layers & 58.2 & \qty{267}{N} (\qty{60}{\lbf}) & \qty{178}{N} (\qty{40}{\lbf}) & \qty{134}{N} (\qty{30}{\lbf}) \\
+    Upright: across the layers & 20.5 & \qty{94}{N} (\qty{21}{\lbf}) & \qty{63}{N} (\qty{14}{\lbf}) & \qty{47}{N} (\qty{11}{\lbf}) & Fractured \\
+    Lying: along the layers & 58.2 & \qty{267}{N} (\qty{60}{\lbf}) & \qty{178}{N} (\qty{40}{\lbf}) & \qty{134}{N} (\qty{30}{\lbf}) & Bent, never broke \\
     \bottomrule
   \end{tabularx}
 \end{table}
 
-Even under a static load, an upright coupler at mid-hub carries only \qty{63}{N} (Table~\ref{tab:coupler}), and the flaw at the corner of the flat and fatigue both cut that by amounts we cannot estimate. We never measured tread tension, so we cannot say which coupler should have failed when. The table does show why orientation mattered: lying down, the coupler carries 2.8 times the tension. We reprinted the couplers lying down and they did not break again, though they did bend permanently over many runs (Section~\ref{sec:lessons}), yielding instead of fracturing.
+Even under a static load, an upright coupler at mid-hub carries only \qty{63}{N} (Table~\ref{tab:coupler}), and the stress concentration at the corner of the flat and fatigue both cut that by amounts we cannot estimate. We never measured tread tension, so we cannot say which coupler should have failed when. The table does show why orientation mattered: lying down, the coupler carries 2.8 times the tension. We reprinted the couplers lying down and they did not break again, though they did bend permanently over many runs (Section~\ref{sec:lessons}), yielding instead of fracturing.

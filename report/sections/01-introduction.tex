@@ -29,7 +29,7 @@ Our objective was to reach the mesa first and keep the opponent from displacing 
     F_\mathrm{att} &= \mu_s m g \cos\ang{33.4} - m g \sin\ang{33.4} \label{eq:attack} \\
     F_\mathrm{def} &= \mu_s m g \label{eq:defend}
   \end{align}
-  For two robots of equal mass and any $\mu_s$ between 0.8 and 1.0, the defender can resist 3.5 to 7 times the force the attacker can apply. This is an estimate for the attacker fully on the ramp and the defender fully on the mesa; while the attacker bridges the crest the forces lie between.
+  For two robots of equal mass and any $\mu_s$ from 0.8 to 1.2, the defender can resist 2.7 to 6.8 times the force the attacker can apply. This is an estimate for the attacker fully on the ramp and the defender fully on the mesa; while the attacker bridges the crest the forces lie between.
   \item \textbf{An attacker arrives with its wedge in the air.} Its wedge cannot sit flush on the mesa until the robot has fully cleared the ramp, so its edge is most likely still raised when it meets the defender's wedge.
   \item \textbf{Autonomy favors the defender.} Until the robots meet, a robot's path is predictable. After contact, a robot without absolute positioning or vision knows very little about where it is, so escaping a losing position is largely infeasible. A robot already on top needs very little information to hold its place.
 \end{itemize}
@@ -49,10 +49,10 @@ Together these make the ground game, the contact between the two robots at the m
 We borrowed a low wedge with forks from combat robotics. The forks matter because no wedge can be perfectly flush with the ground, given manufacturing tolerances and strain in operation, and trying would leave the wedge dragging on the high-friction ramp. In a flat arena, forks sit flush almost all the time under gravity, and their mass and contact area are so small that the friction they add is negligible. For the three-dimensional hill we made two adaptations (Section~\ref{sec:wedge}):
 \begin{itemize}
   \item \textbf{Forks that stay flush while cresting.} We could not count on reaching the mesa first every time, so the forks stay flush with the mesa even while the robot is still cresting onto it.
-  \item \textbf{A wedge at the angle of the ramp.} An opponent that drives up onto it sees no change in pitch, so it does not detect that it has reached the crest.
+  \item \textbf{A wedge at the angle of the ramp.} The wedge nearly matches the slope of the ramp, so an opponent that drives up onto it sees no change in pitch and does not detect that it has reached the crest.
 \end{itemize}
 
-\paragraph{The side wall as a guide rail}
+\paragraph{The walls as guide rails}
 We wanted the robot stable and hard to displace in every direction, so its frame fits the full width of the ramp and uses the walls as guide rails. It cannot become misaligned, shoved sideways or pitched over the side.
 
-These goals set three requirements that organize the rest of the report: climb as fast as traction and available power allow; recognize the crest and stop at the front of the mesa; and hold position there, relying on the wedge and forks to preempt most pushing matches.
+These goals set three requirements that organize the rest of the report: climb as fast as traction and available power allow (Section~\ref{sec:drivetrain}); end the climb at the front of the mesa (Sections~\ref{sec:sensing} and~\ref{sec:control}); and hold position there, relying on the wedge and forks to preempt most pushing matches (Sections~\ref{sec:wedge} and~\ref{sec:run}).

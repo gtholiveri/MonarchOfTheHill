@@ -76,16 +76,16 @@ The wedge face is at \ang{35.0} (Fig.~\ref{fig:dimensions}), slightly steeper th
 
 Printed couplers join each motor's \qty{4}{mm} D-shaft to the stock sprocket (Fig.~\ref{fig:coupler}). Each is \qty{25.3}{mm} long and \qty{7.8}{mm} in diameter, round with one flat. The motor shaft fills a \qty{9.3}{mm} deep D-shaped bore at one end, where an \qty{8}{mm} shaft collar's set screw, passing through a hole in the coupler onto the steel D-shaft, locks collar, coupler and shaft together. The outside of the coupler, with its flat, extends the motor's small D-shaft into the larger \qty{8}{mm} D-shaped bore of the sprocket, which fits over the first \qty{8}{mm} at the other end, and a self-tapping screw driven into the \qty{1.6}{mm} pilot hole along the axis fastens the sprocket on.
 
-The tracks have to be tight so they do not dip and scrape at the mesa edge. The first couplers, printed standing up, snapped under that tread tension, most of them during assembly rather than in operation. Assembly loads them hardest: forcing the tread over the undriven wheel stretches it well past where it sits once it is on, even with the slot. After the contest we treated the coupler as a cantilever and found the largest tread tension it can carry in each print orientation, to see whether orientation explains why those couplers broke and the reprints held.
-
-3D-printed parts are much weaker across their layers than along them, because only the bond between layers resists stress normal to the layer planes. A coupler printed standing up, with its axis along the build direction, carries its bending stress straight across the layer bonds. One printed lying down carries it along the extruded lines (Fig.~\ref{fig:coupler}).
-
 \begin{figure}[htbp]
   \centering
-  \placeholderfig{2.2in}{\textbf{\large Figure: drawing here}\\[4pt]Coupler section view from CAD for both print orientations, showing layer direction, shaft bore, sprocket and the load at lever arm $\ell$.}
-  \caption{\tbd{Side-by-side slicer views of the coupler printed upright and lying down, with the layer lines visible.}}
+  \includegraphics[width=0.8\textwidth]{fig_coupler_drawing.pdf}
+  \caption{Shaft coupler drawing, dimensions in mm.}
   \label{fig:coupler}
 \end{figure}
+
+The tracks have to be tight so they do not dip and scrape at the mesa edge. The first couplers, printed standing up, snapped under that tread tension, most of them during assembly rather than in operation. Assembly loads them hardest: forcing the tread over the undriven wheel stretches it well past where it sits once it is on, even with the slot. After the contest we treated the coupler as a cantilever and found the largest tread tension it can carry in each print orientation, to see whether orientation explains why those couplers broke and the reprints held.
+
+3D-printed parts are much weaker across their layers than along them, because only the bond between layers resists stress normal to the layer planes. A coupler printed standing up, with its axis along the build direction, carries its bending stress straight across the layer bonds. One printed lying down carries it along the extruded lines.
 
 Only one span of the coupler can break. Over its first \qty{8}{mm} it sits inside the rigid sprocket bore, and over its last \qty{9.3}{mm} it wraps the steel motor shaft, which carries the bending there. From 8 to \qty{16}{mm} the plastic carries the load alone. The tread pulls on the sprocket with a total force $T$, perpendicular to the shaft. Along the free span the bending moment grows toward the motor, so it peaks at the bottom of the motor bore, a distance $\ell$ from the line of the tread. The peak bending stress there is
 \begin{equation}

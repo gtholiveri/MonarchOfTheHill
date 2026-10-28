@@ -50,9 +50,9 @@ The couplers took the most iteration (Section~\ref{sec:couplers}), because their
 
 The front wedge is a single part that wraps the front of the robot and comprises the wedge, the side guards and the fork mounts. Besides aligning the robot, the side guards keep the treads from catching a seam at the corner of the ramp, since a tread that catches one can lift the robot fully over the edge. The whole chassis would not fit in the build volume of the Prusa Core One+ we printed on, so deciding where to split it took iteration. We dropped full-length side guards once we saw that the treads did not need covering along the whole length of the robot. To avoid extra fasteners or glue and keep the wedge removable, it mates to the rest of the chassis with dovetail joints and semi-permanent snap-fit nubs. The wedge only fits the build volume along the diagonal, so we added a small \ang{45} planar cut at each side and printed it at an angle, with tree supports that hold up the overhangs and act as outriggers (Fig.~\ref{fig:slicer}).
 
-\begin{figure}[htbp]
+\begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.52\textwidth]{fig_wedge_slicer.png}
+  \includegraphics[width=0.4\textwidth]{fig_wedge_slicer.png}
   \caption{The front wedge in PrusaSlicer, printed roughly along the volume's diagonal. Supports in green, part in orange.}
   \label{fig:slicer}
 \end{figure}
@@ -64,7 +64,7 @@ The wedge also had a significant flaw. Its geometry, meant to fully wrap the fro
 
 The wedge face is at \ang{35.0} (Fig.~\ref{fig:dimensions}), slightly steeper than the \ang{33.4} ramp so that the wedge could fully enclose the front of the treads. That difference is small enough that an opponent driving onto the wedge still sees almost no change in pitch (Section~\ref{sec:concept}). We left the edge slightly blunt so it would not snap. The forks are shaped to sit flush on the mesa while the tracks are still on the ramp, so the front edge is never raised as the robot arrives (Fig.~\ref{fig:wedge}).
 
-\begin{figure}[htbp]
+\begin{figure}[!htb]
   \centering
   \placeholderfig{2.2in}{\textbf{\large Figure: drawing here}\\[4pt]Wedge and fork geometry from the \ang{33.4} ramp angle, with the forks sitting flush on the mesa while the tracks are still on the ramp.}
   \caption{\tbd{Drawing of the wedge and fork geometry from the \mbox{\ang{33.4}} ramp angle, with the forks sitting flush on the mesa while the tracks are still on the ramp.}}

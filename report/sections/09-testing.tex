@@ -13,7 +13,7 @@ Table~\ref{tab:tests} lists our tests, what each varied and measured, and the de
     Test & What we varied & What we measured & Expected & Result & Decision it drove \\
     \midrule
     Stall current & none & Current at stall & \qty{1.5}{A} per motor (Section~\ref{sec:current-bound}) & \qty{1.4}{A} per motor & Acceptable for brief stalls \\
-    Pack internal resistance & none & Terminal voltage open-circuit and at \qty{0.85}{A} through \qty{8}{\ohm} of power resistors & -- & \qty{0.13}{\ohm} & None: the pack allows \qty{1.5}{A} per motor (Table~\ref{tab:current}), so the driver sets the worst-case limit \\
+    Pack internal resistance & none & Terminal voltage open-circuit and at \qty{0.85}{A} through eight \qty{1}{\ohm} power resistors in series & -- & \qty{0.13}{\ohm} & None: the pack allows \qty{1.5}{A} per motor (Table~\ref{tab:current}), so the driver sets the worst-case limit \\
     Regulator bench test & none & Output voltage & \qty{5}{V} & \qty{5.05}{V} & Safe to power the Photon through VUSB \\
     Resets under impulse & Motors driven vs.\ idle, hand rotation & Whether the Photon restarted & -- & Restarted with motors idle & Fastened the battery box and cells \\
     Timed climbs & none & Climb time by stopwatch, three trials & 2.4 to \qty{3.8}{s} (Section~\ref{sec:gear-ratio}) & about \qty{3.3}{s} & Set \qty{3150}{ms} of full-power climb and a \qty{150}{ms} deceleration ramp \\

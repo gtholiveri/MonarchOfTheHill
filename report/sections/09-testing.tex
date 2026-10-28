@@ -16,9 +16,9 @@ Table~\ref{tab:tests} lists every test, what it varied and measured, and the dec
     Regulator bench test & none & Output voltage & \qty{5.05}{V} & Safe to power the Photon through VUSB \\
     Resets under impulse & Motors driven vs.\ idle, hand rotation & Whether the Photon restarted & Restarted with motors idle & Fastened the battery box and cells \\
     Timed climbs & none & Climb time by stopwatch & about \qty{3.3}{s} & Set \qty{3150}{ms} of full-power climb and a \qty{150}{ms} deceleration ramp \\
-    Straight-line trim & Power split between motors & Drift direction & \tbd{trim values: they were set from the dashboard and stored on the robot, and the code only holds the default of no trim} & \tbd{\ } \\
+    Straight-line trim & Power split between motors & Drift direction & \tbd{trim values: set from the dashboard and stored on the robot; the code holds only the default of no trim} & Trimmed the motors to drive straight \\
     Friction (new) & Surface, normal force & Friction force at slip & \tbd{\ } & \tbd{\ } \\
-    Pitch accuracy (new) & none: known hill angles in three autonomous runs & Pitch error, accelerometer alone and fused & Fused within \ang{4.5} while climbing; accelerometer alone off by up to \ang{122} & None: confirmed the simple filter is good enough \\
+    Pitch accuracy & None: known hill angles in three autonomous runs & Pitch error, accelerometer alone and fused & Fused within \ang{4.5} while climbing; accelerometer alone off by up to \ang{122} & None: confirmed the simple filter is good enough \\
     Hold strength (new) & Short brake vs.\ open terminals vs.\ hold active & Force to push off the mesa & \tbd{\ } & \tbd{\ } \\
     \bottomrule
   \end{tabularx}

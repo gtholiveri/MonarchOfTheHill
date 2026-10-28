@@ -4,7 +4,7 @@
 \subsection{Layout and construction}
 \label{sec:layout}
 
-The chassis is fully custom and 3D printed in PLA (Figs.~\ref{fig:chassis} to~\ref{fig:dimensions}).
+The chassis is fully custom and 3D printed in PLA (Figs.~\ref{fig:chassis} to~\ref{fig:dimensions}). The wedge and forks form the front of the chassis. The battery holder sits in the front half, with the breadboard carrying the controller, motor driver and sensors beside it. The two gearmotors sit at the rear, each driving a stock sprocket, and the start switch is on the side where the judge can reach it.
 
 \begin{figure}[htbp]
   \centering
@@ -28,7 +28,7 @@ The chassis is fully custom and 3D printed in PLA (Figs.~\ref{fig:chassis} to~\r
   \label{fig:chassis}
 \end{figure}
 
-We used a master model workflow, in which key reference and control geometry flows down to every part in the assembly. The final design has four parts: a main body enclosing the electronics, a top plate, the front wedge and the forks. Test prints checked the mounting patterns for the battery box and the boards, but in the final build we hot glued those parts in place, which let us change the layout without reprinting the whole box.
+We used a master model workflow, in which key reference and control geometry flows down to every part in the assembly. The final design has four parts: a main body enclosing the electronics, a top plate, the front wedge and the forks (Fig.~\ref{fig:assembly}). Test prints checked the mounting patterns for the battery box and the boards, but in the final build we hot glued those parts in place, which let us change the layout without reprinting the whole box.
 
 \begin{figure}[tb]
   \centering
@@ -37,6 +37,10 @@ We used a master model workflow, in which key reference and control geometry flo
   \label{fig:assembly}
 \end{figure}
 
+The tracks had to be tight enough that the robot would not bottom out on the crest, and putting the treads on and then tensioning them needs an adjustable wheel pitch. The undriven wheel axle bolts therefore mount in slots rather than clearance holes. Slicer volume modifiers raise the infill to \qty{100}{\percent} where each bolt clamps the plastic, so we could tighten the axles fully rigid under high tension without the hollow print yielding.
+
+The couplers took the most iteration (Section~\ref{sec:couplers}), because their fit to each mating part decides how well they work. Too loose a fit lets the shaft sit at an angle under tread tension, so it wobbles and goes through damaging strain cycles as it spins; too tight a fit will not assemble. A sweep of clearances from 0.05 to \qty{0.15}{mm} showed that \qty{0.1}{mm} gives the running fit the coupler needs. Motor mounts and horizontal screw holes with too little clearance did not work, because horizontal printed holes sag at the top and come out undersized vertically; after three test iterations we settled on \qty{0.14}{mm} for both. Test prints of the drivetrain alone showed that the undriven axle slot had to nearly double in width, from 8 to \qty{15}{mm}, for the axle assembly to go in easily. A full prototype chassis followed, and the top plate has countersunk screw holes and alignment ridges that guide it into place.
+
 \begin{figure}[tb]
   \centering
   \includegraphics[width=0.8\textwidth]{fig_chassis_dimensions.pdf}
@@ -44,22 +48,12 @@ We used a master model workflow, in which key reference and control geometry flo
   \label{fig:dimensions}
 \end{figure}
 
-The tracks had to be tight enough that the robot would not bottom out on the crest, and putting the treads on and then tensioning them needs an adjustable wheel pitch. The undriven wheel axle bolts therefore mount in slots rather than clearance holes. Slicer volume modifiers raise the infill to \qty{100}{\percent} where each bolt clamps the plastic, so we could tighten the axles fully rigid under high tension without the hollow print yielding.
-
-Each motor drives its sprocket through a printed shaft coupler, which adapts the motor's \qty{4}{mm} D-shaft to the sprocket's \qty{8}{mm} D-shaped bore. An \qty{8}{mm} shaft collar fastens it: the collar's set screw passes through a hole in the coupler onto the steel D-shaft, locking collar, coupler and shaft together. A self-tapping screw through the sprocket holds the sprocket on.
-
-The couplers took the most iteration, because their fit to each mating part decides how well they work. Too loose a fit (locational clearance) lets the shaft sit at an angle under tread tension, so it wobbles and goes through especially damaging strain cycles as it spins. Too tight a fit (interference) will not assemble. The coupler needs a running fit. We printed a sweep of clearances from 0.05 to \qty{0.15}{mm} in \qty{0.05}{mm} steps and found \qty{0.1}{mm} to be right.
-
-Other iterations also centered on clearance. Motor mounts and horizontal screw holes with too little clearance gave prototypes that did not work, and after three test iterations we settled on \qty{0.14}{mm} for both. Test prints of the drivetrain alone set the width of the undriven axle slot: for the axle assembly to go in easily it had to nearly double, from 8 to \qty{15}{mm}. A full prototype chassis followed. To make assembly easier, the top plate has countersunk screw clearance holes and alignment ridges that guide it into place.
-
-The front wedge is a single part that wraps the front of the robot and comprises the wedge, the side guards and the fork mounts. Besides aligning the robot, the side guards keep the treads from catching a seam at the corner of the ramp; a tread that catches one can lift the robot fully over the edge. Deciding where to split the robot took iteration, because the whole chassis would not fit in the build volume of the Prusa Core One+ we printed on. We first planned to print full-length side guards separately, but dropped the idea once we saw that the treads did not need covering along the whole length of the robot. To avoid extra fasteners or glue and keep the wedge removable, it mates to the rest of the chassis with dovetail joints and semi-permanent snap-fit nubs.
-
-The wedge only fits the build volume at an angle. For a long, roughly straight part, the most room is along the diagonal, so we added a small \ang{45} planar cut at each side and printed it at an angle, with tree supports that both hold up the overhangs and act as outriggers to keep it from tipping over (Fig.~\ref{fig:slicer}).
+The front wedge is a single part that wraps the front of the robot and carries the wedge, the side guards and the fork mounts. Besides aligning the robot, the side guards keep the treads from catching a seam at the corner of the ramp, since a tread that catches one can lift the robot fully over the edge. The whole chassis would not fit in the build volume of the Prusa Core One+ we printed on, so deciding where to split it took iteration. We dropped full-length side guards once we saw that the treads did not need covering along the whole length of the robot. To avoid extra fasteners or glue and keep the wedge removable, it mates to the rest of the chassis with dovetail joints and semi-permanent snap-fit nubs. The wedge only fits the build volume along the diagonal, so we added a small \ang{45} planar cut at each side and printed it at an angle, with tree supports that hold up the overhangs and act as outriggers (Fig.~\ref{fig:slicer}).
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=0.6\textwidth]{fig_wedge_slicer.png}
-  \caption{The front wedge in PrusaSlicer, printed  roughly along the volume's diagonal. Supports in green, part in orange.}
+  \includegraphics[width=0.52\textwidth]{fig_wedge_slicer.png}
+  \caption{The front wedge in PrusaSlicer, printed roughly along the volume's diagonal. Supports in green, part in orange.}
   \label{fig:slicer}
 \end{figure}
 
@@ -70,7 +64,7 @@ At about \qty{4}{in} tall on an \qty{11.75}{in} by \qty{11.4}{in} footprint, the
 \subsection{Wedge and fork geometry}
 \label{sec:wedge}
 
-We set the wedge and fork angles from the ramp angle. \tbd{Explain how the wedge and forks follow from the \mbox{\ang{33.4}} ramp angle.} We left the edge slightly blunt so it would not snap. The forks are shaped to sit flush on the mesa while the tracks are still on the ramp, so the front edge is never raised as the robot arrives (Fig.~\ref{fig:wedge}).
+The wedge matches the \ang{33.4} slope of the ramp, so an opponent that drives up onto it meets the same pitch it just climbed. The forks are shaped to sit flush on the mesa while the tracks are still on the ramp, so the front edge is never raised as the robot arrives (Fig.~\ref{fig:wedge}). \tbd{Explain how the wedge and fork angles follow from the \mbox{\ang{33.4}} ramp angle.} We left the edge slightly blunt so it would not snap.
 
 \begin{figure}[htbp]
   \centering
@@ -82,7 +76,7 @@ We set the wedge and fork angles from the ramp angle. \tbd{Explain how the wedge
 \subsection{Failure analysis: shaft couplers}
 \label{sec:couplers}
 
-Printed couplers join each motor's \qty{4}{mm} D-shaft to the stock sprocket (Fig.~\ref{fig:coupler}). Each is \qty{25.3}{mm} long and \qty{7.8}{mm} in diameter, round with one flat. The motor shaft fills a \qty{9.3}{mm} deep D-shaped bore at one end, where the shaft collar's set screw locks it (Section~\ref{sec:layout}). The outside of the coupler, with its flat, extends the motor's small D-shaft into the larger D-shaped bore of the sprocket, which fits over the first \qty{8}{mm} at the other end, and a self-tapping screw driven into the \qty{1.6}{mm} pilot hole along the axis fastens the sprocket on.
+Printed couplers join each motor's \qty{4}{mm} D-shaft to the stock sprocket (Fig.~\ref{fig:coupler}). Each is \qty{25.3}{mm} long and \qty{7.8}{mm} in diameter, round with one flat. The motor shaft fills a \qty{9.3}{mm} deep D-shaped bore at one end, where an \qty{8}{mm} shaft collar's set screw, passing through a hole in the coupler onto the steel D-shaft, locks collar, coupler and shaft together. The outside of the coupler, with its flat, extends the motor's small D-shaft into the larger \qty{8}{mm} D-shaped bore of the sprocket, which fits over the first \qty{8}{mm} at the other end, and a self-tapping screw driven into the \qty{1.6}{mm} pilot hole along the axis fastens the sprocket on.
 
 The tracks have to be tight so they do not dip and scrape at the mesa edge. The first couplers, printed standing up, snapped under that tread tension, most of them during assembly rather than in operation. Assembly loads them hardest: forcing the tread over the undriven wheel stretches it well past where it sits once it is on, even with the slot. After the contest we treated the coupler as a cantilever and found the largest tread tension it can carry in each print orientation, to see whether orientation explains why those couplers broke and the reprints held.
 
@@ -95,9 +89,7 @@ The tracks have to be tight so they do not dip and scrape at the mesa edge. The 
   \label{fig:coupler}
 \end{figure}
 
-Only one span of the coupler can break. Over its first \qty{8}{mm} it sits inside the rigid sprocket bore, and over its last \qty{9.3}{mm} it wraps the steel motor shaft, which carries the bending there. From 8 to \qty{16}{mm} the plastic carries the load alone.
-
-The tread pulls on the sprocket with a total force $T$, perpendicular to the shaft. Along the free span the bending moment grows toward the motor, so it peaks at the bottom of the motor bore, a distance $\ell$ from the line of the tread. The peak bending stress there is
+Only one span of the coupler can break. Over its first \qty{8}{mm} it sits inside the rigid sprocket bore, and over its last \qty{9.3}{mm} it wraps the steel motor shaft, which carries the bending there. From 8 to \qty{16}{mm} the plastic carries the load alone. The tread pulls on the sprocket with a total force $T$, perpendicular to the shaft. Along the free span the bending moment grows toward the motor, so it peaks at the bottom of the motor bore, a distance $\ell$ from the line of the tread. The peak bending stress there is
 \begin{equation}
   \sigma = \frac{M c}{I} = \frac{T \ell c}{I}
   \label{eq:bending}
@@ -107,28 +99,22 @@ and the largest pull it can carry before failing is
   T_\mathrm{max} = \frac{\sigma_\mathrm{allow}\,(I/c)}{\ell}
   \label{eq:tmax}
 \end{equation}
-The section at the bottom of the bore is the full D profile with the \qty{1.6}{mm} pilot hole. The coupler turns with the shaft, so the load passes through every direction once per revolution. The worst direction puts the peak stress at a corner of the flat, where $I/c = \qty{36.7}{mm^3}$. The tread runs somewhere on the sprocket's \qty{8}{mm} hub, so $\ell$ lies between 8 and \qty{16}{mm} \tbd{confirm where the tread runs on the hub}.
+The section at the bottom of the bore is the full D profile with the \qty{1.6}{mm} pilot hole. The coupler turns with the shaft, so the load passes through every direction once per revolution, and the worst direction puts the peak stress at a corner of the flat, where $I/c = \qty{36.7}{mm^3}$. The tread runs somewhere on the sprocket's \qty{8}{mm} hub, so $\ell$ lies between 8 and \qty{16}{mm} \tbd{confirm where the tread runs on the hub}.
 
-The upright couplers did not bend before they broke: they fractured cleanly across their layers. Loaded across its layers, a printed part will probably fracture well before it yields, because the bond between layers cracks before the plastic around it deforms. The limit that matters is therefore the stress at which a layer bond cracks, not a yield stress, and two things put that well below what test specimens show.
-
-First, a crack starts at the worst flaw in the most stressed region. A dog-bone specimen is printed with care and loaded evenly along its gauge length. In the coupler the peak stress sits at the corner of the flat, beside the pilot hole, and any weak layer bond there starts the crack. Strengths from test specimens are therefore an upper bound for our part.
-
-Second, the coupler is loaded in fatigue. It turns with the motor while the tread pulls in one fixed direction, so every revolution bends it fully one way and then fully the other. One climb of the \qty{1.524}{m} ramp turns the \qty{50}{mm} sprocket about 10 times, so every climb adds about 10 of these load cycles. Repeated loading like this cracks printed PLA at far lower stress than a single static load does~\cite{azadi}. We found no fatigue data for printed PLA loaded across its layers, so we do not put a number on this.
-
-The tread's pull also shears the coupler across its cross-section, the plane perpendicular to the shaft. Over this range of $\ell$ that shear stress is at most \qty{15}{\percent} of the bending stress, so bending governs.
+The upright couplers did not bend before they broke: they fractured cleanly across their layers. Loaded across its layers, a printed part will probably fracture well before it yields, because the bond between layers cracks first. The limit that matters is therefore the stress at which a layer bond cracks, and two things put that well below what test specimens show. First, a crack starts at the worst flaw in the most stressed region. A dog-bone specimen is printed with care and loaded evenly, but in the coupler the peak stress sits at the corner of the flat, beside the pilot hole, and any weak layer bond there starts the crack. Specimen strengths are therefore an upper bound for our part. Second, the coupler is loaded in fatigue. It turns with the motor while the tread pulls in one fixed direction, so every revolution bends it fully one way and then fully the other, and one climb of the \qty{1.524}{m} ramp turns the \qty{50}{mm} sprocket about 10 times. Repeated loading cracks printed PLA at far lower stress than a single static load does~\cite{azadi}. We found no fatigue data for PLA loaded across its layers, so we do not put a number on this. The tread's pull also shears the coupler, but over this range of $\ell$ that shear stress is at most \qty{15}{\percent} of the bending stress, so bending governs.
 
 \begin{table}[htbp]
   \centering
-  \caption{Static strength and the tread tension it allows at mid-hub ($\ell = \qty{12}{mm}$, Eq.~\eqref{eq:tmax}, $I/c = \qty{36.7}{mm^3}$), from the lowest course test value for each orientation~\cite{ronney}. With the tread at the inner edge of the hub ($\ell = \qty{8}{mm}$) each tension is 1.5 times higher; at the outer face ($\ell = \qty{16}{mm}$) it is 0.75 times.}
+  \caption{Static strength and the tread tension it allows (Eq.~\eqref{eq:tmax}, $I/c = \qty{36.7}{mm^3}$), from the lowest course test value for each orientation~\cite{ronney}. The tension scales as $1/\ell$.}
   \label{tab:coupler}
-  \begin{tabular}{@{}l c c@{}}
+  \begin{tabularx}{\textwidth}{@{}L c C C C@{}}
     \toprule
-    Orientation & $\sigma_\mathrm{allow}$ (\unit{MPa}) & $T_\mathrm{max}$ \\
+    Orientation & $\sigma_\mathrm{allow}$ (\unit{MPa}) & $T_\mathrm{max}$, $\ell = \qty{8}{mm}$ (inner edge of hub) & $T_\mathrm{max}$, $\ell = \qty{12}{mm}$ (mid-hub) & $T_\mathrm{max}$, $\ell = \qty{16}{mm}$ (outer face) \\
     \midrule
-    Upright: across the layers & 20.5 & \qty{63}{N} (\qty{14}{\lbf}) \\
-    Lying: along the layers & 58.2 & \qty{178}{N} (\qty{40}{\lbf}) \\
+    Upright: across the layers & 20.5 & \qty{94}{N} (\qty{21}{\lbf}) & \qty{63}{N} (\qty{14}{\lbf}) & \qty{47}{N} (\qty{11}{\lbf}) \\
+    Lying: along the layers & 58.2 & \qty{267}{N} (\qty{60}{\lbf}) & \qty{178}{N} (\qty{40}{\lbf}) & \qty{134}{N} (\qty{30}{\lbf}) \\
     \bottomrule
-  \end{tabular}
+  \end{tabularx}
 \end{table}
 
 Even under a static load, an upright coupler at mid-hub carries only \qty{63}{N} (Table~\ref{tab:coupler}), and the flaw at the corner of the flat and fatigue both cut that by amounts we cannot estimate. We never measured tread tension, so we cannot say which coupler should have failed when. The table does show why orientation mattered: lying down, the coupler carries 2.8 times the tension. We reprinted the couplers lying down and they did not break again, though they did bend permanently over many runs (Section~\ref{sec:lessons}), yielding instead of fracturing.

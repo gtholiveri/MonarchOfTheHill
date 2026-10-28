@@ -3,7 +3,7 @@
 \begin{titlepage}
   \centering
   \vspace*{0.4in}
-  {\LARGE\bfseries Win the Ground Game, Win the Hill \par}
+  {\LARGE\bfseries Design and Testing of an Autonomous Tracked Robot for Monarch of the Hill \par}
   \vspace{0.25in}
   {\large Monarch of the Hill, AME 101, Fall 2026\par}
   \vspace{0.3in}
@@ -46,8 +46,8 @@ We designed and built an autonomous tracked robot for the AME 101 Monarch of the
   \toprule
   \textbf{Symbol} & \textbf{Meaning} & \textbf{Units} \\
   \midrule
-  $a$, $a_1$ & acceleration along the ramp; while the tracks slip & \unit{m/s^2} \\
-  $\bm{a}_\mathrm{m}$ & acceleration vector as measured by accelerometer & \unit{m/s^2} \\
+  $a$ & acceleration along the ramp & \unit{m/s^2} \\
+  $\bm{a}_\mathrm{m}$ & acceleration vector measured by the accelerometer & \unit{m/s^2} \\
   $c$ & distance from the neutral axis to the outermost fiber & \unit{mm} \\
   $F$ & traction force from both tracks & \unit{N} \\
   $F(v)$, $F_\mathrm{stall}$ & drive force from both motors at speed $v$; at stall & \unit{N} \\
@@ -66,30 +66,29 @@ We designed and built an autonomous tracked robot for the AME 101 Monarch of the
   $R_\mathrm{w}$ & motor winding resistance & \unit{\ohm} \\
   $R_\mathrm{int}$ & pack internal resistance & \unit{\ohm} \\
   $r$ & sprocket rolling radius & \unit{m} \\
-  $T$, $T_\mathrm{max}$ & total tension force of the tread on the sprocket; total tension at which the coupler will fail & \unit{N} \\
+  $T$, $T_\mathrm{max}$ & total tension of the tread on the sprocket; tension at which the coupler fails & \unit{N} \\
   $T(G)$ & climb time with gear ratio $G$ & \unit{s} \\
   $T_c$ & filter time constant & \unit{s} \\
-  $t$, $t_0$, $t_1$ & time; time constant of the approach to $v_t$; duration of the slipping phase & \unit{s} \\
+  $t_0$ & time constant of the approach to $v_t$ & \unit{s} \\
   $\Delta t$ & filter update interval & \unit{s} \\
   $\hat{\bm{u}}$ & estimated direction of gravity in the sensor frame & -- \\
   $\hat{\bm{z}}$ & the robot's up direction in the sensor frame & -- \\
   $V$ & pack voltage & \unit{V} \\
   $V_\mathrm{term}$ & pack terminal voltage under load & \unit{V} \\
   $\Delta V_\mathrm{sag}$ & drop in pack voltage with both motors at stall & \unit{V} \\
-  $v$, $v_0$, $v_1$, $v_t$ & speed along the ramp; no-load; when the tracks stop slipping; steady climbing & \unit{m/s} \\
+  $v$, $v_0$, $v_t$ & speed along the ramp; no-load; steady climbing & \unit{m/s} \\
   $W$ & total resistance to climbing, $k_r m g \sin\ang{33.4}$ & \unit{N} \\
-  $x$, $x_1$ & distance along the ramp; covered while slipping & \unit{m} \\
   $\mathcal{E}$ & pack open-circuit voltage & \unit{V} \\
-  $\ell$ & lever arm from the bottom of the motor bore to the tread line (couplers); guard length (side guards) & \unit{mm} \\
+  $\ell$ & lever arm from the bottom of the motor bore to the tread line & \unit{mm} \\
   \midrule
   \multicolumn{3}{@{}l}{\textit{Greek symbols}} \\
   $\eta_\mathrm{g}$ & gearbox efficiency & -- \\
   $\theta$, $\theta_\mathrm{apparent}$ & robot pitch; pitch implied by the accelerometer alone & \unit{\degree} \\
   $\mu_s$ & static friction coefficient, tracks on the ramp surface & -- \\
   $\sigma$, $\sigma_\mathrm{allow}$ & bending stress; failure stress of the print & \unit{MPa} \\
-  $\tau_\mathrm{m}$, $\tau_\mathrm{s}$ & torque of one motor; at one sprocket & \unit{N.m} \\
+  $\tau_\mathrm{m}$ & torque of one motor & \unit{N.m} \\
   $\bm{\omega}$ & gyro angular rate & \unit{rad/s} \\
-  $\omega_\mathrm{m}$, $\omega_\mathrm{s}$ & motor shaft speed; sprocket speed & \unit{rad/s} \\
+  $\omega_\mathrm{m}$ & motor shaft speed & \unit{rad/s} \\
   \bottomrule
 \end{tabularx}
 }

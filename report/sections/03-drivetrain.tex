@@ -111,8 +111,8 @@ Varying gear ratio on the same base motor only changes how power is allocated be
     \midrule
     Very high speed, very low torque & Cannot accelerate the robot at all against gravity and drivetrain resistance \\
     High speed, low torque & Can accelerate the robot, but too slowly to reach maximum speed. Torque budget eaten disproportionately by drivetrain resistance. \\
-    Optimal speed, optimal torque & Only trades RPM for usable torque, produces acceleration that achieves lowest time up the ramp. \\
-    Low speed, high torque & Accelerates the robot, but wastes gearing on torque that's unusable, limiting top speed. \\
+    Optimal speed, optimal torque & Accelerates quickly and climbs at the highest speed: lowest time up the ramp. \\
+    Low speed, high torque & Accelerates the robot, but wastes gearing on torque that is unusable, limiting top speed. \\
     \bottomrule
   \end{tabularx}
 \end{table}
@@ -229,7 +229,7 @@ $v_t$ depends on $G$ through $F_\mathrm{stall}$, which is proportional to $G$ (E
 \end{equation}
 Then $v_t = v_0/2$: the motors climb at half their no-load speed, which is where a DC motor delivers its peak power. For all three combinations of $\eta_\mathrm{g}$ and $k_r$ in Fig.~\ref{fig:gear}b, Eq.~\eqref{eq:optimum} puts the optimum between the \qty{620}{\rpm} (1:9.6) and \qty{280}{\rpm} (1:21.3) versions.
 
-\paragraph{Result}
+\paragraph{Best version}
 The \qty{280}{\rpm} version (1:21.3) gives the shortest estimated climb (Fig.~\ref{fig:gear}b). It stays fastest for every combination of $\eta_\mathrm{g}$ from 0.5 to 0.8 and $k_r$ from 1.0 to 1.25 except the most optimistic corner, $\eta_\mathrm{g}$ of 0.75 or more with $k_r$ of about 1.1 or less, where the \qty{620}{\rpm} version is slightly faster. Nothing is sold between 280 and \qty{620}{\rpm}.
 
 \begin{figure}[htbp]

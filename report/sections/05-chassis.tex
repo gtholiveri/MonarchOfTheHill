@@ -97,7 +97,7 @@ and the largest pull it can carry before failing is
   T_\mathrm{max} = \frac{\sigma_\mathrm{allow}\,(I/c)}{\ell}
   \label{eq:tmax}
 \end{equation}
-The section at the bottom of the bore is the full D profile with the \qty{1.6}{mm} pilot hole. The coupler turns with the shaft, so the load passes through every direction once per revolution, and the worst direction puts the peak stress at a corner of the flat, where $I/c = \qty{36.7}{mm^3}$. The tread runs somewhere on the sprocket's \qty{8}{mm} hub, so $\ell$ lies between 8 and \qty{16}{mm} \tbd{confirm where the tread runs on the hub}.
+The section at the bottom of the bore is the full D profile with the \qty{1.6}{mm} pilot hole. The coupler turns with the shaft, so the load passes through every direction once per revolution, and the worst direction puts the peak stress at a corner of the flat, where $I/c = \qty{36.7}{mm^3}$. The sprocket is \qty{31.5}{mm} wide, and the coupler enters its bore from the inner face. The \qty{45}{mm} wide tread sits flush with the sprocket's outer face, so its centerline is \qty{9}{mm} outboard of the inner face, just past the tip of the coupler. The bottom of the motor bore is \qty{8}{mm} inboard of that face, so $\ell = \qty{17}{mm}$.
 
 \paragraph{Yield and fracture}
 A loaded part can fail in two ways. It can yield: the material deforms permanently, so the part bends and stays bent but still carries load. Or it can fracture: a crack starts at a flaw and runs through the section, and the part separates. A ductile material yields well before it fractures; a brittle one fractures with little or no yielding first~\cite{callister}.
@@ -112,20 +112,20 @@ Fracture starts at the worst flaw in the most stressed material, so a part's fra
 \paragraph{Fatigue}
 The coupler is also loaded in fatigue. It turns with the motor while the tread pulls in one fixed direction, so every revolution bends it fully one way and then fully the other, and one climb of the \qty{1.524}{m} ramp turns the \qty{50}{mm} sprocket about 10 times. Repeated loading grows small cracks, so printed PLA fails at far lower stress than under a single static load~\cite{azadi}. We found no fatigue data for PLA loaded across its layers, so we do not put a number on this.
 
-The tread's pull also shears the coupler, but over this range of $\ell$ that shear stress is at most \qty{15}{\percent} of the bending stress, so bending governs.
+The tread's pull also shears the coupler, but at this $\ell$ that shear stress is only about \qty{7}{\percent} of the bending stress, so bending governs.
 
 \begin{table}[htbp]
   \centering
-  \caption{Static strength and the tread tension it allows (Eq.~\eqref{eq:tmax}, $I/c = \qty{36.7}{mm^3}$), from the lowest course tensile test value for each orientation~\cite{ronney}, the only strengths measured on prints made in our course. The lever arm $\ell$ runs from \qty{8}{mm} with the tread at the inner edge of the hub to \qty{16}{mm} at its outer face, and the tension scales as $1/\ell$.}
+  \caption{Static strength and the tread tension it allows (Eq.~\eqref{eq:tmax}, $I/c = \qty{36.7}{mm^3}$, $\ell = \qty{17}{mm}$), from the lowest course tensile test value for each orientation~\cite{ronney}, the only strengths measured on prints made in our course.}
   \label{tab:coupler}
-  \begin{tabularx}{\textwidth}{@{}L c C C C L@{}}
+  \begin{tabularx}{\textwidth}{@{}L c C L@{}}
     \toprule
-    Orientation & $\sigma_\mathrm{allow}$ (\unit{MPa}) & $T_\mathrm{max}$, $\ell = \qty{8}{mm}$ & $T_\mathrm{max}$, $\ell = \qty{12}{mm}$ & $T_\mathrm{max}$, $\ell = \qty{16}{mm}$ & In our robot \\
+    Orientation & $\sigma_\mathrm{allow}$ (\unit{MPa}) & $T_\mathrm{max}$ & In our robot \\
     \midrule
-    Upright: across the layers & 20.5 & \qty{94}{N} (\qty{21}{\lbf}) & \qty{63}{N} (\qty{14}{\lbf}) & \qty{47}{N} (\qty{11}{\lbf}) & Fractured \\
-    Lying: along the layers & 58.2 & \qty{267}{N} (\qty{60}{\lbf}) & \qty{178}{N} (\qty{40}{\lbf}) & \qty{134}{N} (\qty{30}{\lbf}) & Bent, never broke \\
+    Upright: across the layers & 20.5 & \qty{44}{N} (\qty{10}{\lbf}) & Fractured \\
+    Lying: along the layers & 58.2 & \qty{126}{N} (\qty{28}{\lbf}) & Bent, never broke \\
     \bottomrule
   \end{tabularx}
 \end{table}
 
-Even under a static load, an upright coupler at mid-hub carries only \qty{63}{N} (Table~\ref{tab:coupler}), and the stress concentration at the corner of the flat and fatigue both cut that by amounts we cannot estimate. We never measured tread tension, so we cannot say which coupler should have failed when. The table does show why orientation mattered: lying down, the coupler carries 2.8 times the tension. We reprinted the couplers lying down and they did not break again, though they did bend permanently over many runs (Section~\ref{sec:lessons}), yielding instead of fracturing.
+Even under a static load, an upright coupler carries only \qty{44}{N} (Table~\ref{tab:coupler}), and the stress concentration at the corner of the flat and fatigue both cut that by amounts we cannot estimate. We never measured tread tension, so we cannot say which coupler should have failed when. The table does show why orientation mattered: lying down, the coupler carries 2.8 times the tension. We reprinted the couplers lying down and they did not break again, though they did bend permanently over many runs (Section~\ref{sec:lessons}), yielding instead of fracturing.

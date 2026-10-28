@@ -17,7 +17,7 @@ Table~\ref{tab:tests} lists our tests, what each varied and measured, and the de
     Regulator bench test & none & Output voltage & \qty{5}{V} & \qty{5.05}{V} & Safe to power the Photon through VUSB \\
     Resets under impulse & Motors driven vs.\ idle, hand rotation & Whether the Photon restarted & -- & Restarted with motors idle & Fastened the battery box and cells \\
     Timed climbs & none & Climb time by stopwatch, three trials & 2.4 to \qty{3.8}{s} (Section~\ref{sec:gear-ratio}) & about \qty{3.3}{s} & Set \qty{3150}{ms} of full-power climb and a \qty{150}{ms} deceleration ramp \\
-    Straight-line trim & Power split between motors & Drift direction & -- & \tbd{trim values: set from the dashboard and stored on the robot; the code holds only the default of no trim} & Trimmed the motors to drive straight \\
+    Straight-line trim & Power split between motors & Drift direction & -- & Drifted right untrimmed; left \qty{92}{\percent}, right \qty{100}{\percent} of commanded power & Trimmed the motors to drive straight \\
     Pitch accuracy & none: known hill angles in three autonomous runs & Pitch error, accelerometer alone and fused & Fused within \ang{15} while climbing (Section~\ref{sec:pitch-test}) & Fused within \ang{4.5} while climbing; accelerometer alone off by up to \ang{122} & None: confirmed the simple filter is good enough \\
     Coupler fit & Bore clearance, 0.05 to \qty{0.15}{mm} & Whether it assembled and sat straight on the shaft & -- & \qty{0.1}{mm} was right & Printed the couplers at \qty{0.1}{mm} \\
     Mount and screw-hole fit & Clearance, three iterations & Whether the parts fit & -- & \qty{0.14}{mm} worked & Used \qty{0.14}{mm} for motor mounts and horizontal screw holes \\

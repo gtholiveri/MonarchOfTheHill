@@ -16,7 +16,7 @@ When the robot accelerates along the ramp, however, the measured vector is no lo
 \end{equation}
 Decelerating at \qty{3}{m/s^2}, for example, makes the ramp look like \ang{16}, below the \ang{18} crest threshold (Section~\ref{sec:run}). Fig.~\ref{fig:pitch} shows how large this error was in our climbs.
 
-Using only the component perpendicular to the ramp, Eq.~\eqref{eq:tilt} with $g$ in place of $|\bm{a}_\mathrm{m}|$, would avoid the along-ramp acceleration, but that component is not immune to vibration: three times in our climbs the accelerometer-only pitch read past \ang{90} (Fig.~\ref{fig:pitch}), a jolt of more than $g \cos\ang{33.4} = \qty{8.2}{m/s^2}$.
+Using only the component perpendicular to the ramp, Eq.~\eqref{eq:tilt} with $g$ in place of $|\bm{a}_\mathrm{m}|$, would avoid the along-ramp acceleration, but that component is not immune to vibration: three times in our climbs the accelerometer-only pitch read past \ang{90} (Fig.~\ref{fig:pitch}), which means the measured component along $\hat{\bm{z}}$ briefly swung negative, a jolt of more than $g \cos\ang{33.4} = \qty{8.2}{m/s^2}$.
 
 A gyroscope measures rotation rate directly, so it resists vibration and is not confused by acceleration along the ramp. But turning its rate into an angle means integrating, and integration accumulates error. Ours read up to \qty{4.7}{\degree/s} at rest. Left uncorrected, that offset alone would add about \ang{16} of error over a \qty{3.3}{s} climb. We subtract a measured offset at startup (Section~\ref{sec:filter}), but no offset correction is exact, so the integrated angle still drifts.
 

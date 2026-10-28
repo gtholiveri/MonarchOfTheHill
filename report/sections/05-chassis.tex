@@ -4,7 +4,7 @@
 \subsection{Layout and construction}
 \label{sec:layout}
 
-The chassis is fully custom and 3D printed in PLA (Figs.~\ref{fig:chassis} to~\ref{fig:dimensions}). The wedge and forks form the front of the chassis. The battery holder sits in the front half, with the breadboard carrying the controller, motor driver and sensors beside it. The two gearmotors sit at the rear, each driving a stock sprocket, and the start switch is on the side where the judge can reach it.
+The chassis is fully custom and 3D printed in PLA (Figs.~\ref{fig:chassis} to~\ref{fig:dimensions}).
 
 \begin{figure}[htbp]
   \centering
@@ -39,7 +39,7 @@ We used a master model workflow, in which key reference and control geometry flo
 
 The tracks had to be tight enough that the robot would not bottom out on the crest, and putting the treads on and then tensioning them needs an adjustable wheel pitch. The undriven wheel axle bolts therefore mount in slots rather than clearance holes. Slicer volume modifiers raise the infill to \qty{100}{\percent} where each bolt clamps the plastic, so we could tighten the axles fully rigid under high tension without the hollow print yielding.
 
-The couplers took the most iteration (Section~\ref{sec:couplers}), because their fit to each mating part decides how well they work. Too loose a fit (a loose running fit) lets the shaft sit at an angle under tread tension, so it wobbles and goes through damaging strain cycles as it spins; too tight a fit (interference) will not assemble. The coupler does not turn on the shaft, so it needs a snug locational clearance fit, and a sweep of clearances from 0.05 to \qty{0.15}{mm} showed that \qty{0.1}{mm} gives it. Motor mounts and horizontal screw holes with too little clearance did not work, because horizontal printed holes sag at the top and come out undersized vertically; after three test iterations we settled on \qty{0.14}{mm} for both. Test prints of the drivetrain alone showed that the undriven axle slot had to nearly double in width, from 8 to \qty{15}{mm}, for the axle assembly to go in easily. The top plate has counterbored screw holes and alignment ridges that guide it into place.
+The couplers took the most iteration (Section~\ref{sec:couplers}), because their fit to each mating part decides how well they work. Too loose a fit (a loose running fit) lets the shaft sit at an angle under tread tension, so it wobbles and goes through damaging strain cycles as it spins; too tight a fit (interference) will not assemble. The coupler does not turn on the shaft, so it needs a snug locational clearance fit, and a sweep of clearances from 0.05 to \qty{0.15}{mm} showed that \qty{0.1}{mm} gives it. Motor mounts and horizontal screw holes with too little clearance did not work; after three test iterations we settled on \qty{0.14}{mm} for both. Test prints of the drivetrain alone showed that the undriven axle slot had to nearly double in width, from 8 to \qty{15}{mm}, for the axle assembly to go in easily. The top plate has counterbored screw holes and alignment ridges that guide it into place.
 
 \begin{figure}[tb]
   \centering
@@ -48,7 +48,7 @@ The couplers took the most iteration (Section~\ref{sec:couplers}), because their
   \label{fig:dimensions}
 \end{figure}
 
-The front wedge is a single part that wraps the front of the robot and carries the wedge, the side guards and the fork mounts. Besides aligning the robot, the side guards keep the treads from catching a seam at the corner of the ramp, since a tread that catches one can lift the robot fully over the edge. The whole chassis would not fit in the build volume of the Prusa Core One+ we printed on, so deciding where to split it took iteration. We dropped full-length side guards once we saw that the treads did not need covering along the whole length of the robot. To avoid extra fasteners or glue and keep the wedge removable, it mates to the rest of the chassis with dovetail joints and semi-permanent snap-fit nubs. The wedge only fits the build volume along the diagonal, so we added a small \ang{45} planar cut at each side and printed it at an angle, with tree supports that hold up the overhangs and act as outriggers (Fig.~\ref{fig:slicer}).
+The front wedge is a single part that wraps the front of the robot and comprises the wedge, the side guards and the fork mounts. Besides aligning the robot, the side guards keep the treads from catching a seam at the corner of the ramp, since a tread that catches one can lift the robot fully over the edge. The whole chassis would not fit in the build volume of the Prusa Core One+ we printed on, so deciding where to split it took iteration. We dropped full-length side guards once we saw that the treads did not need covering along the whole length of the robot. To avoid extra fasteners or glue and keep the wedge removable, it mates to the rest of the chassis with dovetail joints and semi-permanent snap-fit nubs. The wedge only fits the build volume along the diagonal, so we added a small \ang{45} planar cut at each side and printed it at an angle, with tree supports that hold up the overhangs and act as outriggers (Fig.~\ref{fig:slicer}).
 
 \begin{figure}[htbp]
   \centering

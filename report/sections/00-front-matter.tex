@@ -46,7 +46,7 @@ We designed and built an autonomous tracked robot for the AME 101 Monarch of the
   \toprule
   \textbf{Symbol} & \textbf{Meaning} & \textbf{Units} \\
   \midrule
-  $a$ & acceleration along the ramp & \unit{m/s^2} \\
+  $a$, $a_1$ & acceleration along the ramp; while the tracks slip & \unit{m/s^2} \\
   $\bm{a}_\mathrm{m}$ & acceleration vector measured by the accelerometer & \unit{m/s^2} \\
   $c$ & distance from the neutral axis to the outermost fiber & \unit{mm} \\
   $F$, $F(v)$, $F_\mathrm{stall}$ & drive force from both tracks along the ramp; at speed $v$; at stall & \unit{N} \\
@@ -69,7 +69,7 @@ We designed and built an autonomous tracked robot for the AME 101 Monarch of the
   $r$ & sprocket rolling radius & \unit{m} \\
   $T$, $T_\mathrm{max}$ & total tension of the tread on the sprocket; tension at which the coupler fails & \unit{N} \\
   $T_c$ & filter time constant & \unit{s} \\
-  $t_0$ & time constant of the approach to $v_t$ & \unit{s} \\
+  $t$, $t_0$, $t_1$ & time; time constant of the approach to $v_t$; duration of the slipping phase & \unit{s} \\
   $t_\mathrm{climb}(G)$ & climb time with gear ratio $G$ & \unit{s} \\
   $\Delta t$ & filter update interval & \unit{s} \\
   $\hat{\bm{u}}$ & estimated direction of gravity in the sensor frame & -- \\
@@ -77,7 +77,8 @@ We designed and built an autonomous tracked robot for the AME 101 Monarch of the
   $V$ & pack voltage & \unit{V} \\
   $V_\mathrm{term}$ & pack terminal voltage under load & \unit{V} \\
   $\Delta V_\mathrm{sag}$ & drop in pack voltage with both motors at stall & \unit{V} \\
-  $v$, $v_0$, $v_t$ & speed along the ramp; no-load; steady climbing & \unit{m/s} \\
+  $v$, $v_0$, $v_1$, $v_t$ & speed along the ramp; no-load; when the tracks stop slipping; steady climbing & \unit{m/s} \\
+  $x$, $x_1$ & distance along the ramp; covered while slipping & \unit{m} \\
   $\mathcal{E}$ & pack open-circuit voltage & \unit{V} \\
   $\ell$ & lever arm from the tread line to the bottom of the motor bore & \unit{mm} \\
   \midrule
@@ -86,9 +87,9 @@ We designed and built an autonomous tracked robot for the AME 101 Monarch of the
   $\theta$, $\theta_\mathrm{apparent}$ & robot pitch; pitch implied by the accelerometer alone & \unit{\degree} \\
   $\mu_s$ & static friction coefficient, tracks on the ramp surface & -- \\
   $\sigma$, $\sigma_\mathrm{allow}$ & bending stress; lowest tensile strength of the print from the course tests & \unit{MPa} \\
-  $\tau_\mathrm{m}$, $\tau_\mathrm{brake}$ & torque of one motor; braking torque of one short-braked motor & \unit{N.m} \\
+  $\tau_\mathrm{m}$, $\tau_\mathrm{s}$, $\tau_\mathrm{brake}$ & torque of one motor; at one sprocket; braking torque of one short-braked motor & \unit{N.m} \\
   $\bm{\omega}$ & gyro angular rate & \unit{rad/s} \\
-  $\omega_\mathrm{m}$ & motor shaft speed & \unit{rad/s} \\
+  $\omega_\mathrm{m}$, $\omega_\mathrm{s}$ & motor shaft speed; sprocket speed & \unit{rad/s} \\
   \bottomrule
 \end{tabularx}
 }

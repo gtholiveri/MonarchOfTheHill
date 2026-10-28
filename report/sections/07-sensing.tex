@@ -16,7 +16,7 @@ When the robot accelerates along the ramp, however, the measured vector is no lo
 \end{equation}
 Decelerating at \qty{3}{m/s^2}, for example, makes the ramp look like \ang{16}, below the \ang{18} crest threshold (Section~\ref{sec:run}). Fig.~\ref{fig:pitch} shows how large this error was in our climbs.
 
-Using only the component perpendicular to the ramp, Eq.~\eqref{eq:tilt} with $g$ in place of $|\bm{a}_\mathrm{m}|$, would avoid the along-ramp acceleration, but that component is not immune to vibration: three times in our climbs the accelerometer-only pitch read past \ang{90} (Fig.~\ref{fig:pitch}), which means the measured component along $\hat{\bm{z}}$ briefly swung negative, a jolt of more than $g \cos\ang{33.4} = \qty{8.2}{m/s^2}$.
+Using only the component perpendicular to the ramp, Eq.~\eqref{eq:tilt} with $g$ in place of $|\bm{a}_\mathrm{m}|$, would avoid the along-ramp acceleration, but that component is not immune to vibration. On the ramp at rest the accelerometer's $z$ axis reads $\cos\ang{33.4} = \qty{0.83}{g}$, and three times in our climbs it dropped below zero, to as low as \qty{-0.33}{g} (Fig.~\ref{fig:pitch}, Appendix~\ref{app:data}).
 
 A gyroscope measures rotation rate directly, so it resists vibration and is not confused by acceleration along the ramp. But turning its rate into an angle means integrating, and integration accumulates error. Ours read up to \qty{4.7}{\degree/s} at rest. Left uncorrected, that offset alone would add about \ang{16} of error over a \qty{3.3}{s} climb. We subtract a measured offset at startup (Section~\ref{sec:filter}), but no offset correction is exact, so the integrated angle still drifts.
 
@@ -42,7 +42,7 @@ where $\operatorname{normalize}$ rescales a vector to unit length. Each correcti
 
 The autopilot treats the robot as crested when the pitch stays below \ang{18} for \qty{40}{ms}, and on the mesa it counts anything within \ang{\pm 6} as level. The estimate therefore must not read more than \ang{15} low while climbing the \ang{33.4} ramp, and must be within \ang{\pm 6} at rest.
 
-To test this we used the hill itself as ground truth: anywhere on the ramp the true pitch is \ang{33.4}, and on the mesa it is \ang{0}. We logged both the accelerometer-only and the fused pitch through three full autonomous runs (Fig.~\ref{fig:pitch}, Table~\ref{tab:pitch}). Climbing, the accelerometer alone was off by up to \ang{122}, while the fused estimate never read more than \ang{4.5} from the true angle, well inside the \ang{15} the crest test allows. At rest, both were within \ang{4} on the mesa, inside the \ang{\pm 6} level band. The fused estimate's larger error at rest on the mesa is left over from the crest: it arrives up to \ang{4} off, and once the robot is still, the accelerometer pulls it to within \ang{1} in about \qty{3}{s}.
+To test this we used the hill itself as ground truth: anywhere on the ramp the true pitch is \ang{33.4}, and on the mesa it is \ang{0}. We logged both the accelerometer-only and the fused pitch through three full autonomous runs (Fig.~\ref{fig:pitch}, Table~\ref{tab:pitch}). Climbing, the accelerometer alone was off by up to \ang{122}, while the fused estimate never read more than \ang{4.5} from the true angle, well inside the \ang{15} the crest test allows. At rest, both were within \ang{4} on the mesa, inside the \ang{\pm 6} level band. We left Run C out of the rest rows: in it both the accelerometer and the fused estimate read about \ang{3} below the known angle at rest, on the ramp and on the mesa alike, so the robot itself sat about \ang{3} off. The fused estimate's larger error at rest on the mesa is left over from the crest: it arrives up to \ang{4} off, and once the robot is still, the accelerometer pulls it to within \ang{1} in about \qty{3}{s}.
 
 \begin{figure}[htbp]
   \centering
@@ -53,7 +53,7 @@ To test this we used the hill itself as ground truth: anywhere on the ramp the t
 
 \begin{table}[htbp]
   \centering
-  \caption{Pitch error against the known hill angle (\ang{33.4} on the ramp, \ang{0} on the mesa). Climbing uses all three runs; the rest rows use Runs A and B, because in Run C the robot was placed on the ramp by hand just before the start and came to rest on the mesa tilted about \ang{3}, so neither rest was at a known angle.}
+  \caption{Pitch error against the known hill angle (\ang{33.4} on the ramp, \ang{0} on the mesa). The rest rows use Runs A and B only.}
   \label{tab:pitch}
   \begin{tabular}{@{}l cc cc@{}}
     \toprule

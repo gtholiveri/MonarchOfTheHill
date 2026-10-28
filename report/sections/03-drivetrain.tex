@@ -74,7 +74,7 @@ so with both motors at stall the pack sags by $\Delta V_\mathrm{sag} = 2 I_\math
   I_\mathrm{stall,max} = \frac{\mathcal{E} - \qty{7}{V}}{2 R_\mathrm{int}}
   \label{eq:istall-max}
 \end{equation}
-Taking $R_\mathrm{int} \approx \qty{0.15}{\ohm}$ \tbd{replace with our measured value from the voltage-drop test} and $\mathcal{E} = \qty{7.4}{V}$, Eq.~\eqref{eq:istall-max} gives $I_\mathrm{stall,max} = \qty{1.3}{A}$. The value \qty{7.4}{V} is the nominal 2S voltage; a 2S pack runs from \qty{8.4}{V} full to a usual cutoff of \qty{6.0}{V}~\cite{cell}. But even with both motors stalled throughout, six \qty{30}{s} runs draw only about \qty{0.14}{A.h}, a few percent of the pack's capacity, so the pack stays near nominal. The best case, a full pack at $\mathcal{E} = \qty{8.4}{V}$, allows \qty{4.7}{A} per motor.
+We measured $R_\mathrm{int}$ by loading the pack with eight \qty{1}{\ohm} power resistors in series. Its terminal voltage fell from \qty{8.06}{V} open-circuit to \qty{7.95}{V} at \qty{0.848}{A}, so Eq.~\eqref{eq:vterm} gives $R_\mathrm{int} = \qty{0.13}{\ohm}$. With $\mathcal{E} = \qty{7.4}{V}$, Eq.~\eqref{eq:istall-max} gives $I_\mathrm{stall,max} = \qty{1.5}{A}$. The value \qty{7.4}{V} is the nominal 2S voltage; a 2S pack runs from \qty{8.4}{V} full to a usual cutoff of \qty{6.0}{V}~\cite{cell}. But even with both motors stalled throughout, six \qty{30}{s} runs draw only about \qty{0.14}{A.h}, a few percent of the pack's capacity, so the pack stays near nominal. The best case, a full pack at $\mathcal{E} = \qty{8.4}{V}$, allows \qty{5.4}{A} per motor.
 
 \begin{table}[htbp]
   \centering
@@ -87,7 +87,7 @@ Taking $R_\mathrm{int} \approx \qty{0.15}{\ohm}$ \tbd{replace with our measured 
     Limiting component & Condition & Max.\ $I_\mathrm{stall}$ (\unit{A}) & Condition & Max.\ $I_\mathrm{stall}$ (\unit{A}) \\
     \midrule
     Driver (TB6612FNG) & Stall held, as in a pushing match & 1.2 & Brief stall at the start of a climb & 3.2 \\
-    Pack (7805 drops out below \qty{7.0}{V}) & Pack at \qty{7.4}{V} & 1.3 & Full pack at \qty{8.4}{V} & 4.7 \\
+    Pack (7805 drops out below \qty{7.0}{V}) & Pack at \qty{7.4}{V} & 1.5 & Full pack at \qty{8.4}{V} & 5.4 \\
     \bottomrule
   \end{tabularx}
 \end{table}
